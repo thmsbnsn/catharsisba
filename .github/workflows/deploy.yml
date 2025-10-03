@@ -1,0 +1,80 @@
+# ...existing code...
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main, staging ]
+  pull_request:
+    branches: [ main, staging ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-path: ./dist
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install dependencies
+        run: npm ci
+      - name: Generate image manifests
+        run: node scripts/gen-image-manifests.mjs
+      - name: Build
+        run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: ./dist
+
+  deploy-staging:
+    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: ./artifact
+      - name: Deploy to STAGING (WinSCP .NET)
+        env:
+          FTP_HOST: ${{ secrets.FTP_STAGING_HOST }}
+          FTP_USER: ${{ secrets.FTP_STAGING_USER }}
+          FTP_PASS: ${{ secrets.FTP_STAGING_PASS }}
+          FTP_DIR:  ${{ secrets.FTP_STAGING_DIR }}
+          WIN_SCP_FINGERPRINT: ${{ secrets.WIN_SCP_FINGERPRINT }}
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-hostinger-winscpnet.ps1 staging -LocalPath .\artifact
+
+  deploy-production:
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: windows-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: site-build
+          path: ./artifact
+      - name: Deploy to PRODUCTION (WinSCP .NET)
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+          FTP_DIR:  ${{ secrets.FTP_DIR }}
+          WIN_SCP_FINGERPRINT: ${{ secrets.WIN_SCP_FINGERPRINT }}
+        run: |
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-hostinger-winscpnet.ps1 production -LocalPath .\artifact

@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Our Studio" description="Where precision, creativity, and comfort come together.">
+  <!-- Hero -->
+  <section class="relative min-h-[70vh] grid place-items-center text-center rounded-xl overflow-hidden border border-white/10">
+    <div class="absolute inset-0 bg-[url('https://staging.catharsisba.com/wp-content/uploads/2025/08/IMG_3603-scaled-e1755709659807.png')] bg-cover bg-center brightness-[.9] contrast-[1.06]"></div>
+    <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/60"></div>
+    <div class="relative z-10 p-6">
+      <h1 class="font-serif text-5xl sm:text-6xl">Our Studio</h1>
+      <p class="text-white/80 max-w-2xl mx-auto">Where precision, creativity, and comfort come together.</p>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="mt-12 beige-section rounded-xl p-8">
+    <h2 class="font-serif text-3xl">About Catharsis Body Art</h2>
+    <p class="text-[#1A1D21]">Nestled in the heart of our community, Catharsis Body Art blends professional craftsmanship with a warm, welcoming atmosphere. From the moment you walk in, you’ll experience a clean, modern space designed to put you at ease.</p>
+  </section>
+
+  <!-- Cleanliness -->
+  <section class="mt-12 card p-8">
+    <h2 class="font-serif text-3xl heading-blue">State-of-the-Art Equipment & Cleanliness</h2>
+    <ul class="list-disc pl-5 text-white/85 space-y-1">
+      <li>Medical-grade sterilization equipment</li>
+      <li>Single-use, disposable needles & tubes</li>
+      <li>Hospital-grade surface disinfectants</li>
+      <li>Private or semi-private stations</li>
+    </ul>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="mt-12 grid gap-6 md:grid-cols-3">
+    <blockquote class="card p-6 bg-white text-black">“Absolutely amazing experience—clean, friendly, and my tattoo healed perfectly!”<br/><span class="text-black/70">— Jamie R.</span></blockquote>
+    <blockquote class="card p-6 bg-white text-black">“The artists really listen and brought my vision to life. Highly recommend.”<br/><span class="text-black/70">— Alex K.</span></blockquote>
+    <blockquote class="card p-6 bg-white text-black">“Top-notch hygiene and a super chill vibe. Loved every minute.”<br/><span class="text-black/70">— Morgan S.</span></blockquote>
+  </section>
+
+  <!-- FAQ / CTA -->
+  <section class="mt-12 text-center card p-10">
+    <h2 class="font-serif text-3xl">FAQs</h2>
+    <p class="text-white/70">Got questions about tattoos, piercings, or healing? Our team has answers.</p>
+    <a href="/contact" class="btn-cta inline-block mt-4 px-6 py-3 rounded">Ask Us Anything</a>
+  </section>
+</BaseLayout>

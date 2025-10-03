@@ -1,0 +1,23 @@
+# Node / build
+node_modules/
+dist/
+# OS / Editor
+.DS_Store
+.vscode/
+Thumbs.db
+Desktop.ini
+# OneDrive temp
+~$*
+Icon?
+*.lnk
+
+# Ignore environment files containing secrets (keep secrets in GitHub Actions secrets)
+.env
+.env.local
+.env.*
+# Logs
+logs/
+# Lockfiles / caches (if any local)
+npm-debug.log*
+yarn-error.log*
+.pnpm-store/

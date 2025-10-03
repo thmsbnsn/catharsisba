@@ -1,0 +1,28 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx", // Enable modern JSX transform
+    "moduleResolution": "node", // Use Node-style module resolution
+    "allowJs": true, // Allow plain .js files alongside TS
+    "esModuleInterop": true, // Better CommonJS/ESM interop
+    "resolveJsonModule": true, // Let you import .json (for image manifests)
+    "isolatedModules": true, // Ensures each file can be transpiled alone
+    "baseUrl": ".", // Root for absolute imports
+    "paths": {
+      "@/*": [
+        "src/*"
+      ] // Alias so you can do import x from "@/components/x"
+    },
+    "strictNullChecks": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "src",
+    "env.d.ts",
+    "astro.config.mjs"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
+}

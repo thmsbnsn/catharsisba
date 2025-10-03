@@ -1,0 +1,73 @@
+---
+import "../styles/base.css";
+import OffCanvasNav from "../components/OffCanvasNav.jsx";
+import { SEO } from "../lib/seo";
+import { siteConfig } from "../site.config";
+
+const {
+  title = siteConfig.name,
+  description = siteConfig.tagline,
+  url = siteConfig.url,
+  image = siteConfig.logo.webp,
+} = Astro.props;
+---
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{title} — {siteConfig.name}</title>
+    <meta name="description" content={description} />
+    <SEO title={title} description={description} url={url} image={image} />
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/avif" href={siteConfig.favicon.avif} />
+    <link rel="icon" type="image/webp" href={siteConfig.favicon.webp} />
+    <link rel="apple-touch-icon" href={siteConfig.favicon.webp} />
+  </head>
+  <body
+    class="min-h-screen font-sans text-white relative bg-fixed bg-center bg-cover"
+    style="background-image: url('/images/branding/wallpaper.jpg');"
+  >
+    <!-- Optional overlay to keep text legible -->
+    <div class="absolute inset-0 bg-black/20 backdrop-blur-[1px]"></div>
+
+    <header class="sticky top-0 z-50 relative">
+      <div
+        class="max-w-6xl mx-auto flex items-center justify-between px-4 py-3
+               bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-md"
+      >
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2">
+          <picture>
+            <source srcSet={siteConfig.logo.avif} type="image/avif" />
+            <img
+              src={siteConfig.logo.webp}
+              alt={siteConfig.name}
+              class="h-10 w-auto drop-shadow"
+              loading="lazy"
+              decoding="async"
+            />
+          </picture>
+        </a>
+        <OffCanvasNav client:load />
+      </div>
+    </header>
+
+    <main class="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 py-10">
+      <slot />
+    </main>
+
+    <footer
+      class="relative z-10 mt-16 border-t border-white/10 py-10 text-sm text-white/70
+             bg-white/10 backdrop-blur-md shadow-inner"
+    >
+      <div
+        class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <p>© {new Date().getFullYear()} {siteConfig.name}</p>
+        <p>{siteConfig.phone} • {siteConfig.address}</p>
+      </div>
+    </footer>
+  </body>
+</html>

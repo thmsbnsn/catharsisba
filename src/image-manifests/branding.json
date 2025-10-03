@@ -1,0 +1,50 @@
+[
+  {
+    "file": "cba-cop-stop.webp",
+    "folder": "public/images/branding",
+    "path": "/images/branding/cba-cop-stop.webp",
+    "sizeKB": 72,
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "file": "cba-favicon-512.webp",
+    "folder": "public/images/branding",
+    "path": "/images/branding/cba-favicon-512.webp",
+    "sizeKB": 14,
+    "width": 512,
+    "height": 512
+  },
+  {
+    "file": "cba-logo-google-title.webp",
+    "folder": "public/images/branding",
+    "path": "/images/branding/cba-logo-google-title.webp",
+    "sizeKB": 23,
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "file": "cba-logo-google.webp",
+    "folder": "public/images/branding",
+    "path": "/images/branding/cba-logo-google.webp",
+    "sizeKB": 12,
+    "width": 1024,
+    "height": 1024
+  },
+  {
+    "file": "cba-logo-nobackground.webp",
+    "folder": "public/images/branding",
+    "path": "/images/branding/cba-logo-nobackground.webp",
+    "sizeKB": 24,
+    "width": 784,
+    "height": 909
+  },
+  {
+    "file": "cba-logo-whitebk.webp",
+    "folder": "public/images/branding",
+    "path": "/images/branding/cba-logo-whitebk.webp",
+    "sizeKB": 30,
+    "width": 784,
+    "height": 909
+  }
+]

@@ -1,0 +1,179 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Gallery from "../components/Gallery.jsx";
+import { getCollection } from "astro:content";
+
+// Load all artists
+const artists = await getCollection("artists");
+
+// Helper: load manifest per slug
+async function loadManifest(slug) {
+  try {
+    const mod = await import(`../../image-manifests/${slug}.json`);
+    return mod.default;
+  } catch {
+    return [];
+  }
+}
+
+// Build array of artist + profile image
+const artistData = [];
+for (const a of artists) {
+  const slug = a.slug;
+  const manifest = await loadManifest(slug);
+  const hero =
+    manifest.find((img) => img.folder.includes("profile-images")) ||
+    manifest[0] ||
+    null;
+
+  artistData.push({
+    slug,
+    ...a.data,
+    hero,
+  });
+}
+
+const HERO_BG =
+  "/images/webpages/home-hero.jpg"; // replace with local hero file under public/images/webpages/
+---
+<BaseLayout
+  title="Catharsis Body Art"
+  description="Tattoo & Piercing in Brownsburg — modern, precise, calm."
+>
+  <!-- HERO -->
+  <section class="relative overflow-hidden rounded-xl border border-white/10 p-10 sm:p-14 bg-black">
+    <div
+      class="absolute inset-0 opacity-80"
+      style={`background-image:url('${HERO_BG}');background-size:cover;background-position:center;`}
+      aria-hidden="true"
+    ></div>
+    <div class="absolute inset-0 bg-black/40" aria-hidden="true"></div>
+
+    <div class="relative z-10 text-center">
+      <div class="font-accent tracking-widest text-white/40 text-4xl sm:text-6xl">
+        01
+      </div>
+      <h1 class="font-display text-4xl sm:text-6xl tracking-wider">
+        Catharsis Body Art
+      </h1>
+
+      <!-- Definition band -->
+      <div
+        class="mt-4 inline-flex flex-wrap gap-2 items-center justify-center rounded-xl border border-white/20 px-4 py-2 bg-black/40 backdrop-blur"
+      >
+        <span class="font-semibold">cath·ar·sis</span>
+        <span class="opacity-90">(kə-ˈthär-səs)</span>
+        <span class="opacity-95"
+          >the process of releasing, and thereby providing relief from, strong
+          or repressed emotions.</span
+        >
+      </div>
+
+      <div class="mt-6 flex flex-wrap gap-3 justify-center">
+        <a href="/contact" class="btn-cta px-6 py-3 rounded">Book Now</a>
+        <a
+          href="#artists"
+          class="rounded border border-white/20 px-6 py-3 hover:bg-white/10"
+          >Meet the Artists</a
+        >
+      </div>
+
+      <span
+        class="absolute left-4 bottom-4 font-accent text-white/15 text-6xl hidden sm:block"
+        aria-hidden="true"
+        >ART</span
+      >
+      <span
+        class="absolute right-4 top-4 font-accent text-white/15 text-6xl hidden sm:block"
+        aria-hidden="true"
+        >SKIN</span
+      >
+    </div>
+  </section>
+
+  <!-- MEET THE ARTISTS -->
+  <section id="artists" class="mt-16">
+    <div class="font-accent text-6xl text-black/20 heading-blue">02</div>
+    <h2 class="font-serif text-3xl">Meet the Artists</h2>
+
+    <div class="mt-6 grid gap-6 sm:grid-cols-2">
+      {artistData.map((artist) => (
+        <article class="card p-4">
+          {artist.hero && (
+            <img
+              class="rounded-md aspect-[4/5] object-cover"
+              src={artist.hero.path}
+              alt={`${artist.name} portrait`}
+              width={artist.hero.width}
+              height={artist.hero.height}
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+          <div class="mt-3 flex items-center justify-between">
+            <div>
+              <h3 class="font-serif text-xl">{artist.name}</h3>
+              <p class="text-white/70">{artist.styles?.[0] || ""}</p>
+            </div>
+            <a
+              href={`/artists/${artist.slug}`}
+              class="btn-cta rounded px-4 py-2"
+              >View</a
+            >
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <!-- GALLERY TEASER -->
+  <section class="mt-20">
+    <div class="font-accent text-6xl text-blue-300/30">03</div>
+    <h2 class="font-serif text-3xl heading-blue">Tattoo Gallery</h2>
+    <div class="mt-6"><Gallery client:load /></div>
+  </section>
+
+  <!-- BOOKING CTA BAND -->
+  <section class="mt-20 card p-10 text-center">
+    <h2 class="font-accent text-5xl">
+      <span class="bg-black/60 rounded-lg px-3 py-1">Ready when you are.</span>
+    </h2>
+    <p class="mt-2 text-white/70">
+      Book a consult for tattoos or piercings. Clean, precise, and personal.
+    </p>
+    <a
+      href="/contact"
+      class="btn-cta mt-4 inline-block px-6 py-3 rounded"
+      data-open-contact="true"
+      >Book Now</a
+    >
+  </section>
+
+  <!-- AFTERCARE + CONTACT TEASERS -->
+  <section class="mt-20 grid gap-6 md:grid-cols-2">
+    <div class="card p-6">
+      <div class="font-accent text-5xl text-white/10">04</div>
+      <h2 class="font-serif text-2xl">Aftercare</h2>
+      <p class="text-white/80">
+        Keep your new work pristine. Our step-by-step aftercare covers
+        cleansing, moisture balance, and what to avoid.
+      </p>
+      <a class="underline mt-2 inline-block" href="/aftercare"
+        >View Aftercare Guide</a
+      >
+    </div>
+    <div class="card p-6">
+      <div class="font-accent text-5xl text-white/10">05</div>
+      <h2 class="font-serif text-2xl">Contact Us</h2>
+      <p>
+        5801 N. Green St, Suite 106, Brownsburg, IN 46112 •
+        <a class="underline" href="tel:+13172867092">(317) 286-7092</a>
+      </p>
+      <a
+        href="/contact"
+        class="mt-2 inline-block rounded border border-white/20 px-4 py-2 hover:bg-white/10"
+        >Open Contact Page</a
+      >
+    </div>
+  </section>
+</BaseLayout>

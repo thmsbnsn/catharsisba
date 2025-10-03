@@ -1,0 +1,125 @@
+/* Theme tokens (converted to CSS variables) */
+:root{
+  --bg:#0B0B0C; --surface:#121314;
+  --text:#E7E2DB; --muted:#9E968C; --outline:#2A2A2C;
+  --cta:#E43C2F; --cta-hover:#D2362A; --link:#2F6F74; --link-hover:#24545A;
+
+  /* convenience variables (optional) */
+  --font-heading:"Playfair Display", ui-serif, Georgia, "Times New Roman", serif;
+  --font-body:"Inter", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  --font-accent:"Bebas Neue", system-ui, sans-serif;
+}
+
+/* ================== Inter (variable) ================== */
+@font-face{
+  font-family:"Inter";
+  src:url("/fonts/inter-var.woff2") format("woff2-variations");
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Inter";
+  src:url("/fonts/inter-var-italic.woff2") format("woff2-variations");
+  font-weight:100 900;
+  font-style:italic;
+  font-display:swap;
+}
+
+/* ================== Playfair Display (variable) ================== */
+@font-face{
+  font-family:"Playfair Display";
+  src:url("/fonts/playfair-display.woff2") format("woff2-variations");
+  font-weight:100 900;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Playfair Display";
+  src:url("/fonts/playfair-display-italic.woff2") format("woff2-variations");
+  font-weight:100 900;
+  font-style:italic;
+  font-display:swap;
+}
+
+/* ================== Bebas Neue (regular) ================== */
+@font-face{
+  font-family:"Bebas Neue";
+  src:url("/fonts/bebas-neue.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* ===== Optional decorative faces ===== */
+@font-face{
+  font-family:"Coldiac";
+  src:url("/fonts/coldiac.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Neon City";
+  src:url("/fonts/neon-city.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Street Writing";
+  src:url("/fonts/street-writing.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face{
+  font-family:"Street Writing Extrude";
+  src:url("/fonts/street-writing-extrude.woff2") format("woff2");
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+
+/* Custom helpers / components
+   Place these BEFORE Tailwind directives so utility classes can override when required.
+*/
+.card {
+  border-radius: 0.5rem;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.04);
+}
+.btn-cta { background: var(--cta); color: #111; }
+.btn-cta:hover { background: var(--cta-hover); }
+.heading-blue{ color:#4682B4 !important; }
+.beige-section{ background:#D8CFC4; color:#444A4F; }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { color-scheme: dark; }
+html { color-scheme: dark; }
+body {
+  background: var(--bg); color: var(--text); font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+  background-image: radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+  background-size: 3px 3px;
+}
+/* Keyboard focus visibility for accessibility */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 3px solid rgba(255,255,255,0.12);
+  outline-offset: 3px;
+}
+a { color: var(--link); text-underline-offset: 4px; }
+a:hover { color: var(--link-hover); }
+
+.card { @apply border rounded-lg backdrop-blur-sm; border-color: rgba(255,255,255,.08); background: rgba(255,255,255,.04); }
+.btn-cta { background: var(--cta); color: #111; }
+.btn-cta:hover { background: var(--cta-hover); }
+.heading-blue{ color:#4682B4 !important; }
+.beige-section{ background:#D8CFC4; color:#444A4F; }

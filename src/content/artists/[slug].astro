@@ -1,0 +1,58 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getEntryBySlug } from "astro:content";
+import ArtistCard from "../components/ArtistCard.jsx";
+import ArtistGallery from "../components/ArtistGallery.jsx";
+
+const { slug } = Astro.params;
+const entry = await getEntryBySlug("artists", slug);
+
+if (!entry) {
+  throw new Error(`Artist not found: ${slug}`);
+}
+
+const { name, styles, email, instagram, hero: heroFromMd, bio } = entry.data;
+const pageTitle = `${name} — Artist`;
+
+// Load the matching manifest dynamically
+let images = [];
+try {
+  const manifestModule = await import(`../image-manifests/${slug}.json`);
+  images = manifestModule.default;
+} catch {
+  console.warn(`⚠️ No manifest found for ${slug}.json`);
+}
+
+// Hero logic: manifest first, then fallback to markdown
+const hero =
+  images.find((img) => img.folder.includes("profile-images")) ||
+  images[0] ||
+  (heroFromMd ? { path: heroFromMd } : null);
+
+const artist = {
+  slug,
+  name,
+  styles,
+  email,
+  instagram,
+  hero,
+  bio,
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  description={`${name} • ${styles.join(", ")}`}
+  url={`/artists/${slug}`}
+>
+  <section class="pt-10 sm:pt-16">
+    <div class="grid gap-8 md:grid-cols-3 md:items-start">
+      <div class="md:col-span-2">
+        <ArtistCard artist={artist} client:load />
+        <div class="mt-10">
+          <ArtistGallery images={images} client:load />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

@@ -1,0 +1,14 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import LeadForm from "../components/LeadForm.jsx";
+---
+<BaseLayout title="Contact" description="Book a consult or ask a question.">
+  <div class="grid gap-8 md:grid-cols-2">
+    <div>
+      <h2 class="font-serif text-2xl">Studio</h2>
+      <p class="text-white/70">5801 N. Green St. Suite 106, Brownsburg, IN 46112<br/>Tue–Sat, 11–7</p>
+      <p class="mt-2"><a href="tel:+13172867092">(317) 286-7092</a><br/><a href="mailto:info@catharsisba.com">info@catharsisba.com</a></p>
+    </div>
+    <div class="card p-6"><LeadForm client:load /></div>
+  </div>
+</BaseLayout>

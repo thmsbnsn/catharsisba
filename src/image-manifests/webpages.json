@@ -1,0 +1,18 @@
+[
+  {
+    "file": "hero-404page.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/hero-404page.webp",
+    "sizeKB": 261,
+    "width": 1792,
+    "height": 1024
+  },
+  {
+    "file": "hero-aftercare.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/hero-aftercare.webp",
+    "sizeKB": 76,
+    "width": 1536,
+    "height": 1024
+  }
+]
