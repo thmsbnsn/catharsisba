@@ -6,6 +6,16 @@ on:
     branches: [ main, staging ]
   pull_request:
     branches: [ main, staging ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+        - production
+        - staging
 
 jobs:
   build:
@@ -38,7 +48,7 @@ jobs:
           path: ./dist
 
   deploy-staging:
-    if: github.ref == 'refs/heads/staging' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/staging' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'staging')
     runs-on: windows-latest
     needs: build
     steps:
@@ -53,13 +63,13 @@ jobs:
           FTP_HOST: ${{ secrets.FTP_STAGING_HOST }}
           FTP_USER: ${{ secrets.FTP_STAGING_USER }}
           FTP_PASS: ${{ secrets.FTP_STAGING_PASS }}
-          FTP_DIR:  ${{ secrets.FTP_STAGING_DIR }}
+          FTP_DIR: ${{ secrets.FTP_STAGING_DIR }}
           WIN_SCP_FINGERPRINT: ${{ secrets.WIN_SCP_FINGERPRINT }}
         run: |
           powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-hostinger-winscpnet.ps1 staging -LocalPath .\artifact
 
   deploy-production:
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
     runs-on: windows-latest
     needs: build
     steps:
@@ -74,7 +84,7 @@ jobs:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
           FTP_PASS: ${{ secrets.FTP_PASS }}
-          FTP_DIR:  ${{ secrets.FTP_DIR }}
+          FTP_DIR: ${{ secrets.FTP_DIR }}
           WIN_SCP_FINGERPRINT: ${{ secrets.WIN_SCP_FINGERPRINT }}
         run: |
           powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-hostinger-winscpnet.ps1 production -LocalPath .\artifact

@@ -1,5 +1,13 @@
 [
   {
+    "file": "background4.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/background4.webp",
+    "sizeKB": 14,
+    "width": 341,
+    "height": 512
+  },
+  {
     "file": "hero-404page.webp",
     "folder": "public/images/webpages",
     "path": "/images/webpages/hero-404page.webp",
@@ -12,6 +20,14 @@
     "folder": "public/images/webpages",
     "path": "/images/webpages/hero-aftercare.webp",
     "sizeKB": 76,
+    "width": 1536,
+    "height": 1024
+  },
+  {
+    "file": "landinghero1.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/landinghero1.webp",
+    "sizeKB": 698,
     "width": 1536,
     "height": 1024
   }

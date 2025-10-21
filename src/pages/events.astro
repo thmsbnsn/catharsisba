@@ -1,0 +1,143 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const partners = [
+  {
+    name: "American Foundation for Suicide Prevention — Indiana Chapter",
+    url: "https://afsp.org/Indiana",
+    address: [
+      "AFSP Indiana Chapter",
+      "14350 Mundy Drive, Suite 800 #199",
+      "Noblesville, IN 46060",
+    ],
+    phone: "(317) 864-6074",
+    email: "Indiana@afsp.org",
+  },
+  {
+    name: "The Willow Center",
+    url: "https://thewillowcenter.com",
+    address: [
+      "The Willow Center",
+      "515 North Green Street, Suite 402",
+      "Brownsburg, IN 46112",
+    ],
+    phone: "(317) 852-3690",
+    email: "ccotten@thewillowcenter.com",
+  },
+  {
+    name: "Panoony's Pizza & Wings",
+    url: "https://panoony.com",
+    address: [
+      "1447 E Main St, Ste C",
+      "Brownsburg, IN 46112",
+    ],
+    phone: "(317) 286-3500",
+    email: "panoony@panoony.com",
+  },
+];
+
+// Build a calendar for the current month with richer US holidays and simple navigation
+const now = new Date();
+const urlMonth = Number(Astro.url.searchParams.get('m'));
+const urlYear = Number(Astro.url.searchParams.get('y'));
+const month = Number.isFinite(urlMonth) ? Math.min(11, Math.max(0, urlMonth)) : now.getMonth();
+const year = Number.isFinite(urlYear) ? urlYear : now.getFullYear();
+const first = new Date(year, month, 1);
+const startDay = first.getDay();
+const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+// US holiday set (simplified rules)
+function nthWeekdayOfMonth(y:number, m:number, weekday:number, n:number){
+  const first = new Date(y, m, 1);
+  const firstW = first.getDay();
+  const day = 1 + ((7 + weekday - firstW) % 7) + (n - 1) * 7;
+  return new Date(y, m, day);
+}
+function lastWeekdayOfMonth(y:number, m:number, weekday:number){
+  const last = new Date(y, m + 1, 0);
+  const offset = (7 + last.getDay() - weekday) % 7;
+  return new Date(y, m + 1, 0 - offset);
+}
+const holidays = new Map<string, string>([
+  [new Date(year, 0, 1).toDateString(), "New Year's Day"],
+  [nthWeekdayOfMonth(year, 0, 1, 3).toDateString(), "MLK Day"],
+  [lastWeekdayOfMonth(year, 4, 1).toDateString(), "Memorial Day"],
+  [new Date(year, 6, 4).toDateString(), "Independence Day"],
+  [nthWeekdayOfMonth(year, 8, 1, 1).toDateString(), "Labor Day"],
+  [nthWeekdayOfMonth(year, 10, 4, 4).toDateString(), "Thanksgiving"],
+  [new Date(year, 11, 25).toDateString(), "Christmas Day"],
+]);
+
+const cells: Array<{ label: string; note?: string }> = [];
+for (let i = 0; i < startDay; i++) cells.push({ label: "" });
+for (let d = 1; d <= daysInMonth; d++) {
+  const date = new Date(year, month, d);
+  const note = holidays.get(date.toDateString());
+  cells.push({ label: String(d), note });
+}
+while (cells.length % 7 !== 0) cells.push({ label: "" });
+---
+
+<BaseLayout title="Events" description="Studio events, holidays and community partners">
+  <section class="mb-12">
+    <div class="font-accent text-6xl text-white/10 mb-2">Events</div>
+    <h1 class="font-serif text-4xl mb-6">{new Date(year, month, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' })}</h1>
+
+    <div class="card p-6">
+      <div class="flex items-center justify-between mb-4">
+        <a class="btn-outline px-3 py-2 rounded" href={`?y=${month===0?year-1:year}&m=${month===0?11:month-1}`}>
+          <img src="/icons/chevron_left_24dp.svg" class="inline w-5 h-5" alt="Prev" /> Prev
+        </a>
+        <a class="btn-outline px-3 py-2 rounded" href={`?y=${now.getFullYear()}&m=${now.getMonth()}`}>Today</a>
+        <a class="btn-outline px-3 py-2 rounded" href={`?y=${month===11?year+1:year}&m=${month===11?0:month+1}`}>
+          Next <img src="/icons/chevron_right_24dp.svg" class="inline w-5 h-5" alt="Next" />
+        </a>
+      </div>
+      <div class="grid grid-cols-7 gap-2 text-center font-semibold mb-2">
+        <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+      </div>
+      <div class="grid grid-cols-7 gap-2">
+        {cells.map((c, index) => {
+          const isCurrentDay = c.label && 
+            new Date(year, month, parseInt(c.label)).toDateString() === new Date().toDateString();
+          return (
+            <div class={`calendar-cell ${c.note ? 'is-holiday' : ''} ${isCurrentDay ? 'is-today' : ''}`}>
+              <div class="calendar-date">{c.label}</div>
+              {c.note && <div class="calendar-note">{c.note}</div>}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="font-accent text-6xl text-white/10 mb-2">Partners</div>
+    <h2 class="font-serif text-3xl mb-6">Community Partners</h2>
+    <div class="grid gap-6 md:grid-cols-3">
+      {partners.map((p) => (
+        <article class="card p-5">
+          <h3 class="font-serif text-xl mb-2">
+            <a class="underline" href={p.url} target="_blank" rel="noopener">{p.name}</a>
+          </h3>
+          <div class="text-white/80 text-sm leading-relaxed">
+            {p.address.map((line) => (<div>{line}</div>))}
+            <div class="mt-2"><strong>Phone:</strong> <a class="underline" href={`tel:${p.phone.replace(/[^0-9]/g,'')}`}>{p.phone}</a></div>
+            <div><strong>Email:</strong> <a class="underline" href={`mailto:${p.email}`}>{p.email}</a></div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+.calendar-cell{ position:relative; min-height:84px; padding:.5rem; border:1px solid rgba(255,255,255,.12); border-radius:10px; background:rgba(255,255,255,.04); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); text-align:left; }
+.calendar-date{ font-weight:800; font-family: var(--font-accent); letter-spacing:.06em; opacity:.85; }
+.calendar-note{ margin-top:.25rem; font-size:.8rem; color:#9fd3ff; }
+.is-holiday{ border-color: rgba(99, 179, 237, .45); box-shadow:0 6px 18px rgba(99,179,237,.16) inset; }
+.is-today{ background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.25); box-shadow:0 4px 12px rgba(255,255,255,.1) inset; }
+.is-today .calendar-date{ opacity:1; color:#ffffff; }
+@media (max-width:768px){ .calendar-cell{ min-height:68px; } }
+</style>
+

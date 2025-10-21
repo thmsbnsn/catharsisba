@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Accessibility Statement" description="Our commitment to accessibility.">
+  <section class="cba-legal">
+    <div class="wrap">
+      <h1>Accessibility Statement</h1>
+      <p class="lede">Catharsis Body Art is committed to providing a website that is accessible to the widest possible audience.</p>
+
+      <div class="legal-grid">
+        <article class="legal-block">
+          <h2>Standards</h2>
+          <p>We aim to conform to WCAG 2.1 AA guidelines. We continually improve color contrast, keyboard navigation, focus indicators, labeling, and motion reduction.</p>
+        </article>
+        <article class="legal-block">
+          <h2>Feedback</h2>
+          <p>If you experience difficulty using our site, contact us at <a href="mailto:info@catharsisba.com">info@catharsisba.com</a> or (317) 286-7092 and we will assist you.</p>
+        </article>
+      </div>
+
+      <div class="legal-footer">
+        <a class="btn btn--ghost" href="/">Home</a>
+        <span class="muted small">Updated {new Date().toLocaleDateString()}</span>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+

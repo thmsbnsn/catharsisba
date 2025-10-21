@@ -19,8 +19,9 @@ export default {
       fontFamily: {
         /* Core families */
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Bebas Neue', 'Inter', 'sans-serif'],
+        display: ['Coldiac', 'Playfair Display', 'ui-serif', 'Georgia', 'Times New Roman', 'serif'],
         serif: ['Playfair Display', 'serif'],
+        accent: ['Bebas Neue', 'system-ui', 'sans-serif'],
         /* Optional decorative utilities */
         coldiac: ['Coldiac', 'serif'],
         neon: ['Neon City', 'sans-serif'],

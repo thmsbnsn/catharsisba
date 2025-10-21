@@ -1,8 +1,16 @@
 ---
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { getEntryBySlug } from "astro:content";
-import ArtistCard from "../components/ArtistCard.jsx";
-import ArtistGallery from "../components/ArtistGallery.jsx";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getEntryBySlug, getCollection } from "astro:content";
+import ArtistCard from "../../components/ArtistCard.jsx";
+import ArtistGallery from "../../components/ArtistGallery.jsx";
+
+export async function getStaticPaths() {
+  const artists = await getCollection("artists");
+  return artists.map((artist) => ({
+    params: { slug: artist.slug },
+    props: { artist: artist.data },
+  }));
+}
 
 const { slug } = Astro.params;
 const entry = await getEntryBySlug("artists", slug);
@@ -17,7 +25,7 @@ const pageTitle = `${name} — Artist`;
 // Load the matching manifest dynamically
 let images = [];
 try {
-  const manifestModule = await import(`../image-manifests/${slug}.json`);
+  const manifestModule = await import(`../../image-manifests/${slug}.json`);
   images = manifestModule.default;
 } catch {
   console.warn(`⚠️ No manifest found for ${slug}.json`);

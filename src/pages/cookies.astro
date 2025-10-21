@@ -1,0 +1,35 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+<BaseLayout title="Cookie Policy" description="How we use cookies and similar technologies.">
+  <section class="cba-legal">
+    <div class="wrap">
+      <h1>Cookie Policy</h1>
+      <p class="lede">This Cookie Policy explains how we use cookies and your choices.</p>
+
+      <div class="legal-grid">
+        <article class="legal-block">
+          <h2>What Are Cookies?</h2>
+          <p>Cookies are small text files stored on your device to enable site functionality, preferences, and analytics.</p>
+        </article>
+        <article class="legal-block">
+          <h2>Types We Use</h2>
+          <ul>
+            <li>Essential: required for core functionality.</li>
+            <li>Analytics: helps us understand site usage to improve the experience.</li>
+          </ul>
+        </article>
+        <article class="legal-block">
+          <h2>Your Choices</h2>
+          <p>You can control cookies via your browser settings. Disabling certain cookies may impact site functionality.</p>
+        </article>
+      </div>
+
+      <div class="legal-footer">
+        <a class="btn btn--ghost" href="/">Home</a>
+        <span class="muted small">Updated {new Date().toLocaleDateString()}</span>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+

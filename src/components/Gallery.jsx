@@ -1,8 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import PhotoSwipeLightbox from "photoswipe/lightbox";
 import "photoswipe/style.css";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 // Import artist manifests
 import chrisImages from "../image-manifests/chris-summers.json";
@@ -18,6 +21,8 @@ const tattooImages = austinImages.filter((img) =>
 );
 
 function LightboxWrapper({ images, galleryId }) {
+  const [showSwipeHint, setShowSwipeHint] = useState(true);
+
   useEffect(() => {
     const lightbox = new PhotoSwipeLightbox({
       gallery: `#${galleryId}`,
@@ -28,19 +33,61 @@ function LightboxWrapper({ images, galleryId }) {
     return () => lightbox.destroy();
   }, [galleryId]);
 
+  // Hide swipe hint after 3 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSwipeHint(false);
+    }, 3000);
+    return () => clearTimeout(timer);
+  }, []);
+
   if (!images || images.length === 0) {
     return <p className="text-white/60">No images available.</p>;
   }
 
   return (
-    <div id={galleryId}>
+    <div id={galleryId} className="relative">
+      {/* Swipe Hint Overlay */}
+      {showSwipeHint && (
+        <div className="absolute top-4 right-4 z-10 bg-black/70 backdrop-blur-sm rounded-full px-3 py-2 text-white text-sm font-medium animate-pulse">
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+            </svg>
+            <span className="hidden sm:inline">Swipe to see more</span>
+            <span className="sm:hidden">Swipe</span>
+          </div>
+        </div>
+      )}
+
       <Swiper
+        modules={[Navigation, Pagination]}
         spaceBetween={12}
         slidesPerView={1.2}
-        breakpoints={{
-          640: { slidesPerView: 2.2 },
-          1024: { slidesPerView: 3.2 },
+        navigation={{
+          nextEl: `.${galleryId}-next`,
+          prevEl: `.${galleryId}-prev`,
         }}
+        pagination={{
+          el: `.${galleryId}-pagination`,
+          clickable: true,
+          dynamicBullets: true,
+        }}
+        breakpoints={{
+          640: { 
+            slidesPerView: 2.2,
+            navigation: {
+              enabled: true,
+            }
+          },
+          1024: { 
+            slidesPerView: 3.2,
+            navigation: {
+              enabled: true,
+            }
+          },
+        }}
+        className="gallery-swiper"
       >
         {images.map((img, i) => {
           // assume .webp is the main path
@@ -51,6 +98,7 @@ function LightboxWrapper({ images, galleryId }) {
                 href={avifPath}
                 data-pswp-width={img.width}
                 data-pswp-height={img.height}
+                className="block group"
               >
                 <picture>
                   <source srcSet={avifPath} type="image/avif" />
@@ -59,7 +107,7 @@ function LightboxWrapper({ images, galleryId }) {
                     decoding="async"
                     src={img.path} // webp as fallback
                     alt={img.alt || `Gallery image ${i + 1}`}
-                    className="aspect-[4/3] object-cover rounded-md"
+                    className="aspect-[4/3] object-cover rounded-md transition-transform duration-300 group-hover:scale-105"
                     width={img.width}
                     height={img.height}
                   />
@@ -69,6 +117,27 @@ function LightboxWrapper({ images, galleryId }) {
           );
         })}
       </Swiper>
+
+      {/* Navigation Arrows (Desktop) */}
+      <button 
+        className={`${galleryId}-prev gallery-nav-btn gallery-nav-prev`}
+        aria-label="Previous images"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
+      <button 
+        className={`${galleryId}-next gallery-nav-btn gallery-nav-next`}
+        aria-label="Next images"
+      >
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Pagination Dots */}
+      <div className={`${galleryId}-pagination gallery-pagination`}></div>
     </div>
   );
 }

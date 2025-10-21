@@ -185,7 +185,10 @@ if ($code -ne 0) {
     $code = Invoke-Deploy $sessionOptionsFTP
 }
 
-if ($code -eq 0) { Write-Host "Deployment completed successfully (DryRun=$DryRun). Log: $logFile" }
-else { Write-Error "Deployment failed. See $logFile for details." }
+if ($code -eq 0) { 
+    Write-Host "Deployment completed successfully (DryRun=$DryRun). Log: $logFile" 
+} else { 
+    Write-Error "Deployment failed. See $logFile for details." 
+}
 
 exit $code

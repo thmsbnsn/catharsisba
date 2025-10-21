@@ -1,45 +1,151 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import Icon from './Icon.jsx';
 
 export default function OffCanvasNav() {
   const [open, setOpen] = useState(false);
+  const [theme, setTheme] = useState('light');
+
+  // Initialize theme: localStorage -> system preference -> light
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('theme');
+      if (saved === 'light' || saved === 'dark') {
+        setTheme(saved);
+        document.documentElement.setAttribute('data-theme', saved);
+        return;
+      }
+    } catch {}
+    const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const initial = prefersDark ? 'dark' : 'light';
+    setTheme(initial);
+    if (typeof document !== 'undefined') {
+      document.documentElement.setAttribute('data-theme', initial);
+    }
+  }, []);
+
+  const navItems = [
+    { href: "/", title: "Home", iconSrc: "/icons/Homepage_Icon.svg", description: "Main page" },
+    { href: "/artists", title: "Meet the Artists", iconSrc: "/icons/MeetTheArtists_Icon.svg", description: "Chris & Austin" },
+    { href: "/gallery", title: "Gallery", iconSrc: "/icons/Gallery_Icon.svg", description: "Selected works" },
+    { href: "/events", title: "Events", iconSrc: "/icons/edit_calendar_24dp.svg", description: "This month & partners" },
+    { href: "/faq", title: "FAQ", iconSrc: "/icons/help_24dp.svg", description: "Common questions" },
+    { href: "/our-studio", title: "Our Studio", iconSrc: "/icons/OurStudio_Icon.svg", description: "Visit us" },
+    { href: "/aftercare", title: "Aftercare", iconSrc: "/icons/Aftercare_Icon.svg", description: "Healing guide" },
+    { href: "/contact", title: "Contact", iconSrc: "/icons/local_phone_24dp.svg", description: "Book & questions" }
+  ];
+
   return (
-    <div className="backdrop-blur bg-black/40 supports-[backdrop-filter]:bg-black/20">
-      <div className="mx-auto max-w-6xl px-4 py-4 flex items-center justify-between">
-        <a href="/" className="font-display text-2xl tracking-wider">Catharsis</a>
-        <button className="rounded-md border border-white/20 px-3 py-1 text-sm hover:bg-white/10"
-                onClick={() => setOpen(true)} aria-label="Open menu">
-          Menu
-        </button>
-      </div>
+    <>
+      <button
+        className="game-menu-toggle"
+        onClick={() => setOpen(true)}
+        aria-label="Open navigation menu"
+      >
+        <div className="menu-icon">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <span className="menu-label">Menu</span>
+      </button>
+
       <Transition show={open} as={Fragment}>
-        <Dialog onClose={setOpen} className="relative z-50">
-          <Transition.Child as={Fragment} enter="transition-opacity duration-150" enterFrom="opacity-0" enterTo="opacity-100" leave="transition-opacity duration-150" leaveFrom="opacity-100" leaveTo="opacity-0">
-            <div className="fixed inset-0 bg-black/60" />
+        <Dialog onClose={setOpen} className="game-menu-dialog">
+          {/* Backdrop */}
+          <Transition.Child
+            as={Fragment}
+            enter="transition-opacity duration-300 ease-out"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-200 ease-in"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div className="game-menu-backdrop" data-theme-light={theme === 'light' ? '' : undefined} />
           </Transition.Child>
-          <div className="fixed inset-0 flex justify-end">
-            <Transition.Child as={Fragment} enter="transition duration-200" enterFrom="translate-x-full" enterTo="translate-x-0" leave="transition duration-150" leaveFrom="translate-x-0" leaveTo="translate-x-full">
-              <Dialog.Panel className="w-80 max-w-full h-full bg-charcoal text-bone border-l border-white/10 p-6 overflow-y-auto">
-                <div className="flex items-center justify-between">
-                  <Dialog.Title className="font-display text-xl">Navigate</Dialog.Title>
-                  <button className="p-2" onClick={() => setOpen(false)} aria-label="Close menu">✕</button>
+
+          {/* Menu Panel */}
+          <div className="game-menu-container">
+            <Transition.Child
+              as={Fragment}
+              enter="transition-all duration-300 ease-out"
+              enterFrom="opacity-0 scale-95 translate-y-4"
+              enterTo="opacity-100 scale-100 translate-y-0"
+              leave="transition-all duration-200 ease-in"
+              leaveFrom="opacity-100 scale-100 translate-y-0"
+              leaveTo="opacity-0 scale-95 translate-y-4"
+            >
+              <Dialog.Panel className="game-menu-panel">
+                {/* Header */}
+                <div className="game-menu-header">
+                  <Dialog.Title className="game-menu-title">Where do you want to go?</Dialog.Title>
+                  <button
+                    className="game-menu-close"
+                    onClick={() => setOpen(false)}
+                    aria-label="Close menu"
+                  >
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M18 6L6 18M6 6l12 12"/>
+                    </svg>
+                  </button>
                 </div>
-                <nav className="mt-6 space-y-3">
-                  <a className="flex items-center gap-3 card p-4 hover:bg-white/10" href="/artists"><Icon id="icon-home"/><span>Artists</span></a>
-                  <a className="flex items-center gap-3 card p-4 hover:bg-white/10" href="/gallery"><Icon id="icon-gallery"/><span>Gallery</span></a>
-                  <a className="flex items-center gap-3 card p-4 hover:bg-white/10" href="/contact"><Icon id="icon-shop"/><span>Book</span></a>
-                  <a className="flex items-center gap-3 card p-4 hover:bg-white/10" href="tel:+13172867092"><Icon id="icon-phone"/><span>(317) 286-7092</span></a>
+
+                {/* Theme Toggle */}
+                <div className="game-menu-theme">
+                  <label className="theme-switch" aria-label="Toggle appearance">
+                    <input
+                      type="checkbox"
+                      checked={theme === 'dark'}
+                      onChange={(e) => {
+                        const next = e.target.checked ? 'dark' : 'light';
+                        setTheme(next);
+                        try { localStorage.setItem('theme', next); } catch {}
+                        if (typeof document !== 'undefined') {
+                          document.documentElement.setAttribute('data-theme', next);
+                        }
+                      }}
+                    />
+                    <span className="slider" />
+                  </label>
+                  <span className="theme-label">{theme === 'dark' ? 'Dark' : 'Light'}</span>
+                </div>
+
+                {/* Navigation Grid */}
+                <nav className="game-menu-grid" role="navigation" aria-label="Primary navigation">
+                  {navItems.map((item) => (
+                    <a
+                      key={item.href}
+                      href={item.href}
+                      className="game-menu-card"
+                      onClick={() => setOpen(false)}
+                    >
+                      <div className="game-menu-card-icon">
+                        <Icon src={item.iconSrc} className="w-6 h-6" title={item.title} />
+                      </div>
+                      <div className="game-menu-card-content">
+                        <h3 className="game-menu-card-title">{item.title}</h3>
+                        <p className="game-menu-card-desc">{item.description}</p>
+                      </div>
+                    </a>
+                  ))}
                 </nav>
-                <div className="mt-6 text-sm text-white/60">
-                  <p>Tue–Sat • 11–7</p>
-                  <p>5801 N. Green St. Suite 106, Brownsburg, IN</p>
+
+                {/* Footer */}
+                <div className="game-menu-footer">
+                  <a
+                    href="tel:+13172867092"
+                    className="game-menu-call-btn"
+                  >
+                    <Icon id="icon-phone" />
+                    Call Now
+                  </a>
                 </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
         </Dialog>
       </Transition>
-    </div>
+    </>
   );
 }

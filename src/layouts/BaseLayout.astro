@@ -1,6 +1,7 @@
 ---
 import "../styles/base.css";
 import OffCanvasNav from "../components/OffCanvasNav.jsx";
+import Footer from "../components/Footer.astro";
 import { SEO } from "../lib/seo";
 import { siteConfig } from "../site.config";
 
@@ -27,30 +28,39 @@ const {
   </head>
   <body
     class="min-h-screen font-sans text-white relative bg-fixed bg-center bg-cover"
-    style="background-image: url('/images/branding/wallpaper.jpg');"
+    style="background-image: url('/images/webpages/background4.webp');"
   >
     <!-- Optional overlay to keep text legible -->
     <div class="absolute inset-0 bg-black/20 backdrop-blur-[1px]"></div>
 
     <header class="sticky top-0 z-50 relative">
-      <div
-        class="max-w-6xl mx-auto flex items-center justify-between px-4 py-3
-               bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl shadow-md"
-      >
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-2">
-          <picture>
-            <source srcSet={siteConfig.logo.avif} type="image/avif" />
-            <img
-              src={siteConfig.logo.webp}
-              alt={siteConfig.name}
-              class="h-10 w-auto drop-shadow"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
-        </a>
-        <OffCanvasNav client:load />
+      <div class="max-w-6xl mx-auto px-4 py-4">
+        <div class="flex items-center justify-between">
+          <!-- Logo -->
+          <a href="/" class="flex items-center gap-3 group">
+            <picture>
+              <source srcSet={siteConfig.logo.avif} type="image/avif" />
+              <img
+                src={siteConfig.logo.webp}
+                alt={siteConfig.name}
+                class="h-12 w-auto drop-shadow transition-transform duration-200 group-hover:scale-105"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
+            <div class="hidden sm:block">
+              <h1 class="font-display text-xl font-bold tracking-wider text-white">
+                Catharsis Body Art
+              </h1>
+              <p class="text-xs text-white/60 font-accent tracking-widest uppercase">
+                Tattoo & Piercing
+              </p>
+            </div>
+          </a>
+          
+          <!-- Navigation -->
+          <OffCanvasNav client:load />
+        </div>
       </div>
     </header>
 
@@ -58,16 +68,345 @@ const {
       <slot />
     </main>
 
-    <footer
-      class="relative z-10 mt-16 border-t border-white/10 py-10 text-sm text-white/70
-             bg-white/10 backdrop-blur-md shadow-inner"
-    >
-      <div
-        class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
-      >
-        <p>© {new Date().getFullYear()} {siteConfig.name}</p>
-        <p>{siteConfig.phone} • {siteConfig.address}</p>
-      </div>
-    </footer>
+    <Footer />
+    
+    <script>
+      // Enhanced micro-interactions and accessibility improvements
+      document.addEventListener('DOMContentLoaded', () => {
+        // Smooth image loading with fade-in effect
+        const images = document.querySelectorAll('img[loading="lazy"]');
+        images.forEach(img => {
+          img.addEventListener('load', () => img.classList.add('loaded'));
+          if (img.complete) img.classList.add('loaded');
+        });
+
+        // Enhanced keyboard navigation
+        const customButtons = document.querySelectorAll('.game-menu-card, .card');
+        customButtons.forEach(button => {
+          if (!button.hasAttribute('tabindex')) {
+            button.setAttribute('tabindex', '0');
+          }
+          button.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              button.click();
+            }
+          });
+        });
+
+        // Smooth scroll for anchor links
+        const links = document.querySelectorAll('a[href^="#"]');
+        links.forEach(link => {
+          link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+            if (href === '#') return;
+            const target = document.querySelector(href);
+            if (target) {
+              e.preventDefault();
+              target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          });
+        });
+
+        // Advanced Visual Effects
+        initAdvancedVisuals();
+      });
+
+      // Advanced Visual Effects
+      function initAdvancedVisuals() {
+        // 1. Animated Ink Drop Hero Effect
+        createInkDropEffect();
+        
+        // 2. Interactive Tattoo Preview
+        initTattooPreview();
+        
+        // 3. Dynamic Background Patterns
+        initDynamicBackground();
+        
+        // 4. Scroll-triggered Animations
+        initScrollAnimations();
+      }
+
+      function createInkDropEffect() {
+        const heroSection = document.querySelector('.hero-section');
+        if (!heroSection) return;
+
+        // Create ink drop particles
+        for (let i = 0; i < 15; i++) {
+          setTimeout(() => {
+            createInkDrop(heroSection);
+          }, i * 300);
+        }
+      }
+
+      function createInkDrop(container) {
+        const drop = document.createElement('div');
+        drop.className = 'ink-drop';
+        drop.style.cssText = `
+          position: absolute;
+          width: 4px;
+          height: 4px;
+          background: radial-gradient(circle, rgba(228,60,47,0.8) 0%, rgba(228,60,47,0.4) 50%, transparent 100%);
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 10;
+          animation: inkDropFall 3s ease-in forwards;
+        `;
+        
+        // Random starting position
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.top = '-10px';
+        
+        container.appendChild(drop);
+        
+        // Remove after animation
+        setTimeout(() => {
+          if (drop.parentNode) {
+            drop.parentNode.removeChild(drop);
+          }
+        }, 3000);
+      }
+
+      function initTattooPreview() {
+        const artistCards = document.querySelectorAll('.artist-card');
+        
+        artistCards.forEach(card => {
+          const image = card.querySelector('img');
+          if (!image) return;
+          
+          // Add hover effect with tattoo-style overlay
+          card.addEventListener('mouseenter', () => {
+            createTattooOverlay(card);
+          });
+          
+          card.addEventListener('mouseleave', () => {
+            removeTattooOverlay(card);
+          });
+        });
+      }
+
+      function createTattooOverlay(card) {
+        const overlay = document.createElement('div');
+        overlay.className = 'tattoo-overlay';
+        overlay.style.cssText = `
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(45deg, 
+            rgba(228,60,47,0.1) 0%, 
+            rgba(228,60,47,0.05) 25%, 
+            transparent 50%, 
+            rgba(228,60,47,0.05) 75%, 
+            rgba(228,60,47,0.1) 100%);
+          border-radius: 16px;
+          opacity: 0;
+          transition: opacity 0.3s ease;
+          pointer-events: none;
+          z-index: 5;
+        `;
+        
+        card.style.position = 'relative';
+        card.appendChild(overlay);
+        
+        // Animate in
+        requestAnimationFrame(() => {
+          overlay.style.opacity = '1';
+        });
+      }
+
+      function removeTattooOverlay(card) {
+        const overlay = card.querySelector('.tattoo-overlay');
+        if (overlay) {
+          overlay.style.opacity = '0';
+          setTimeout(() => {
+            if (overlay.parentNode) {
+              overlay.parentNode.removeChild(overlay);
+            }
+          }, 300);
+        }
+      }
+
+      function initDynamicBackground() {
+        const body = document.body;
+        
+        // Create floating particles
+        for (let i = 0; i < 10; i++) {
+          createFloatingParticle(body);
+        }
+      }
+
+      function createFloatingParticle(container) {
+        const particle = document.createElement('div');
+        particle.className = 'floating-particle';
+        particle.style.cssText = `
+          position: fixed;
+          width: 2px;
+          height: 2px;
+          background: rgba(255,255,255,0.1);
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 1;
+          animation: float ${5 + Math.random() * 10}s linear infinite;
+        `;
+        
+        particle.style.left = Math.random() * 100 + 'vw';
+        particle.style.top = Math.random() * 100 + 'vh';
+        particle.style.animationDelay = Math.random() * 5 + 's';
+        
+        container.appendChild(particle);
+      }
+
+      function initScrollAnimations() {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('animate-in');
+            }
+          });
+        }, { threshold: 0.1 });
+        
+        // Observe all cards and sections
+        document.querySelectorAll('.card, section').forEach(el => {
+          observer.observe(el);
+        });
+
+        // Get Directions button functionality
+        const getDirectionsBtn = document.getElementById('get-directions-btn');
+        if (getDirectionsBtn) {
+          getDirectionsBtn.addEventListener('click', () => {
+            const destination = '5801 N. Green St. Suite 106, Brownsburg, IN 46112';
+            const encodedDestination = encodeURIComponent(destination);
+
+            // Detect device type for default app
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isAndroid = /Android/.test(navigator.userAgent);
+
+            const mapOptions = [];
+
+            // Google Maps
+            mapOptions.push({ 
+              name: 'Google Maps', 
+              url: `https://www.google.com/maps/dir/?api=1&destination=${encodedDestination}`,
+              isDefault: !isIOS && !isAndroid
+            });
+
+            // Apple Maps (iOS only)
+            if (isIOS) {
+              mapOptions.push({ 
+                name: 'Apple Maps', 
+                url: `http://maps.apple.com/?daddr=${encodedDestination}`,
+                isDefault: true
+              });
+            }
+
+            // Waze
+            mapOptions.push({ 
+              name: 'Waze', 
+              url: `https://waze.com/ul?q=${encodedDestination}&navigate=yes`,
+              isDefault: false
+            });
+
+            // Sort with default first
+            mapOptions.sort((a, b) => b.isDefault - a.isDefault);
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'map-selection-modal';
+            modal.style.cssText = `
+              position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+              background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center;
+              z-index: 1000; backdrop-filter: blur(4px);
+            `;
+
+            const optionsHtml = mapOptions.map(option => 
+              `<button class="map-option-btn ${option.isDefault ? 'default-option' : ''}" data-url="${option.url}">
+                ${option.name} ${option.isDefault ? '(Default)' : ''}
+              </button>`
+            ).join('');
+
+            modal.innerHTML = `
+              <div class="map-selection-content">
+                <h3 style="color: white; margin-bottom: 1rem; font-size: 1.25rem;">Choose your preferred map app:</h3>
+                <div class="map-options-container">
+                  ${optionsHtml}
+                </div>
+                <button class="map-selection-close">Cancel</button>
+              </div>
+            `;
+
+            // Style the modal content
+            const content = modal.querySelector('.map-selection-content');
+            content.style.cssText = `
+              background: rgba(18, 19, 20, 0.95); padding: 2rem; border-radius: 16px; text-align: center;
+              max-width: 90%; width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+              border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(20px);
+            `;
+
+            const optionsContainer = modal.querySelector('.map-options-container');
+            optionsContainer.style.cssText = `
+              display: flex; flex-direction: column; gap: 0.75rem; margin: 1.5rem 0;
+            `;
+
+            // Style buttons
+            modal.querySelectorAll('.map-option-btn').forEach(btn => {
+              btn.style.cssText = `
+                background: #E43C2F; color: white; padding: 0.75rem 1.5rem; border: none; border-radius: 12px;
+                font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-weight: 600;
+                box-shadow: 0 4px 15px rgba(228, 60, 47, 0.3);
+              `;
+              btn.onmouseover = () => {
+                btn.style.background = '#D2362A';
+                btn.style.transform = 'translateY(-2px)';
+                btn.style.boxShadow = '0 8px 25px rgba(228, 60, 47, 0.4)';
+              };
+              btn.onmouseout = () => {
+                btn.style.background = '#E43C2F';
+                btn.style.transform = 'translateY(0)';
+                btn.style.boxShadow = '0 4px 15px rgba(228, 60, 47, 0.3)';
+              };
+              btn.addEventListener('click', (e) => {
+                window.open(e.target.dataset.url, '_blank');
+                modal.remove();
+              });
+            });
+
+            // Style default option
+            const defaultBtn = modal.querySelector('.default-option');
+            if (defaultBtn) {
+              defaultBtn.style.cssText += `
+                background: linear-gradient(135deg, #E43C2F 0%, #D2362A 100%);
+                border: 2px solid rgba(255,255,255,0.2);
+                font-weight: 700;
+              `;
+            }
+
+            // Style close button
+            const closeBtn = modal.querySelector('.map-selection-close');
+            closeBtn.style.cssText = `
+              background: rgba(255,255,255,0.1); color: white; padding: 0.5rem 1rem; border: none; border-radius: 8px;
+              font-size: 0.9rem; cursor: pointer; margin-top: 1rem; transition: all 0.3s ease;
+              border: 1px solid rgba(255,255,255,0.2);
+            `;
+            closeBtn.onmouseover = () => {
+              closeBtn.style.background = 'rgba(255,255,255,0.2)';
+            };
+            closeBtn.onmouseout = () => {
+              closeBtn.style.background = 'rgba(255,255,255,0.1)';
+            };
+            closeBtn.addEventListener('click', () => {
+              modal.remove();
+            });
+
+            // Close on backdrop click
+            modal.addEventListener('click', (e) => {
+              if (e.target === modal) {
+                modal.remove();
+              }
+            });
+
+            document.body.appendChild(modal);
+          });
+        }
+      }
+    </script>
   </body>
 </html>
