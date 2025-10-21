@@ -118,7 +118,7 @@ export default function LeadForm() {
             const v = (e.target.value || '').trim();
             setErrors((s) => ({ ...s, name: v ? '' : 'Please enter your name' }));
           }}
-          className="w-full bg-white/5 border border-white/30 rounded px-3 py-2 text-white placeholder-white/60 focus:bg-white/10 focus:border-white/50 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 shadow-lg"
         />
         {errors.name && <p id="err_name" className="text-red-400 text-sm mt-1" role="alert">{errors.name}</p>}
       </div>
@@ -140,7 +140,7 @@ export default function LeadForm() {
             else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) msg = 'Please enter a valid email';
             setErrors((s) => ({ ...s, email: msg }));
           }}
-          className="w-full bg-white/5 border border-white/30 rounded px-3 py-2 text-white placeholder-white/60 focus:bg-white/10 focus:border-white/50 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 shadow-lg"
         />
         {errors.email && <p id="err_email" className="text-red-400 text-sm mt-1" role="alert">{errors.email}</p>}
       </div>
@@ -152,7 +152,7 @@ export default function LeadForm() {
           name="phone"
           type="tel"
           placeholder="Phone"
-          className="w-full bg-white/5 border border-white/30 rounded px-3 py-2 text-white placeholder-white/60 focus:bg-white/10 focus:border-white/50 focus:outline-none focus:ring-2 focus:ring-white/20"
+          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 shadow-lg"
         />
       </div>
 
@@ -171,7 +171,7 @@ export default function LeadForm() {
             const v = (e.target.value || '').trim();
             setErrors((s) => ({ ...s, message: v ? '' : 'Please enter a brief message' }));
           }}
-          className="w-full bg-white/5 border border-white/30 rounded px-3 py-2 h-28 text-white placeholder-white/60 focus:bg-white/10 focus:border-white/50 focus:outline-none focus:ring-2 focus:ring-white/20 resize-none"
+          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 h-28 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 resize-none shadow-lg"
         ></textarea>
         {errors.message && <p id="err_message" className="text-red-400 text-sm mt-1" role="alert">{errors.message}</p>}
       </div>

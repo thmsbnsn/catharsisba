@@ -256,8 +256,8 @@
 }
 
 .game-menu-card-icon {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -424,7 +424,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: 
+  background:
     radial-gradient(circle at 20% 80%, rgba(228,60,47,0.1) 0%, transparent 50%),
     radial-gradient(circle at 80% 20%, rgba(228,60,47,0.05) 0%, transparent 50%);
   animation: heroGlow 8s ease-in-out infinite alternate;
@@ -508,7 +508,7 @@
 
 .card:hover {
   transform: translateY(-4px);
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
@@ -589,7 +589,7 @@ html {
   .card:hover {
     transform: none;
   }
-  
+
   .btn-cta:hover, .btn-outline:hover {
     transform: scale(0.98);
   }
@@ -743,7 +743,7 @@ html {
   .game-menu-title {
     font-size: 1.5rem;
   }
-  
+
   /* Ensure all navigation items are visible */
   .game-menu-container {
     align-items: flex-start;
@@ -763,8 +763,8 @@ html {
   }
 
   .game-menu-card-icon {
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
   }
 }
 
@@ -788,8 +788,8 @@ html {
   color: white;
   cursor: pointer;
   transition: all 0.3s ease;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 0.3;
+  pointer-events: auto;
 }
 
 .gallery-nav-btn:hover {
@@ -810,6 +810,18 @@ html {
 .gallery-swiper:hover .gallery-nav-btn {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* Always show navigation buttons on desktop */
+@media (min-width: 769px) {
+  .gallery-nav-btn {
+    opacity: 0.4;
+    pointer-events: auto;
+  }
+
+  .gallery-swiper:hover .gallery-nav-btn {
+    opacity: 1;
+  }
 }
 
 /* Gallery Pagination */
@@ -878,11 +890,11 @@ html {
   .gallery-nav-btn {
     display: none; /* Hide arrows on mobile, rely on swipe */
   }
-  
+
   .gallery-pagination {
     margin-top: 0.75rem;
   }
-  
+
   .gallery-pagination .swiper-pagination-bullet {
     width: 6px;
     height: 6px;

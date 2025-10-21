@@ -68,16 +68,16 @@ if ($DryRun) {
 # Use .NET FTP classes for simple upload
 try {
     Write-Host "Connecting to FTP server..." -ForegroundColor Yellow
-    
+
     # Test connection to root directory first
     $ftpRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost/")
     $ftpRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
     $ftpRequest.Method = [System.Net.WebRequestMethods+Ftp]::ListDirectory
-    
+
     # Test connection
     $response = $ftpRequest.GetResponse()
     $response.Close()
-    
+
     # Try to create the target directory if it doesn't exist
     try {
         $dirRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$ftpDir/")
@@ -86,52 +86,55 @@ try {
         $dirResponse = $dirRequest.GetResponse()
         $dirResponse.Close()
         Write-Host "Created directory: $ftpDir" -ForegroundColor Green
-    } catch {
+    }
+    catch {
         # Directory might already exist, which is fine
         Write-Host "Directory $ftpDir already exists or creation failed (this is usually fine)" -ForegroundColor Yellow
     }
-    
+
     Write-Host "FTP connection successful!" -ForegroundColor Green
-    
+
     # Get all files to upload
     $files = Get-ChildItem -Path $LocalPath -Recurse -File
     $totalFiles = $files.Count
     $currentFile = 0
-    
+
     Write-Host "Found $totalFiles files to upload..." -ForegroundColor Yellow
-    
+
     foreach ($file in $files) {
         $currentFile++
         $relativePath = $file.FullName.Substring((Resolve-Path $LocalPath).Path.Length + 1)
         $remotePath = "$ftpDir/$relativePath".Replace('\', '/')
-        
+
         Write-Host "[$currentFile/$totalFiles] Uploading: $relativePath" -ForegroundColor Cyan
-        
+
         try {
             # Create FTP request for file upload
             $fileRequest = [System.Net.FtpWebRequest]::Create("ftp://$ftpHost$remotePath")
             $fileRequest.Credentials = New-Object System.Net.NetworkCredential($ftpUser, $ftpPass)
             $fileRequest.Method = [System.Net.WebRequestMethods+Ftp]::UploadFile
             $fileRequest.UseBinary = $true
-            
+
             # Upload file
             $fileStream = [System.IO.File]::OpenRead($file.FullName)
             $requestStream = $fileRequest.GetRequestStream()
             $fileStream.CopyTo($requestStream)
             $requestStream.Close()
             $fileStream.Close()
-            
+
             Write-Host "  Uploaded successfully" -ForegroundColor Green
-            
-        } catch {
+
+        }
+        catch {
             Write-Host "  Upload failed: $($_.Exception.Message)" -ForegroundColor Red
         }
     }
-    
+
     Write-Host "Deployment to $env completed!" -ForegroundColor Green
     Write-Host "Your website should be live at your Hostinger domain" -ForegroundColor Cyan
-    
-} catch {
+
+}
+catch {
     Write-Error "FTP deployment failed: $($_.Exception.Message)"
     Write-Host "Please check your FTP credentials and try again." -ForegroundColor Yellow
     exit 1

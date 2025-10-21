@@ -28,11 +28,11 @@ export default function OffCanvasNav() {
     { href: "/", title: "Home", iconSrc: "/icons/Homepage_Icon.svg", description: "Main page" },
     { href: "/artists", title: "Meet the Artists", iconSrc: "/icons/MeetTheArtists_Icon.svg", description: "Chris & Austin" },
     { href: "/gallery", title: "Gallery", iconSrc: "/icons/Gallery_Icon.svg", description: "Selected works" },
-    { href: "/events", title: "Events", iconSrc: "/icons/edit_calendar_24dp.svg", description: "This month & partners" },
-    { href: "/faq", title: "FAQ", iconSrc: "/icons/help_24dp.svg", description: "Common questions" },
+    { href: "/events", title: "Events", iconSrc: "/icons/schedule_24dp.svg", description: "This month & partners" },
+    { href: "/faq", title: "FAQ", iconSrc: "/icons/info_24dp.svg", description: "Common questions" },
     { href: "/our-studio", title: "Our Studio", iconSrc: "/icons/OurStudio_Icon.svg", description: "Visit us" },
     { href: "/aftercare", title: "Aftercare", iconSrc: "/icons/Aftercare_Icon.svg", description: "Healing guide" },
-    { href: "/contact", title: "Contact", iconSrc: "/icons/local_phone_24dp.svg", description: "Book & questions" }
+    { href: "/contact", title: "Contact", iconSrc: "/icons/Contact_Icon.svg", description: "Book & questions" }
   ];
 
   return (
