@@ -41,10 +41,20 @@ const now = new Date();
 const urlMonth = Number(Astro.url.searchParams.get('m'));
 const urlYear = Number(Astro.url.searchParams.get('y'));
 const month = Number.isFinite(urlMonth) ? Math.min(11, Math.max(0, urlMonth)) : now.getMonth();
-const year = Number.isFinite(urlYear) ? urlYear : now.getFullYear();
-const first = new Date(year, month, 1);
-const startDay = first.getDay();
-const daysInMonth = new Date(year, month + 1, 0).getDate();
+const year = Number.isFinite(urlYear) && urlYear > 1900 ? urlYear : now.getFullYear();
+
+// Ensure we have valid dates and calculate calendar variables
+let first, startDay, daysInMonth;
+if (year < 1900 || year > 2100) {
+  // Fallback to current date if invalid
+  first = new Date(now.getFullYear(), now.getMonth(), 1);
+  startDay = first.getDay();
+  daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+} else {
+  first = new Date(year, month, 1);
+  startDay = first.getDay();
+  daysInMonth = new Date(year, month + 1, 0).getDate();
+}
 
 // US holiday set (simplified rules)
 function nthWeekdayOfMonth(y:number, m:number, weekday:number, n:number){
@@ -71,7 +81,7 @@ const holidays = new Map<string, string>([
 const cells: Array<{ label: string; note?: string }> = [];
 for (let i = 0; i < startDay; i++) cells.push({ label: "" });
 for (let d = 1; d <= daysInMonth; d++) {
-  const date = new Date(year, month, d);
+  const date = new Date(year < 1900 ? now.getFullYear() : year, month, d);
   const note = holidays.get(date.toDateString());
   cells.push({ label: String(d), note });
 }
@@ -81,15 +91,15 @@ while (cells.length % 7 !== 0) cells.push({ label: "" });
 <BaseLayout title="Events" description="Studio events, holidays and community partners">
   <section class="mb-12">
     <div class="font-accent text-6xl text-white/10 mb-2">Events</div>
-    <h1 class="font-serif text-4xl mb-6">{new Date(year, month, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' })}</h1>
+    <h1 class="font-serif text-4xl mb-6">{new Date(year < 1900 ? now.getFullYear() : year, month, 1).toLocaleString(undefined, { month: 'long', year: 'numeric' })}</h1>
 
     <div class="card p-6">
       <div class="flex items-center justify-between mb-4">
-        <a class="btn-outline px-3 py-2 rounded" href={`?y=${month===0?year-1:year}&m=${month===0?11:month-1}`}>
+        <a class="btn-outline px-3 py-2 rounded" href={`?y=${month===0?(year < 1900 ? now.getFullYear()-1 : year-1):(year < 1900 ? now.getFullYear() : year)}&m=${month===0?11:month-1}`}>
           <img src="/icons/expand_less_24dp.svg" class="inline w-5 h-5" alt="Prev" /> Prev
         </a>
         <a class="btn-outline px-3 py-2 rounded" href={`?y=${now.getFullYear()}&m=${now.getMonth()}`}>Today</a>
-        <a class="btn-outline px-3 py-2 rounded" href={`?y=${month===11?year+1:year}&m=${month===11?0:month+1}`}>
+        <a class="btn-outline px-3 py-2 rounded" href={`?y=${month===11?(year < 1900 ? now.getFullYear()+1 : year+1):(year < 1900 ? now.getFullYear() : year)}&m=${month===11?0:month+1}`}>
           Next <img src="/icons/expand_more_24dp.svg" class="inline w-5 h-5" alt="Next" />
         </a>
       </div>
@@ -99,7 +109,7 @@ while (cells.length % 7 !== 0) cells.push({ label: "" });
       <div class="grid grid-cols-7 gap-2">
         {cells.map((c, index) => {
           const isCurrentDay = c.label &&
-            new Date(year, month, parseInt(c.label)).toDateString() === new Date().toDateString();
+            new Date(year < 1900 ? now.getFullYear() : year, month, parseInt(c.label)).toDateString() === new Date().toDateString();
           return (
             <div class={`calendar-cell ${c.note ? 'is-holiday' : ''} ${isCurrentDay ? 'is-today' : ''}`}>
               <div class="calendar-date">{c.label}</div>
