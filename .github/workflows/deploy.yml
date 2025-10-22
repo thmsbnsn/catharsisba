@@ -66,7 +66,7 @@ jobs:
           FTP_DIR: ${{ secrets.FTP_STAGING_DIR }}
           WIN_SCP_FINGERPRINT: ${{ secrets.WIN_SCP_FINGERPRINT }}
         run: |
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-hostinger-winscpnet.ps1 staging -LocalPath .\artifact
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-winscp-final.ps1 staging -LocalPath .\artifact
 
   deploy-production:
     if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
@@ -87,4 +87,4 @@ jobs:
           FTP_DIR: ${{ secrets.FTP_DIR }}
           WIN_SCP_FINGERPRINT: ${{ secrets.WIN_SCP_FINGERPRINT }}
         run: |
-          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-hostinger-winscpnet.ps1 production -LocalPath .\artifact
+          powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\deploy-winscp-final.ps1 production -LocalPath .\artifact
