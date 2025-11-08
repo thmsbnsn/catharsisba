@@ -1,11 +1,35 @@
 [
   {
+    "file": "AFSPlogo.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/AFSPlogo.webp",
+    "sizeKB": 29,
+    "width": 768,
+    "height": 432
+  },
+  {
+    "file": "background1.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/background1.webp",
+    "sizeKB": 59,
+    "width": 1280,
+    "height": 720
+  },
+  {
     "file": "background4.webp",
     "folder": "public/images/webpages",
     "path": "/images/webpages/background4.webp",
     "sizeKB": 14,
     "width": 341,
     "height": 512
+  },
+  {
+    "file": "background5.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/background5.webp",
+    "sizeKB": 732,
+    "width": 2693,
+    "height": 1243
   },
   {
     "file": "hero-404page.webp",
@@ -30,5 +54,21 @@
     "sizeKB": 698,
     "width": 1536,
     "height": 1024
+  },
+  {
+    "file": "panoonyslogo.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/panoonyslogo.webp",
+    "sizeKB": 31,
+    "width": 228,
+    "height": 302
+  },
+  {
+    "file": "WillowCenterlogo.webp",
+    "folder": "public/images/webpages",
+    "path": "/images/webpages/WillowCenterlogo.webp",
+    "sizeKB": 95,
+    "width": 1080,
+    "height": 1080
   }
 ]

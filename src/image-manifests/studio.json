@@ -1,5 +1,53 @@
 [
   {
+    "file": "cba-cop-stop.webp",
+    "folder": "public/images/studio",
+    "path": "/images/studio/cba-cop-stop.webp",
+    "sizeKB": 77,
+    "width": 1024,
+    "height": 1536
+  },
+  {
+    "file": "CBA_collage.webp",
+    "folder": "public/images/studio",
+    "path": "/images/studio/CBA_collage.webp",
+    "sizeKB": 298,
+    "width": 2048,
+    "height": 1366
+  },
+  {
+    "file": "CBA_exteriorsnip.webp",
+    "folder": "public/images/studio",
+    "path": "/images/studio/CBA_exteriorsnip.webp",
+    "sizeKB": 145,
+    "width": 2046,
+    "height": 668
+  },
+  {
+    "file": "CBA_Heart.webp",
+    "folder": "public/images/studio",
+    "path": "/images/studio/CBA_Heart.webp",
+    "sizeKB": 156,
+    "width": 2805,
+    "height": 2377
+  },
+  {
+    "file": "CBA_interior1.webp",
+    "folder": "public/images/studio",
+    "path": "/images/studio/CBA_interior1.webp",
+    "sizeKB": 697,
+    "width": 3213,
+    "height": 4284
+  },
+  {
+    "file": "CBA_interiorsnip.webp",
+    "folder": "public/images/studio",
+    "path": "/images/studio/CBA_interiorsnip.webp",
+    "sizeKB": 91,
+    "width": 2046,
+    "height": 540
+  },
+  {
     "file": "shop-manihand.webp",
     "folder": "public/images/studio",
     "path": "/images/studio/shop-manihand.webp",

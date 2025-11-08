@@ -3,198 +3,270 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 import Icon from "../components/Icon.jsx";
 ---
 
-<BaseLayout title="FAQ" description="Frequently asked questions about tattoos, piercings, and appointments.">
-  <section class="card p-8 sm:p-10">
-    <h1 class="font-display text-4xl sm:text-5xl mb-6">Frequently Asked Questions</h1>
-
-    <div class="faq-grid">
-      <!-- Booking & Appointments -->
-      <div class="faq-section">
-        <h2 class="faq-section-title">
-          <Icon src="/icons/schedule_24dp.svg" className="w-6 h-6" />
-          Booking & Appointments
-        </h2>
-
-        <div class="faq-item">
-          <h3 class="faq-question">How do I book an appointment?</h3>
-          <p class="faq-answer">You can book by calling us at <a href="tel:3172867092" class="text-cta hover:text-cta-hover">(317) 286-7092</a>, visiting our <a href="/contact" class="text-cta hover:text-cta-hover">contact page</a>, or stopping by the shop during business hours.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Do you take walk-ins?</h3>
-          <p class="faq-answer">Yes! We welcome walk-ins, though appointments are preferred to ensure availability. Walk-in availability varies by day and artist.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What's your cancellation policy?</h3>
-          <p class="faq-answer">We require 24-hour notice for cancellations. Same-day cancellations may result in forfeiture of your deposit.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Do I need a deposit?</h3>
-          <p class="faq-answer">Yes, we require a deposit to secure your appointment. Deposit amounts vary by project size and are applied to your final cost.</p>
-        </div>
-      </div>
-
-      <!-- Pricing -->
-      <div class="faq-section">
-        <h2 class="faq-section-title">
-          <Icon src="/icons/payments_24dp.svg" className="w-6 h-6" />
-          Pricing
-        </h2>
-
-        <div class="faq-item">
-          <h3 class="faq-question">How much do tattoos cost?</h3>
-          <p class="faq-answer">Pricing varies by size, complexity, and placement. Small pieces start around $80, while larger custom work is priced by the hour. We'll provide an estimate during your consultation.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What forms of payment do you accept?</h3>
-          <p class="faq-answer">We accept cash, credit cards, and debit cards. Cash is preferred for larger pieces and may qualify for a discount.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Do you offer payment plans?</h3>
-          <p class="faq-answer">We don't offer payment plans, but we can work with you to break larger projects into multiple sessions.</p>
-        </div>
-      </div>
-
-      <!-- Age & ID Requirements -->
-      <div class="faq-section">
-        <h2 class="faq-section-title">
-          <Icon src="/icons/fiber_new_24dp.svg" className="w-6 h-6" />
-          Age & ID Requirements
-        </h2>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What's the minimum age for tattoos?</h3>
-          <p class="faq-answer">You must be 18+ for tattoos. We require a valid government-issued photo ID (driver's license, passport, or state ID).</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Can minors get piercings?</h3>
-          <p class="faq-answer">Minors 16+ can get piercings with parental consent and ID. Parents must be present and provide their own ID. Some piercings may have additional age restrictions.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What if I don't have ID?</h3>
-          <p class="faq-answer">Valid government-issued photo ID is required for all services. We cannot make exceptions for safety and legal compliance.</p>
-        </div>
-      </div>
-
-      <!-- Health & Safety -->
-      <div class="faq-section">
-        <h2 class="faq-section-title">
-          <Icon src="/icons/healing_24dp.svg" className="w-6 h-6" />
-          Health & Safety
-        </h2>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Are you licensed and inspected?</h3>
-          <p class="faq-answer">Yes, we're fully licensed by the Marion County Health Department and undergo regular inspections. All artists are certified in bloodborne pathogen safety.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What safety measures do you follow?</h3>
-          <p class="faq-answer">We use single-use needles, sterile equipment, and follow strict sanitation protocols. All surfaces are disinfected between clients.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Can I get tattooed if I'm pregnant or nursing?</h3>
-          <p class="faq-answer">We recommend waiting until after pregnancy and nursing for tattoos. Please consult with your healthcare provider first.</p>
-        </div>
-      </div>
-
-      <!-- Aftercare -->
-      <div class="faq-section">
-        <h2 class="faq-section-title">
-          <Icon src="/icons/healing_24dp.svg" className="w-6 h-6" />
-          Aftercare
-        </h2>
-
-        <div class="faq-item">
-          <h3 class="faq-question">How long does healing take?</h3>
-          <p class="faq-answer">Surface healing takes 2-3 weeks, but full healing can take 2-3 months. Follow our <a href="/aftercare" class="text-cta hover:text-cta-hover">aftercare instructions</a> for best results.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What if I have a problem with my tattoo?</h3>
-          <p class="faq-answer">Contact us immediately if you notice signs of infection or unusual healing. We offer free touch-ups within 3 months for normal wear.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">When can I swim or work out?</h3>
-          <p class="faq-answer">Avoid swimming, hot tubs, and intense workouts for 2-3 weeks. Light exercise is usually fine after the first week.</p>
-        </div>
-      </div>
-
-      <!-- General -->
-      <div class="faq-section">
-        <h2 class="faq-section-title">
-          <Icon src="/icons/info_24dp.svg" className="w-6 h-6" />
-          General
-        </h2>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Do you do cover-ups?</h3>
-          <p class="faq-answer">Yes! We specialize in cover-ups and can work with you to design something that effectively covers your existing tattoo.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Can I bring friends?</h3>
-          <p class="faq-answer">One guest is welcome during your appointment. Additional guests may be asked to wait in the lobby due to space constraints.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">Do you offer consultations?</h3>
-          <p class="faq-answer">Yes! Consultations are free and recommended for custom work. We can discuss design, placement, and pricing.</p>
-        </div>
-
-        <div class="faq-item">
-          <h3 class="faq-question">What if I'm not sure about my design?</h3>
-          <p class="faq-answer">We encourage you to take time to think about your design. It's better to wait and be sure than to rush into something permanent.</p>
-        </div>
+<BaseLayout
+  title="FAQ"
+  description="Frequently asked questions about tattoos, piercings, and appointments."
+>
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">FAQ</span>
+      <div>
+        <h1 class="section-heading">Answers before you book</h1>
+        <p class="section-subhead">
+          Everything you need to know about scheduling, pricing, safety, and
+          caring for your new tattoo or piercing. Call us if you don’t see your
+          question below—we’re happy to help.
+        </p>
       </div>
     </div>
 
-    <div class="faq-cta">
-      <h2 class="font-display text-2xl mb-4">Still have questions?</h2>
-      <p class="text-white/80 mb-6">We're here to help! Contact us for personalized answers.</p>
-      <div class="flex flex-col sm:flex-row gap-4">
-        <a href="/contact" class="btn-cta">Contact Us</a>
-        <a href="tel:3172867092" class="btn-outline">Call (317) 286-7092</a>
-        <a href="/aftercare" class="btn-outline">Aftercare Guide</a>
+    <div class="faq-grid">
+      <article class="luxe-card faq-section">
+        <header class="faq-section__header">
+          <Icon
+            id="faq-booking"
+            src="/icons/schedule_24dp.svg"
+            className="faq-icon"
+            title="Booking & Appointments"
+          />
+          <h2>Booking &amp; appointments</h2>
+        </header>
+        <dl class="faq-list">
+          <div>
+            <dt>How do I book?</dt>
+            <dd>
+              Call <a href="tel:+13172867092">(317) 286-7092</a>, submit the <a
+                href="/contact">contact form</a
+              >, or stop by the studio during business hours. We’ll gather
+              details and secure your time slot.
+            </dd>
+          </div>
+          <div>
+            <dt>Do you take walk-ins?</dt>
+            <dd>
+              Yes—piercing walk-ins are welcome daily and tattoo walk-ins are
+              offered when artists have availability. Call ahead if you want to
+              confirm before you drive over.
+            </dd>
+          </div>
+          <div>
+            <dt>What’s the cancellation policy?</dt>
+            <dd>
+              Please give us 24 hours’ notice so we can refill the slot.
+              Same-day cancellations or no-shows may forfeit deposits.
+            </dd>
+          </div>
+          <div>
+            <dt>Is a deposit required?</dt>
+            <dd>
+              Yes—deposits vary by project size and are applied to your final
+              total. We’ll quote the amount when we book.
+            </dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="luxe-card faq-section">
+        <header class="faq-section__header">
+          <Icon
+            id="faq-pricing"
+            src="/icons/payments_24dp.svg"
+            className="faq-icon"
+            title="Pricing"
+          />
+          <h2>Pricing</h2>
+        </header>
+        <dl class="faq-list">
+          <div>
+            <dt>How much do tattoos cost?</dt>
+            <dd>
+              Mini pieces start around $80. Larger or custom designs are quoted
+              during consults and typically priced by the hour.
+            </dd>
+          </div>
+          <div>
+            <dt>What payments are accepted?</dt>
+            <dd>
+              We accept cash, debit, and major credit cards. Cash is appreciated
+              for multi-hour sessions and may qualify for a discount.
+            </dd>
+          </div>
+          <div>
+            <dt>Do you offer payment plans?</dt>
+            <dd>
+              We don’t offer financing, but we can split extensive projects into
+              multiple sessions to spread out costs.
+            </dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="luxe-card faq-section">
+        <header class="faq-section__header">
+          <Icon
+            id="faq-age"
+            src="/icons/fiber_new_24dp.svg"
+            className="faq-icon"
+            title="Age and ID Requirements"
+          />
+          <h2>Age &amp; ID requirements</h2>
+        </header>
+        <dl class="faq-list">
+          <div>
+            <dt>Minimum age for tattoos?</dt>
+            <dd>
+              Guests must be 18+ with valid government-issued photo ID—no
+              exceptions. That includes driver’s license, passport, or state ID.
+            </dd>
+          </div>
+          <div>
+            <dt>Can minors get piercings?</dt>
+            <dd>
+              Selected piercings are available for ages 16–17 with
+              parent/guardian present. Both parties must bring ID. Some
+              placements require 18+.
+            </dd>
+          </div>
+          <div>
+            <dt>Forgot my ID—now what?</dt>
+            <dd>
+              We can’t proceed without legal ID. Please reschedule and bring
+              valid identification so we stay compliant with Indiana
+              regulations.
+            </dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="luxe-card faq-section">
+        <header class="faq-section__header">
+          <Icon
+            id="faq-health"
+            src="/icons/healing_24dp.svg"
+            className="faq-icon"
+            title="Health and Safety"
+          />
+          <h2>Health &amp; safety</h2>
+        </header>
+        <dl class="faq-list">
+          <div>
+            <dt>Are you licensed and inspected?</dt>
+            <dd>
+              Absolutely. Catharsis Body Art is licensed through the Hendricks
+              County Health Department and every artist maintains bloodborne
+              pathogen certification.
+            </dd>
+          </div>
+          <div>
+            <dt>What protocols do you follow?</dt>
+            <dd>
+              Single-use needles, disposable cartridges, medical-grade
+              sterilization, barrier film on all touch points, and full
+              disinfection between clients.
+            </dd>
+          </div>
+          <div>
+            <dt>Pregnant or nursing?</dt>
+            <dd>
+              We recommend postponing tattoos and piercings until after
+              pregnancy and nursing. Consult your healthcare provider if unsure.
+            </dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="luxe-card faq-section">
+        <header class="faq-section__header">
+          <Icon
+            id="faq-aftercare"
+            src="/icons/healing_24dp.svg"
+            className="faq-icon"
+            title="Aftercare"
+          />
+          <h2>Aftercare</h2>
+        </header>
+        <dl class="faq-list">
+          <div>
+            <dt>Healing timelines?</dt>
+            <dd>
+              Surface healing is 2–3 weeks; complete healing can take up to 3
+              months. Follow our <a href="/aftercare">aftercare guide</a> for the
+              best outcome.
+            </dd>
+          </div>
+          <div>
+            <dt>Issues with my tattoo?</dt>
+            <dd>
+              Contact us immediately if you see unusual redness, swelling, or
+              irritation. We include complimentary touch-ups within 3 months for
+              normal wear.
+            </dd>
+          </div>
+          <div>
+            <dt>When can I swim or work out?</dt>
+            <dd>
+              Wait 2–3 weeks before swimming, hot tubs, or high-intensity
+              workouts. Light exercise is usually fine after the first week.
+            </dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="luxe-card faq-section">
+        <header class="faq-section__header">
+          <Icon
+            id="faq-general"
+            src="/icons/info_24dp.svg"
+            className="faq-icon"
+            title="General Questions"
+          />
+          <h2>General</h2>
+        </header>
+        <dl class="faq-list">
+          <div>
+            <dt>Do you do cover-ups?</dt>
+            <dd>
+              Yes—bring reference photos and we’ll map a design that obscures
+              the original piece effectively.
+            </dd>
+          </div>
+          <div>
+            <dt>Can I bring a friend?</dt>
+            <dd>
+              One guest is welcome. Additional friends may need to wait in the
+              lounge depending on space.
+            </dd>
+          </div>
+          <div>
+            <dt>Consultations?</dt>
+            <dd>
+              Complimentary for custom work. We’ll review placement, size,
+              pricing, and schedule your session.
+            </dd>
+          </div>
+          <div>
+            <dt>Second thoughts on my design?</dt>
+            <dd>
+              No rush—let’s only proceed when you’re confident. We’re happy to
+              iterate or pause until you’re ready.
+            </dd>
+          </div>
+        </dl>
+      </article>
+    </div>
+
+    <div class="faq-footer">
+      <h2>Need something specific?</h2>
+      <p>
+        Reach out for personalized recommendations, jewelry sizing questions, or
+        to talk through a custom concept. We answer messages within one business
+        day.
+      </p>
+      <div class="faq-footer__actions">
+        <a href="/contact" class="btn-cta">Contact us</a>
+        <a href="tel:+13172867092" class="btn-outline">Call (317) 286-7092</a>
+        <a href="/aftercare" class="btn-outline">View aftercare</a>
       </div>
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  .faq-grid {
-    @apply grid gap-8 lg:grid-cols-2;
-  }
-
-  .faq-section {
-    @apply space-y-6;
-  }
-
-  .faq-section-title {
-    @apply font-display text-xl font-bold text-white flex items-center gap-3 mb-4;
-  }
-
-  .faq-item {
-    @apply space-y-2;
-  }
-
-  .faq-question {
-    @apply font-accent text-lg font-semibold text-white/90;
-  }
-
-  .faq-answer {
-    @apply text-white/80 leading-relaxed;
-  }
-
-  .faq-cta {
-    @apply mt-12 pt-8 border-t border-white/20 text-center;
-  }
-</style>

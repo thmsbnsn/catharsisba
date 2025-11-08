@@ -24,13 +24,22 @@ function LightboxWrapper({ images, galleryId }) {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
 
   useEffect(() => {
+    const galleryElement = document.getElementById(galleryId);
+    if (!galleryElement) {
+      return;
+    }
+
     const lightbox = new PhotoSwipeLightbox({
       gallery: `#${galleryId}`,
       children: "a",
       pswpModule: () => import("photoswipe"),
     });
+
     lightbox.init();
-    return () => lightbox.destroy();
+
+    return () => {
+      lightbox.destroy();
+    };
   }, [galleryId]);
 
   // Hide swipe hint after 3 seconds
@@ -42,8 +51,11 @@ function LightboxWrapper({ images, galleryId }) {
   }, []);
 
   if (!images || images.length === 0) {
+    console.log('No images available for gallery:', galleryId);
     return <p className="text-white/60">No images available.</p>;
   }
+
+  console.log(`Gallery ${galleryId} has ${images.length} images:`, images.slice(0, 3));
 
   return (
     <div id={galleryId} className="relative">
@@ -74,52 +86,55 @@ function LightboxWrapper({ images, galleryId }) {
           dynamicBullets: true,
         }}
         breakpoints={{
-          640: { 
+          640: {
             slidesPerView: 2.2,
             navigation: {
               enabled: true,
-            }
+            },
           },
-          1024: { 
+          1024: {
             slidesPerView: 3.2,
             navigation: {
               enabled: true,
-            }
+            },
           },
         }}
         className="gallery-swiper"
       >
-        {images.map((img, i) => {
-          // assume .webp is the main path
-          const avifPath = img.path.replace(/\.webp$/i, ".avif");
-          return (
-            <SwiperSlide key={i}>
-              <a
-                href={avifPath}
-                data-pswp-width={img.width}
-                data-pswp-height={img.height}
-                className="block group"
-              >
-                <picture>
-                  <source srcSet={avifPath} type="image/avif" />
-                  <img
-                    loading="lazy"
-                    decoding="async"
-                    src={img.path} // webp as fallback
-                    alt={img.alt || `Gallery image ${i + 1}`}
-                    className="aspect-[4/3] object-cover rounded-md transition-transform duration-300 group-hover:scale-105"
-                    width={img.width}
-                    height={img.height}
-                  />
-                </picture>
-              </a>
-            </SwiperSlide>
-          );
-        })}
+        {images.map((img, i) => (
+          <SwiperSlide
+            key={i}
+            className="gallery-slide"
+            style={{ "--slide-delay": `${i * 0.08}s` }}
+          >
+            <a
+              href={img.path}
+              data-pswp-width={img.width}
+              data-pswp-height={img.height}
+              className="block group"
+            >
+              <picture>
+                <source
+                  srcSet={img.path.replace(/\.webp$/i, ".avif")}
+                  type="image/avif"
+                />
+                <img
+                  loading="lazy"
+                  decoding="async"
+                  src={img.path}
+                  alt={img.alt || `Gallery image ${i + 1}`}
+                  className="aspect-[4/3] object-cover rounded-xl transition-transform duration-300 group-hover:scale-105 gallery-image"
+                  width={img.width}
+                  height={img.height}
+                />
+              </picture>
+            </a>
+          </SwiperSlide>
+        ))}
       </Swiper>
 
       {/* Navigation Arrows (Desktop) */}
-      <button 
+      <button
         className={`${galleryId}-prev gallery-nav-btn gallery-nav-prev`}
         aria-label="Previous images"
       >
@@ -127,7 +142,7 @@ function LightboxWrapper({ images, galleryId }) {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
         </svg>
       </button>
-      <button 
+      <button
         className={`${galleryId}-next gallery-nav-btn gallery-nav-next`}
         aria-label="Next images"
       >

@@ -1,63 +1,70 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getCollection } from "astro:content";
 import ArtistCard from "../../components/ArtistCard.jsx";
+import { getAllArtists, urlForImage } from "../../lib/sanity";
 
-// Grab all artist markdown entries
-const artists = await getCollection("artists");
+type SanityImageAsset = {
+  asset?: {
+    url?: string;
+    metadata?: {
+      lqip?: string;
+      dimensions?: { width?: number; height?: number };
+    };
+  };
+  crop?: Record<string, unknown>;
+  hotspot?: Record<string, unknown>;
+};
 
-// Helper to try importing a manifest file by slug
-async function loadManifest(slug) {
-  try {
-    const mod = await import(`../../image-manifests/${slug}.json`);
-    return mod.default;
-  } catch {
-    return [];
-  }
-}
+type ArtistListItem = {
+  name: string;
+  slug: string;
+  position?: string;
+  shortBio?: string;
+  profileImage?: SanityImageAsset;
+  socialLinks?: Record<string, string>;
+};
 
-// Build enriched artist data
-const artistData = [];
-for (const a of artists) {
-  const slug = a.slug;
-  const manifest = await loadManifest(slug);
-  const hero =
-    manifest.find((img) => img.folder.includes("profile-images")) ||
-    manifest[0] ||
-    null;
-  artistData.push({
-    slug,
-    ...a.data,
-    manifest,
-    hero,
-  });
-}
+type ProcessedArtist = ArtistListItem & {
+  profileImageUrl: string | null;
+  profileImageAlt: string;
+  profileImageLqip?: string;
+};
+
+const rawArtists = (await getAllArtists()) as ArtistListItem[];
+
+const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
+  const imageBuilder = urlForImage(artist.profileImage);
+  const profileImageUrl = imageBuilder
+    ? imageBuilder.width(640).height(640).fit("crop").auto("format").url()
+    : null;
+
+  return {
+    ...artist,
+    profileImageUrl,
+    profileImageAlt: `${artist.name} portrait`,
+    profileImageLqip: artist.profileImage?.asset?.metadata?.lqip,
+  };
+});
 ---
 
 <BaseLayout
   title="Meet the Artists"
   description="Craft, intent, precision. Our artists, one standard."
 >
-  <section class="relative card p-8 sm:p-10 bg-white text-black">
-    <div
-      class="absolute left-3 top-2 text-[10vw] sm:text-8xl font-black text-red-800/10 select-none"
-      aria-hidden="true"
-    >
-      01
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">01</span>
+      <div>
+        <h1 class="section-heading">Meet the Artists</h1>
+        <p class="section-subhead">
+          Each artist curates an experience tailored to you—custom design
+          consults, jewelry styling, and a calming studio presence that lets you
+          exhale.
+        </p>
+      </div>
     </div>
-    <header class="relative">
-      <h1 class="font-serif text-4xl sm:text-5xl">Meet the Artists</h1>
-      <p class="text-black/70">
-        Craft, intent, and precision. Each artist brings their own focus.
-      </p>
-    </header>
+    <div class="artist-grid">
+      {artistData.map((artist) => <ArtistCard artist={artist} client:load />)}
+    </div>
   </section>
-
-  <section class="mt-6 grid gap-6 md:grid-cols-2">
-  {artistData.map((artist) => (
-    <div class="h-full">
-      <ArtistCard artist={artist} variant="compact" client:load />
-    </div>
-  ))}
-</section>
 </BaseLayout>

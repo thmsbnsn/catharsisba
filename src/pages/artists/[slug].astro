@@ -1,66 +1,231 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { getEntryBySlug, getCollection } from "astro:content";
-import ArtistCard from "../../components/ArtistCard.jsx";
 import ArtistGallery from "../../components/ArtistGallery.jsx";
+import {
+  getAllArtistSlugs,
+  getArtistBySlug,
+  portableTextToHtml,
+  urlForImage,
+} from "../../lib/sanity";
+
+type SanityImageAsset = {
+  asset?: {
+    url?: string;
+    metadata?: {
+      lqip?: string;
+      dimensions?: { width?: number; height?: number };
+    };
+  };
+  crop?: Record<string, unknown>;
+  hotspot?: Record<string, unknown>;
+  alt?: string;
+};
+
+type ArtistDetail = {
+  name: string;
+  slug: string;
+  position?: string;
+  shortBio?: string;
+  bio?: unknown[];
+  email?: string;
+  socialLinks?: {
+    instagram?: string;
+    facebook?: string;
+  };
+  videos?: string[];
+  profileImage?: SanityImageAsset;
+  gallery?: SanityImageAsset[];
+};
+
+type GalleryImage = {
+  url: string;
+  width: number;
+  height: number;
+  alt: string;
+  lqip?: string;
+};
 
 export async function getStaticPaths() {
-  const artists = await getCollection("artists");
-  return artists.map((artist) => ({
-    params: { slug: artist.slug },
-    props: { artist: artist.data },
+  const slugs = (await getAllArtistSlugs()) as string[];
+  return slugs.map((slug) => ({
+    params: { slug },
   }));
 }
 
-const { slug } = Astro.params;
-const entry = await getEntryBySlug("artists", slug);
+const slug = Astro.params.slug as string;
+const artist = (await getArtistBySlug(slug)) as ArtistDetail | null;
 
-if (!entry) {
-  throw new Error(`Artist not found: ${slug}`);
+if (!artist) {
+  throw new Error(`Artist not found in Sanity: ${slug}`);
 }
 
-const { name, styles, email, instagram, hero: heroFromMd, bio } = entry.data;
-const pageTitle = `${name} — Artist`;
+const firstName = artist.name.split(" ")[0];
+const position = artist.position || "Artist";
+const pageTitle = `${artist.name} — ${position}`;
 
-// Load the matching manifest dynamically
-let images = [];
-try {
-  const manifestModule = await import(`../../image-manifests/${slug}.json`);
-  images = manifestModule.default;
-} catch {
-  console.warn(`⚠️ No manifest found for ${slug}.json`);
-}
+const heroBuilder = urlForImage(artist.profileImage);
+const heroImageUrl = heroBuilder
+  ? heroBuilder.width(900).height(900).fit("crop").auto("format").url()
+  : artist.profileImage?.asset?.url;
+const heroImageLqip = artist.profileImage?.asset?.metadata?.lqip;
 
-// Hero logic: manifest first, then fallback to markdown
-const hero =
-  images.find((img) => img.folder.includes("profile-images")) ||
-  images[0] ||
-  (heroFromMd ? { path: heroFromMd } : null);
+const galleryImages: GalleryImage[] = (artist.gallery || []).map(
+  (image, index) => {
+    const builder = urlForImage(image);
+    const url =
+      builder?.width(1600).quality(85).auto("format").url() ||
+      image.asset?.url ||
+      "";
+    return {
+      url,
+      width: image.asset?.metadata?.dimensions?.width || 1600,
+      height: image.asset?.metadata?.dimensions?.height || 1067,
+      alt: image.alt || `${artist.name} artwork ${index + 1}`,
+      lqip: image.asset?.metadata?.lqip,
+    };
+  },
+);
 
-const artist = {
-  slug,
-  name,
-  styles,
-  email,
-  instagram,
-  hero,
-  bio,
-};
+const bioHtml = artist.bio?.length ? portableTextToHtml(artist.bio) : "";
+const instagramUrl = artist.socialLinks?.instagram || "";
+const facebookUrl = artist.socialLinks?.facebook || "";
 ---
 
 <BaseLayout
   title={pageTitle}
-  description={`${name} • ${styles.join(", ")}`}
+  description={`${artist.name} • ${position}`}
   url={`/artists/${slug}`}
 >
-  <section class="pt-10 sm:pt-16">
-    <div class="grid gap-8 md:grid-cols-3 md:items-start">
-      <div class="md:col-span-2">
-        <ArtistCard artist={artist} variant="full" client:load />
-        <div class="mt-10">
-          <ArtistGallery images={images} client:load />
+  <section class="section-block">
+    <article class="artist-profile-card">
+      <div class="artist-profile-card__media">
+        {
+          heroImageUrl && (
+            <img
+              src={heroImageUrl}
+              alt={`${artist.name} portrait`}
+              loading="lazy"
+              decoding="async"
+              style={
+                heroImageLqip
+                  ? { backgroundImage: `url(${heroImageLqip})` }
+                  : undefined
+              }
+            />
+          )
+        }
+        <span class="artist-profile-card__tag">{position}</span>
+      </div>
+      <div class="artist-profile-card__body">
+        <header>
+          <h1>{artist.name}</h1>
+          <p>{artist.shortBio || "Custom artistry tailored to your story."}</p>
+        </header>
+        <ul class="artist-profile-card__details">
+          {
+            artist.email && (
+              <li>
+                <span>Email</span>
+                <a href={`mailto:${artist.email}`}>{artist.email}</a>
+              </li>
+            )
+          }
+          {
+            instagramUrl && (
+              <li>
+                <span>Instagram</span>
+                <a
+                  href={instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {instagramUrl.replace(/^https?:\/\//, "")}
+                </a>
+              </li>
+            )
+          }
+          {
+            facebookUrl && (
+              <li>
+                <span>Facebook</span>
+                <a href={facebookUrl} target="_blank" rel="noopener noreferrer">
+                  {facebookUrl.replace(/^https?:\/\//, "")}
+                </a>
+              </li>
+            )
+          }
+        </ul>
+        <div class="artist-profile-card__actions">
+          <a
+            href={`/contact?artist=${encodeURIComponent(artist.name)}`}
+            class="btn-cta"
+          >
+            Book {firstName}
+          </a>
+          <a href="/contact" class="btn-outline"> General Inquiry </a>
         </div>
       </div>
+    </article>
+  </section>
+
+  {
+    bioHtml && (
+      <section class="section-block">
+        <div class="luxe-card artist-richtext" set:html={bioHtml} />
+      </section>
+    )
+  }
+
+  {
+    slug === "austin-stirling" && (
+      <section class="section-block">
+        <div class="luxe-card">
+          <h3
+            class="section-heading"
+            style="font-size: clamp(1.6rem, 3vw, 2.2rem);"
+          >
+            Watch Austin Work
+          </h3>
+          <p class="section-subhead" style="margin-top: 0.75rem;">
+            See Austin in action creating beautiful tattoo art in our studio.
+          </p>
+          <div class="artist-reel">
+            <div class="artist-reel__frame">
+              <iframe
+                src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1999995910776807%2F&show_text=false&width=267&t=0"
+                title="Austin Stirling Tattoo Reel"
+                loading="lazy"
+                class="artist-reel__iframe"
+                scrolling="no"
+                frameborder="0"
+                allowfullscreen="true"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">Portfolio</span>
+      <div>
+        <h2
+          class="section-heading"
+          style="font-size: clamp(1.8rem, 3vw, 2.4rem);"
+        >
+          Selected Work
+        </h2>
+        <p class="section-subhead">
+          A rotating sampling of recent tattoos, piercings, and healed
+          follow-ups. Tap any image to open the lightbox.
+        </p>
+      </div>
+    </div>
+    <div class="luxe-card">
+      <ArtistGallery images={galleryImages as any} client:load />
     </div>
   </section>
 </BaseLayout>

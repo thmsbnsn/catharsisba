@@ -2,214 +2,145 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
 
-<BaseLayout title="Aftercare Instructions" description="Complete aftercare instructions for your new tattoo or piercing from Catharsis Body Art">
-  <section class="mb-12">
-    <div class="font-accent text-6xl text-white/10 mb-2">Aftercare</div>
-    <h1 class="font-serif text-4xl mb-6">Aftercare Instructions</h1>
-    <p class="text-white/80 text-lg mb-8">
-      Catharsis Body Art provides the latest in aftercare. Follow these instructions carefully to ensure proper healing and the best results for your new tattoo or piercing.
-    </p>
+<BaseLayout
+  title="Aftercare Instructions"
+  description="How to care for your new tattoo or piercing from Catharsis Body Art."
+>
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">Aftercare</span>
+      <div>
+        <h1 class="section-heading">Heal with intention</h1>
+        <p class="section-subhead">
+          Follow these steps to protect your fresh work and ensure the best
+          possible heal. Every body is different—when in doubt, reach out.
+        </p>
+      </div>
+    </div>
   </section>
 
-  <div class="grid gap-8 lg:grid-cols-2">
-    <!-- Main Aftercare Instructions -->
-    <div class="card p-8">
-      <h2 class="font-serif text-3xl mb-6 text-red-400">Saniderm Bandage Instructions</h2>
-
-      <div class="space-y-6">
-        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-          <h3 class="font-accent text-lg mb-2 text-blue-300">Important Note</h3>
-          <p class="text-white/90">
-            All of our artists use Saniderm bandages for the semi-immediate healing processes.
-            <strong class="text-yellow-300">If you are allergic to medical adhesives or latex, please make sure you have let your artist know</strong>
-            so we can accommodate you appropriately with a standard bandage.
+  <section class="section-block">
+    <div class="aftercare-grid">
+      <article class="luxe-card aftercare-card">
+        <h2>Saniderm bandage</h2>
+        <div class="callout info">
+          <h3>Heads up</h3>
+          <p>
+            All artists apply Saniderm immediately after your session. If you
+            have adhesive or latex allergies, tell us before your appointment so
+            we can wrap with a traditional bandage.
           </p>
         </div>
+        <ol class="steps-list">
+          <li>
+            <span class="step-badge">24-48h</span>
+            Leave the bandage on for 24–48 hours. Seeing plasma, ink, or blood collect
+            under the film is normal—don’t peel it early.
+          </li>
+          <li>
+            <span class="step-badge">Release</span>
+            Gently push pooled fluid toward the edge and blot with a clean towel
+            if it becomes uncomfortable.
+          </li>
+          <li>
+            <span class="step-badge">Shower safe</span>
+            Saniderm is water-resistant—quick showers are fine. Skip soaking, baths,
+            pools, or hot tubs.
+          </li>
+          <li>
+            <span class="step-badge">Remove</span>
+            Peel the bandage off slowly in the shower under lukewarm water, pulling
+            it back over itself—not straight up.
+          </li>
+        </ol>
+      </article>
 
-        <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0">1</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Initial Bandage Care</h4>
-              <p class="text-white/80">
-                Leave the Saniderm bandage on for <strong>24-48 hours</strong>. The Saniderm will pool with blood, plasma, or ink.
-                <span class="text-green-300 font-semibold">THIS IS EXPECTED AND OK.</span>
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0">2</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Draining Excess Fluid</h4>
-              <p class="text-white/80">
-                Any excess can be drained by pressing the liquid to the bottom of the bandage and absorbing it with a towel.
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0">3</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Water Resistance</h4>
-              <p class="text-white/80">
-                The bandage is water-resistant and you can shower with it.
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-6 h-6 bg-red-600 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0">4</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Removal</h4>
-              <p class="text-white/80">
-                Remove the bandage in the shower slowly at your leisure.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Healing Process -->
-    <div class="card p-8">
-      <h2 class="font-serif text-3xl mb-6 text-red-400">Healing Process</h2>
-
-      <div class="space-y-6">
-        <div class="bg-green-500/10 border border-green-500/20 rounded-lg p-4">
-          <h3 class="font-accent text-lg mb-2 text-green-300">Lotion Application</h3>
-          <p class="text-white/90">
-            After removal of the Saniderm, apply a thin layer of <strong>Aquaphor, Lubiderm, or any other non-scented lotion</strong>
-            for the next <strong>TWO weeks</strong> or until the skin has returned to its pre-tattooed state.
+      <article class="luxe-card aftercare-card">
+        <h2>First two weeks</h2>
+        <div class="callout success">
+          <h3>Lotion routine</h3>
+          <p>
+            After removing Saniderm, apply a thin layer of unscented moisturizer
+            (Aquaphor, Lubriderm, etc.) 2–3 times daily for two weeks or until
+            skin normalizes. Less is more—avoid clogging pores.
           </p>
         </div>
-
-        <div class="space-y-4">
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center text-black text-sm font-bold mt-1 flex-shrink-0">☀️</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Sun Protection</h4>
-              <p class="text-white/80">
-                Keep your healing skin out of <strong>direct sunlight or tanning booths</strong> until your skin is completely healed.
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0">🏃</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Physical Activity</h4>
-              <p class="text-white/80">
-                <strong>NO gym, or working out for at least 4-5 days</strong> while the Saniderm is in place.
-                If you work out before with your exposed tattoo this can lead to infection.
-              </p>
-            </div>
-          </div>
-
-          <div class="flex items-start gap-3">
-            <div class="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white text-sm font-bold mt-1 flex-shrink-0">🚫</div>
-            <div>
-              <h4 class="font-accent text-lg mb-2">Important Restrictions</h4>
-              <p class="text-white/80">
-                <strong class="text-red-300">DO NOT SCRATCH, PICK, OR RUB THE TREATED AREA WHILE IT IS HEALING.</strong>
-                This can cause infection and loss of color.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Long-term Care -->
-    <div class="card p-8">
-      <h2 class="font-serif text-3xl mb-6 text-red-400">Long-term Care</h2>
-
-      <div class="space-y-4">
-        <div class="bg-orange-500/10 border border-orange-500/20 rounded-lg p-4">
-          <h3 class="font-accent text-lg mb-2 text-orange-300">Sun Protection</h3>
-          <p class="text-white/90">
-            Apply sunblock to your tattoo <strong>(SPF 15+)</strong> after it has healed and whenever you are exposed to the sun
-            to protect it from <strong>DAMAGING ULTRAVIOLET RAYS</strong>. Sun exposure can fade your tattoo over time.
-          </p>
-        </div>
-
-        <div class="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
-          <h3 class="font-accent text-lg mb-2 text-blue-300">Healing Timeline</h3>
-          <p class="text-white/90">
-            Your tattoo should heal in as little as <strong>two weeks</strong>. Saniderm may help it heal faster but
-            we all heal differently and healing times may vary.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Warning Signs -->
-    <div class="card p-8 border-red-500/30">
-      <h2 class="font-serif text-3xl mb-6 text-red-400">⚠️ Warning Signs</h2>
-
-      <div class="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-4">
-        <h3 class="font-accent text-lg mb-2 text-red-300">Seek Medical Attention</h3>
-        <p class="text-white/90 mb-3">
-          Consult a physician if any of the following signs or symptoms develop:
-        </p>
-        <ul class="list-disc list-inside space-y-1 text-white/90">
-          <li><strong>REDNESS AT SITE</strong></li>
-          <li><strong>GREEN AND/OR YELLOW DISCHARGE</strong></li>
-          <li><strong>FOUL SMELL</strong></li>
-          <li><strong>FEVER</strong></li>
+        <ul class="emoji-list">
+          <li>
+            <span>☀️</span>
+            Avoid direct sun, tanning beds, and harsh UV until fully healed. If you
+            must go outside, cover the area.
+          </li>
+          <li>
+            <span>🏃</span>
+            Skip the gym, pools, and high-sweat activities for 4–5 days while it’s
+            bandaged. Too soon risks infection.
+          </li>
+          <li>
+            <span>🚫</span>
+            Do not scratch, pick, or peel flaking skin. Let the healing cycle run
+            naturally to protect detail and color.
+          </li>
         </ul>
-      </div>
-
-      <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
-        <h3 class="font-accent text-lg mb-2 text-yellow-300">Important Notice</h3>
-        <p class="text-white/90">
-          Everyone heals differently and making sure to follow the above healing process after your appointment is
-          <strong class="text-yellow-300">YOUR RESPONSIBILITY</strong>.
-        </p>
-        <p class="text-white/90 mt-2">
-          We are not responsible for your aftercare once you leave from your appointment.
-        </p>
-      </div>
+      </article>
     </div>
-  </div>
+  </section>
 
-  <!-- Contact Information -->
-  <section class="mt-12">
-    <div class="card p-8 text-center">
-      <h2 class="font-serif text-3xl mb-4">Questions About Aftercare?</h2>
-      <p class="text-white/80 mb-6">
-        If you have any questions about your healing process or need clarification on these instructions,
-        don't hesitate to contact us.
-      </p>
-      <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="tel:+13172867092" class="btn-cta">
-          Call Us: (317) 286-7092
-        </a>
-        <a href="/contact" class="btn-outline">
-          Contact Form
-        </a>
+  <section class="section-block">
+    <div class="aftercare-grid">
+      <article class="luxe-card aftercare-card">
+        <h2>Long-term care</h2>
+        <div class="callout warm">
+          <h3>Protect your investment</h3>
+          <p>
+            Once healed, apply SPF 15+ whenever you’re in the sun. UV rays break
+            down pigment rapidly. Keep skin hydrated year-round.
+          </p>
+        </div>
+        <ul class="dot-list">
+          <li>
+            Expect surface healing in ~2 weeks; complete healing can take up to
+            3 months.
+          </li>
+          <li>
+            Saniderm can speed things up, but everyone’s timeline is different.
+          </li>
+          <li>Schedule free touch-ups within 3 months for normal wear.</li>
+        </ul>
+      </article>
+
+      <article class="luxe-card aftercare-card danger">
+        <h2>Warning signs</h2>
+        <div class="callout danger">
+          <h3>Contact a doctor if you notice</h3>
+          <ul class="dot-list">
+            <li>Persistent redness spreading from the tattooed area</li>
+            <li>Green or yellow discharge or a foul odor</li>
+            <li>Fever, chills, or flu-like symptoms</li>
+          </ul>
+        </div>
+        <p>
+          Healing is your responsibility once you leave the studio. Follow the
+          steps above and reach out if anything looks off—we’ll help you figure
+          out next steps.
+        </p>
+      </article>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="cta-banner">
+      <div class="cta-banner__content">
+        <h2>Need clarity on aftercare?</h2>
+        <p>
+          Call, message, or stop by if you have questions about your heal. We’d
+          rather talk it through than see you risk infection or color loss.
+        </p>
+      </div>
+      <div class="cta-banner__actions">
+        <a href="tel:+13172867092" class="btn-cta">Call (317) 286-7092</a>
+        <a href="/contact" class="btn-outline">Send a message</a>
       </div>
     </div>
   </section>
 </BaseLayout>
-
-<style>
-  .card {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow:
-      0 4px 16px rgba(0, 0, 0, 0.2),
-      inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
-  }
-
-  .btn-cta {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl;
-  }
-
-  .btn-outline {
-    @apply inline-flex items-center justify-center px-6 py-3 border border-white/30 hover:border-white/50 text-white hover:bg-white/10 font-semibold rounded-lg transition-all duration-200;
-  }
-</style>

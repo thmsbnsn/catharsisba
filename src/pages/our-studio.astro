@@ -1,45 +1,221 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 ---
-<BaseLayout title="Our Studio" description="Where precision, creativity, and comfort come together.">
-  <!-- Hero -->
-  <section class="relative min-h-[70vh] grid place-items-center text-center rounded-xl overflow-hidden border border-white/10">
-    <div class="absolute inset-0 bg-[url('https://staging.catharsisba.com/wp-content/uploads/2025/08/IMG_3603-scaled-e1755709659807.png')] bg-cover bg-center brightness-[.9] contrast-[1.06]"></div>
-    <div class="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/60"></div>
-    <div class="relative z-10 p-6">
-      <h1 class="font-serif text-5xl sm:text-6xl">Our Studio</h1>
-      <p class="text-white/80 max-w-2xl mx-auto">Where precision, creativity, and comfort come together.</p>
+
+<BaseLayout
+  title="Our Studio"
+  description="Where precision, creativity, and comfort converge for every session."
+>
+  <section class="studio-hero">
+    <div class="studio-hero__veil" aria-hidden="true"></div>
+    <div class="studio-hero__texture" aria-hidden="true"></div>
+    <div class="studio-hero__content">
+      <span class="section-label">Catharsis Body Art</span>
+      <h1>Inside the Studio</h1>
+      <p>
+        A calming, modern space purpose-built for tattoos and piercings—sterile,
+        private work bays; curated lighting; and a team focused on your comfort
+        from consult through aftercare.
+      </p>
     </div>
   </section>
 
-  <!-- About -->
-  <section class="mt-12 beige-section rounded-xl p-8">
-    <h2 class="font-serif text-3xl">About Catharsis Body Art</h2>
-    <p class="text-[#1A1D21]">Nestled in the heart of our community, Catharsis Body Art blends professional craftsmanship with a warm, welcoming atmosphere. From the moment you walk in, you’ll experience a clean, modern space designed to put you at ease.</p>
+  <section class="section-block">
+    <div class="luxe-card studio-about">
+      <div class="studio-about__copy">
+        <h2>Designed for catharsis</h2>
+        <p>
+          From the moment you arrive, the studio is staged to ease nerves and
+          amplify creativity. We blended upscale finishes with the functionality
+          artists rely on—so you can breathe, settle in, and focus on
+          translating your story into wearable art.
+        </p>
+      </div>
+      <div class="studio-about__image">
+        <img
+          src="/images/studio/CBA_collage.webp"
+          alt="Collage of Catharsis Body Art studio interior"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+    </div>
   </section>
 
-  <!-- Cleanliness -->
-  <section class="mt-12 card p-8">
-    <h2 class="font-serif text-3xl heading-blue">State-of-the-Art Equipment & Cleanliness</h2>
-    <ul class="list-disc pl-5 text-white/85 space-y-1">
-      <li>Medical-grade sterilization equipment</li>
-      <li>Single-use, disposable needles & tubes</li>
-      <li>Hospital-grade surface disinfectants</li>
-      <li>Private or semi-private stations</li>
-    </ul>
+  <section class="section-block studio-feature">
+    <div class="studio-feature__media">
+      <img
+        src="/images/studio/CBA_interior1.webp"
+        alt="Private workstation inside Catharsis Body Art"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="studio-feature__copy">
+      <span class="studio-feature__eyebrow">Spacious &amp; Intentional</span>
+      <h3>Private bays, calming energy</h3>
+      <p>
+        Multiple private workstations let each artist curate lighting, music,
+        and layout for the work ahead. Guests relax in ergonomic seating while
+        artists focus under crisp LED ring lights and diffused accents that
+        showcase every line.
+      </p>
+      <ul>
+        <li>Dedicated tattoo &amp; piercing suites</li>
+        <li>Premium chairs and ergonomic armrests</li>
+        <li>Adjustable lighting for precision detailing</li>
+        <li>Soundscapes tuned per client comfort</li>
+      </ul>
+    </div>
   </section>
 
-  <!-- Testimonials -->
-  <section class="mt-12 grid gap-6 md:grid-cols-3">
-    <blockquote class="card p-6 bg-white text-black">“Absolutely amazing experience—clean, friendly, and my tattoo healed perfectly!”<br/><span class="text-black/70">— Jamie R.</span></blockquote>
-    <blockquote class="card p-6 bg-white text-black">“The artists really listen and brought my vision to life. Highly recommend.”<br/><span class="text-black/70">— Alex K.</span></blockquote>
-    <blockquote class="card p-6 bg-white text-black">“Top-notch hygiene and a super chill vibe. Loved every minute.”<br/><span class="text-black/70">— Morgan S.</span></blockquote>
+  <section class="section-block studio-feature studio-feature--reverse">
+    <div class="studio-feature__media">
+      <img
+        src="/images/studio/CBA_interiorsnip.webp"
+        alt="Sterile equipment set up at Catharsis Body Art"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="studio-feature__copy">
+      <span class="studio-feature__eyebrow">Sterile by design</span>
+      <h3>Hospital-grade protocols, always</h3>
+      <p>
+        Cleanliness is non-negotiable. Every workstation is reset between
+        sessions using hospital-grade disinfectants, and all piercing and tattoo
+        tools are single-use or sterilized in our medical autoclave.
+      </p>
+      <ul>
+        <li>Single-use needles, cartridges, and tubes</li>
+        <li>Medical autoclave &amp; weekly spore testing</li>
+        <li>Barrier film &amp; cross-contamination controls</li>
+        <li>Certified blood-borne pathogen training</li>
+      </ul>
+    </div>
   </section>
 
-  <!-- FAQ / CTA -->
-  <section class="mt-12 text-center card p-10">
-    <h2 class="font-serif text-3xl">FAQs</h2>
-    <p class="text-white/70">Got questions about tattoos, piercings, or healing? Our team has answers.</p>
-    <a href="/contact" class="btn-cta inline-block mt-4 px-6 py-3 rounded">Ask Us Anything</a>
+  <section class="section-block studio-feature">
+    <div class="studio-feature__media">
+      <img
+        src="/images/studio/CBA_exteriorsnip.webp"
+        alt="Exterior of Catharsis Body Art in Brownsburg, Indiana"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="studio-feature__copy">
+      <span class="studio-feature__eyebrow">Brownsburg roots</span>
+      <h3>Visit us in Suite 106</h3>
+      <p>
+        Catharsis Body Art is located within the Brownsburg Station development.
+        Park right out front, step through the glass doors, and we’ll greet you
+        with forms, jewelry displays, and a beverage while we prep your bay.
+      </p>
+      <div class="studio-contact">
+        <span>5801 N. Green St. Suite 106</span>
+        <span>Brownsburg, IN 46112</span>
+        <a href="tel:+13172867092">(317) 286-7092</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block studio-feature studio-feature--reverse">
+    <div class="studio-feature__media">
+      <img
+        src="/images/studio/CBA_MerchBlackTShirt.jpg"
+        alt="Catharsis Body Art merchandise display"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="studio-feature__copy">
+      <span class="studio-feature__eyebrow">Studio merch</span>
+      <h3>The “You Matter” collection</h3>
+      <p>
+        Limited-run tees, hoodies, and enamel pins—designed in-house to echo the
+        cathartic vibe. Browse the rack while you wait or call ahead to reserve
+        your size for pickup.
+      </p>
+      <div class="studio-feature__actions">
+        <a href="tel:+13172867092" class="btn-outline">Call about merch</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">Reviews</span>
+      <div>
+        <h2 class="section-heading">What clients say</h2>
+        <p class="section-subhead">
+          100% of our 27 recent Facebook reviews recommend Catharsis Body Art.
+          Here are a few stories from guests who trusted us with their
+          milestones.
+        </p>
+      </div>
+    </div>
+    <div class="quote-grid">
+      <blockquote class="quote-card">
+        <p>
+          “Chris was amazing—friendly, professional, and lightning-fast with my
+          double helix. I felt welcome from the minute I walked in. Easily the
+          best piercing experience I’ve ever had.”
+        </p>
+        <footer>
+          <cite>Sarah Gerner</cite>
+          <span>September 20</span>
+        </footer>
+      </blockquote>
+      <blockquote class="quote-card">
+        <p>
+          “My 11-year-old was thrilled with her new earrings. Chris took his
+          time, explained every step, and made her feel brave. We won’t go
+          anywhere else for piercings.”
+        </p>
+        <footer>
+          <cite>Elizabeth Ruple</cite>
+          <span>September 19</span>
+        </footer>
+      </blockquote>
+      <blockquote class="quote-card">
+        <p>
+          “I trust Chris with every piercing and Austin with every tattoo.
+          Honest advice, immaculate setup, and a vibe that keeps you laughing.
+          They care about what works for your body—not just the appointment.”
+        </p>
+        <footer>
+          <cite>Elaina Bibler</cite>
+          <span>September 9</span>
+        </footer>
+      </blockquote>
+    </div>
+    <div class="quote-cta">
+      <a
+        href="https://facebook.com/thesumofc/reviews"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-outline"
+      >
+        Read all Facebook reviews
+      </a>
+    </div>
+  </section>
+
+  <section class="section-block">
+    <div class="cta-banner">
+      <div class="cta-banner__content">
+        <h2>Ready to experience the studio?</h2>
+        <p>
+          Book a consult or reach out with questions. We’ll align on vision,
+          healing timelines, and the perfect jewelry before you sit in the
+          chair.
+        </p>
+      </div>
+      <div class="cta-banner__actions">
+        <a href="/contact" class="btn-cta">Book consultation</a>
+        <a href="tel:+13172867092" class="btn-outline">Call (317) 286-7092</a>
+      </div>
+    </div>
   </section>
 </BaseLayout>

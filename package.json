@@ -17,13 +17,17 @@
     "deploy:local:staging:skip": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-local.ps1 staging -SkipBuild",
     "deploy:local:production:skip": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-local.ps1 production -SkipBuild"
   },
-
   "dependencies": {
     "@astrojs/react": "^4.0.0",
     "@astrojs/tailwind": "^5.0.0",
+    "@astrojs/vercel": "^9.0.0",
     "@headlessui/react": "^2.1.8",
+    "@portabletext/to-html": "^2.0.2",
+    "@sanity/client": "^6.21.2",
+    "@sanity/image-url": "^1.0.2",
     "astro": "^5.0.0",
     "framer-motion": "^12.23.16",
+    "groq": "^3.50.1",
     "photoswipe": "^5.4.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

@@ -74,8 +74,11 @@ export default function LeadForm() {
     }
   }
 
+  const controlClass = (hasError) =>
+    `field-control${hasError ? " has-error" : ""}`;
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
+    <form onSubmit={handleSubmit} className="form-grid" noValidate>
       {/* Honeypot + time trap */}
       <input
         type="text"
@@ -105,32 +108,43 @@ export default function LeadForm() {
         </>
       )}
 
-      <div>
-        <label htmlFor="lead_name" className="sr-only">Your name</label>
+      <div className="form-field">
+        <label htmlFor="lead_name" className="sr-only">
+          Your name
+        </label>
+        <div className={controlClass(Boolean(errors.name))}>
         <input
           id="lead_name"
           name="name"
           required
-          placeholder="Your name"
+          placeholder=" "
           aria-invalid={errors.name ? 'true' : 'false'}
           aria-describedby={errors.name ? 'err_name' : undefined}
           onBlur={(e) => {
             const v = (e.target.value || '').trim();
             setErrors((s) => ({ ...s, name: v ? '' : 'Please enter your name' }));
           }}
-          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 shadow-lg"
+          className="field-input"
         />
-        {errors.name && <p id="err_name" className="text-red-400 text-sm mt-1" role="alert">{errors.name}</p>}
+        <label htmlFor="lead_name" className="field-label">
+          Your name
+        </label>
+        <span className="field-underline" />
+        </div>
+        {errors.name && <p id="err_name" className="form-error" role="alert">{errors.name}</p>}
       </div>
 
-      <div>
-        <label htmlFor="lead_email" className="sr-only">Email address</label>
+      <div className="form-field">
+        <label htmlFor="lead_email" className="sr-only">
+          Email address
+        </label>
+        <div className={controlClass(Boolean(errors.email))}>
         <input
           id="lead_email"
           name="email"
           type="email"
           required
-          placeholder="Email"
+          placeholder=" "
           aria-invalid={errors.email ? 'true' : 'false'}
           aria-describedby={errors.email ? 'err_email' : undefined}
           onBlur={(e) => {
@@ -140,54 +154,73 @@ export default function LeadForm() {
             else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) msg = 'Please enter a valid email';
             setErrors((s) => ({ ...s, email: msg }));
           }}
-          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 shadow-lg"
+          className="field-input"
         />
-        {errors.email && <p id="err_email" className="text-red-400 text-sm mt-1" role="alert">{errors.email}</p>}
+        <label htmlFor="lead_email" className="field-label">
+          Email address
+        </label>
+        <span className="field-underline" />
+        </div>
+        {errors.email && <p id="err_email" className="form-error" role="alert">{errors.email}</p>}
       </div>
 
-      <div>
-        <label htmlFor="lead_phone" className="sr-only">Phone number</label>
+      <div className="form-field">
+        <label htmlFor="lead_phone" className="sr-only">
+          Phone number
+        </label>
+        <div className="field-control">
         <input
           id="lead_phone"
           name="phone"
           type="tel"
-          placeholder="Phone"
-          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 shadow-lg"
+          placeholder=" "
+          className="field-input"
         />
+        <label htmlFor="lead_phone" className="field-label">
+          Phone number
+        </label>
+        <span className="field-underline" />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor="lead_message" className="sr-only">Message</label>
+      <div className="form-field">
+        <label htmlFor="lead_message" className="sr-only">
+          Message
+        </label>
+        <div className={controlClass(Boolean(errors.message))}>
         <textarea
           id="lead_message"
           name="message"
           required
-          placeholder={
-            artist ? `Tell us your idea (for ${artist})` : "Tell us your idea"
-          }
+          placeholder=" "
           aria-invalid={errors.message ? 'true' : 'false'}
           aria-describedby={errors.message ? 'err_message' : undefined}
           onBlur={(e) => {
             const v = (e.target.value || '').trim();
             setErrors((s) => ({ ...s, message: v ? '' : 'Please enter a brief message' }));
           }}
-          className="w-full bg-white/10 border border-white/50 rounded px-3 py-2 h-28 text-white placeholder-white/80 focus:bg-white/20 focus:border-white/70 focus:outline-none focus:ring-2 focus:ring-white/40 resize-none shadow-lg"
+          className="field-textarea"
         ></textarea>
-        {errors.message && <p id="err_message" className="text-red-400 text-sm mt-1" role="alert">{errors.message}</p>}
+        <label htmlFor="lead_message" className="field-label">
+          {artist ? `Project details for ${artist}` : "Tell us your idea"}
+        </label>
+        <span className="field-underline" />
+        </div>
+        {errors.message && <p id="err_message" className="form-error" role="alert">{errors.message}</p>}
       </div>
 
       <button
-        className="px-4 py-2 rounded btn-cta disabled:opacity-50"
+      className="btn-cta w-full justify-center disabled:opacity-60"
         disabled={status === "loading"}
       >
         {status === "loading" ? "Sending..." : "Request consult"}
       </button>
 
       {status === "sent" && (
-        <p className="text-green-400" role="status">✅ Sent! We’ll reply soon.</p>
+        <p className="form-status success" role="status">✅ Sent! We’ll reply soon.</p>
       )}
       {status === "fail" && (
-        <p className="text-red-400" role="alert">❌ {errorMsg}</p>
+        <p className="form-status error" role="alert">❌ {errorMsg}</p>
       )}
     </form>
   );

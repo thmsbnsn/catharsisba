@@ -1,24 +1,179 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import LeadForm from "../components/LeadForm.jsx";
----
-<BaseLayout title="Contact" description="Book a consult or ask a question.">
-  <div class="grid gap-8 md:grid-cols-2">
-    <div>
-      <h2 class="font-serif text-2xl">Studio</h2>
-      <p class="text-white/70">5801 N. Green St. Suite 106, Brownsburg, IN 46112<br/>Tue–Sat, 11–7</p>
-      <p class="mt-2"><a href="tel:+13172867092">(317) 286-7092</a><br/><a href="mailto:info@catharsisba.com">info@catharsisba.com</a></p>
+import { getGlobalSettings } from "../lib/sanity";
 
-      <div class="mt-6 p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-        <h3 class="font-accent text-lg mb-2 text-blue-300">Need Aftercare Help?</h3>
-        <p class="text-white/80 text-sm mb-3">
-          Questions about healing your new tattoo or piercing? Check our comprehensive aftercare guide first.
+type StudioContact = {
+  studioName?: string;
+  phone?: string;
+  email?: string;
+  address?: string;
+  mapLink?: string;
+};
+
+type ContactHour = {
+  day: string;
+  open?: string;
+  close?: string;
+  notes?: string;
+};
+
+type SocialLink = {
+  platform?: string;
+  label?: string;
+  url: string;
+  isPrimary?: boolean;
+};
+
+const globalSettings = await getGlobalSettings();
+const contactInfo = globalSettings?.contact as StudioContact | undefined;
+const addressLines = contactInfo?.address
+  ? contactInfo.address.split("\n")
+  : [];
+const phone = contactInfo?.phone || "(317) 286-7092";
+const email = contactInfo?.email || "info@catharsisba.com";
+const mapLink = contactInfo?.mapLink;
+
+const hoursOrder = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"] as const;
+const hoursLabelMap: Record<string, string> = {
+  mon: "Monday",
+  tue: "Tuesday",
+  wed: "Wednesday",
+  thu: "Thursday",
+  fri: "Friday",
+  sat: "Saturday",
+  sun: "Sunday",
+};
+
+const formattedHours = (
+  (globalSettings?.hours as ContactHour[] | undefined) || []
+)
+  .slice()
+  .sort(
+    (a, b) =>
+      hoursOrder.indexOf(a.day as (typeof hoursOrder)[number]) -
+      hoursOrder.indexOf(b.day as (typeof hoursOrder)[number]),
+  )
+  .map((item) => ({
+    label: hoursLabelMap[item.day] || item.day,
+    value:
+      item.open && item.close
+        ? `${item.open} – ${item.close}`
+        : item.notes || "By appointment",
+  }));
+
+const primarySocial = (
+  (globalSettings?.socialLinks as SocialLink[] | undefined) || []
+).filter((link) => link.isPrimary);
+---
+
+<BaseLayout title="Contact" description="Book a consult or ask a question.">
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">Contact</span>
+      <div>
+        <h1 class="section-heading">Let’s start the conversation</h1>
+        <p class="section-subhead">
+          Use the form to tell us about your tattoo or piercing, request a
+          consult, or ask anything that helps you feel ready. We respond within
+          one business day.
         </p>
-        <a href="/aftercare" class="btn-outline text-sm">
-          View Aftercare Instructions
-        </a>
       </div>
     </div>
-    <div class="card p-6"><LeadForm client:load /></div>
-  </div>
+  </section>
+
+  <section class="section-block contact-grid">
+    <aside class="contact-panel">
+      <div class="contact-panel__block">
+        <h2>{contactInfo?.studioName || "Catharsis Body Art"}</h2>
+        <div class="contact-meta">
+          {
+            addressLines.length > 0 && (
+              <p>
+                {addressLines.map((line) => (
+                  <>
+                    {line}
+                    <br />
+                  </>
+                ))}
+              </p>
+            )
+          }
+          {
+            formattedHours.length > 0 && (
+              <ul class="contact-hours">
+                {formattedHours.map((item) => (
+                  <li>
+                    <span>{item.label}</span>
+                    <span>{item.value}</span>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          <p>
+            <a href={`tel:${phone.replace(/[^0-9+]/g, "")}`}>{phone}</a>
+            <br />
+            <a href={`mailto:${email}`}>{email}</a>
+          </p>
+          {
+            mapLink && (
+              <a
+                href={mapLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-outline contact-map"
+              >
+                Get directions
+              </a>
+            )
+          }
+        </div>
+      </div>
+      <div class="contact-panel__block">
+        <div class="contact-callout">
+          <h3>Need aftercare help?</h3>
+          <p>
+            For jewelry troubleshooting and healing guidance, visit our
+            aftercare guide—it covers products, timelines, and when to reach
+            out.
+          </p>
+          <a href="/aftercare" class="btn-outline">View aftercare guide</a>
+        </div>
+      </div>
+      {
+        primarySocial.length > 0 && (
+          <div class="contact-panel__block">
+            <h3 class="contact-subheading">Connect with us</h3>
+            <div class="contact-social">
+              {primarySocial.map((item) => (
+                <a href={item.url} target="_blank" rel="noopener noreferrer">
+                  {item.label || item.platform}
+                </a>
+              ))}
+            </div>
+          </div>
+        )
+      }
+      <div class="contact-panel__block">
+        <h3 class="contact-subheading">Ready to book right now?</h3>
+        <p>
+          Use our NeetoCal calendar to grab an open slot instantly. Consults are
+          free and recommended for large custom work.
+        </p>
+        <a
+          href="https://neetocal.com/embed/catharsis-body-art"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="btn-cta"
+        >
+          Schedule via NeetoCal
+        </a>
+      </div>
+    </aside>
+
+    <div class="form-shell contact-form">
+      <LeadForm client:load />
+    </div>
+  </section>
 </BaseLayout>
