@@ -15,8 +15,11 @@ Icon?
 .env
 .env.local
 .env.*
+env.vercel
+.envMigration.rtf
 # Logs
 logs/
+build.log
 # Lockfiles / caches (if any local)
 npm-debug.log*
 yarn-error.log*

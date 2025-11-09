@@ -2,12 +2,25 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Gallery from "../components/Gallery.jsx";
 import { getCollection } from "astro:content";
+import { getPageSettings, urlForImage } from "../lib/sanity";
+
+type ManifestImage = {
+  path: string;
+  folder: string;
+  width?: number;
+  height?: number;
+};
+
+type HeroCta = {
+  label: string;
+  href: string;
+};
 
 // Load all artists
 const artists = await getCollection("artists");
 
 // Helper: load manifest per slug
-async function loadManifest(slug) {
+async function loadManifest(slug: string): Promise<ManifestImage[]> {
   try {
     const mod = await import(`../../image-manifests/${slug}.json`);
     return mod.default;
@@ -33,217 +46,285 @@ for (const a of artists) {
   });
 }
 
-const HERO_BG = "/images/webpages/landinghero1.webp";
+const pageSettings = await getPageSettings("index");
+const heroImageBuilder = urlForImage(pageSettings?.heroMedia);
+const HERO_BG_DEFAULT = "/images/webpages/landinghero1.webp";
+const heroBackground =
+  heroImageBuilder?.width(2400).height(1600).fit("crop").auto("format").url() ??
+  pageSettings?.heroMedia?.asset?.url ??
+  HERO_BG_DEFAULT;
+const heroOverlay =
+  pageSettings?.backgroundOverlay ??
+  "linear-gradient(180deg, rgba(8,7,7,0.88) 0%, rgba(8,7,7,0.65) 55%, rgba(8,7,7,0.92) 100%)";
+const heroTitle = pageSettings?.heroTitle ?? "Release Through Artistry";
+const heroSubtitle =
+  pageSettings?.heroSubtitle ??
+  "Upscale tattoo and piercing sessions inside a studio that obsesses over detail, safety, and soul. Step in with a vision—leave with catharsis.";
+const heroCta: HeroCta =
+  pageSettings?.cta && pageSettings.cta.label && pageSettings.cta.href
+    ? pageSettings.cta
+    : { label: "Book Consultation", href: "/contact" };
 ---
+
 <BaseLayout
   title="Catharsis Body Art"
   description="Tattoo & Piercing in Brownsburg — modern, precise, calm."
 >
   <!-- HERO -->
-  <section class="hero-section relative overflow-hidden rounded-2xl border border-white/10 p-12 sm:p-16 bg-black">
-    <div
-      class="absolute inset-0 opacity-80"
-      style={`background-image:url('${HERO_BG}');background-size:cover;background-position:center;`}
-      aria-hidden="true"
-    ></div>
-    <div class="absolute inset-0 bg-black/50" aria-hidden="true"></div>
+  <section
+    class="hero-viewport"
+    style={`--hero-image:url('${heroBackground}'); --hero-overlay:${heroOverlay};`}
+  >
+    <div class="hero-viewport__content">
+      <div class="hero-viewport__copy">
+        <span class="hero-pretitle">Catharsis Body Art · Brownsburg, IN</span>
+        <h1 class="hero-title">{heroTitle}</h1>
+        <p class="hero-subtitle">
+          {heroSubtitle}
+        </p>
 
-    <div class="relative z-10 text-center">
-      <h2 class="font-serif text-2xl sm:text-3xl mb-3">More than ink therapy - this is release.</h2>
-      <!-- 01 removed from hero section -->
-      <h1 class="font-display text-5xl sm:text-7xl tracking-wider mb-6">
-        Catharsis Body Art
-      </h1>
+        <div class="hero-actions">
+          <a
+            href={heroCta.href}
+            class="btn-cta hero-action-primary"
+            target={heroCta.href.startsWith("http") ? "_blank" : undefined}
+            rel={heroCta.href.startsWith("http")
+              ? "noopener noreferrer"
+              : undefined}
+          >
+            {heroCta.label}
+          </a>
+          <a href="#artists" class="btn-outline hero-action-secondary">
+            Browse Artists
+          </a>
+        </div>
 
-      <!-- Definition band -->
-      <div
-        class="mt-6 inline-flex flex-wrap gap-3 items-center justify-center rounded-2xl border border-white/20 px-6 py-4 bg-black/60 backdrop-blur-lg"
-      >
-        <span class="font-semibold text-lg">cath·ar·sis</span>
-        <span class="opacity-90">(kə-ˈthär-səs)</span>
-        <span class="opacity-95 text-sm max-w-md"
-          >the process of releasing, and thereby providing relief from, strong
-          or repressed emotions.</span
-        >
+        <ul class="hero-metrics" aria-label="Studio highlights">
+          <li>
+            <span class="metric-label">Piercing Walk-ins</span>
+            <span class="metric-value">Welcomed daily</span>
+          </li>
+          <li>
+            <span class="metric-label">Studio Finish</span>
+            <span class="metric-value">Medical-grade sterilization</span>
+          </li>
+        </ul>
       </div>
 
-      <div class="mt-8 flex flex-wrap gap-4 justify-center">
-        <a href="/contact" class="btn-cta px-8 py-4 rounded-xl text-lg">Book Now</a>
-        <a
-          href="#artists"
-          class="btn-outline px-8 py-4 rounded-xl text-lg"
-          >Meet the Artists</a
-        >
-      </div>
-
-      <span
-        class="absolute left-6 bottom-6 font-accent text-white/15 text-7xl hidden lg:block"
-        aria-hidden="true"
-        >ART</span
-      >
-      <span
-        class="absolute right-6 top-6 font-accent text-white/15 text-7xl hidden lg:block"
-        aria-hidden="true"
-        >SKIN</span
-      >
+      <aside class="hero-definition" aria-label="Catharsis definition">
+        <span class="definition-term">cath·ar·sis</span>
+        <span class="definition-pronounce">(kə-ˈthär-səs)</span>
+        <p class="definition-body">
+          The release that comes from transforming your story into something
+          worn with pride. Every session is a ritual of care, intention, and
+          precision.
+        </p>
+        <div class="definition-footer">
+          <span class="glow-dot" aria-hidden="true"></span>
+          <span>Honoring your narrative since 2021</span>
+        </div>
+      </aside>
     </div>
+
+    <a href="#artists" class="hero-scroll" aria-label="Scroll to artists">
+      <span>Scroll</span>
+    </a>
   </section>
 
   <!-- MEET THE ARTISTS -->
-  <section id="artists" class="mt-20">
-    <div class="font-accent text-7xl text-black/20 heading-blue mb-4">01</div>
-    <h2 class="font-serif text-4xl mb-8">Meet the Artists</h2>
+  <section id="artists" class="section-block">
+    <div class="section-header">
+      <span class="section-label">01</span>
+      <div>
+        <h2 class="section-heading">Meet the Artists</h2>
+        <p class="section-subhead">
+          The humans behind the needles—meticulous, intuitive, and obsessed with
+          your comfort.
+        </p>
+      </div>
+    </div>
 
-    <div class="grid gap-8 sm:grid-cols-2">
-      {artistData.map((artist) => (
-        <article class="card artist-card p-6 group">
-          {artist.hero && (
-            <div class="relative overflow-hidden rounded-xl mb-4">
-              <img
-                class="w-full aspect-[4/5] object-cover transition-transform duration-300 group-hover:scale-105"
-                src={artist.hero.path}
-                alt={`${artist.name} portrait`}
-                width={artist.hero.width}
-                height={artist.hero.height}
-                loading="lazy"
-                decoding="async"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-            </div>
-          )}
-          <div class="flex items-center justify-between">
-            <div>
-              <h3 class="font-serif text-2xl mb-1">{artist.name}</h3>
-              <p class="text-white/70 font-medium">{artist.styles?.[0] || ""}</p>
-            </div>
-            <a
-              href={`/artists/${artist.slug}/`}
-              class="btn-cta rounded-xl px-6 py-3"
-              >View Profile</a
-            >
-          </div>
-        </article>
-      ))}
+    <div class="artist-grid">
+      {
+        artistData.map((artist) => {
+          const heroImage =
+            artist.hero?.path ??
+            artist.hero ??
+            "/images/branding/cba-logo-nobackground.webp";
+          const summary = artist.bio
+            ? `${artist.bio.split(" ").slice(0, 26).join(" ")}${artist.bio.split(" ").length > 26 ? "…" : ""}`
+            : "Custom artistry tailored to your story.";
+
+          return (
+            <article class="artist-luxe" data-artist={artist.slug}>
+              <div class="artist-avatar">
+                <div class="artist-avatar__frame">
+                  <img
+                    src={heroImage}
+                    alt={`${artist.name} portrait`}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </div>
+              </div>
+              <div class="artist-meta">
+                {artist.styles && artist.styles.length > 0 && (
+                  <span class="artist-style">{artist.styles.join(" · ")}</span>
+                )}
+                <h3 class="artist-name">{artist.name}</h3>
+                <p class="artist-bio">{summary}</p>
+              </div>
+              <div class="artist-actions">
+                <a href={`/artists/${artist.slug}/`} class="btn-outline">
+                  View Profile
+                </a>
+              </div>
+            </article>
+          );
+        })
+      }
     </div>
   </section>
 
   <!-- GALLERY TEASER -->
-  <section class="mt-24">
-    <div class="font-accent text-7xl text-blue-300/30 mb-4">02</div>
-    <h2 class="font-serif text-4xl heading-blue mb-8">Tattoo Gallery</h2>
-    <div class="card p-8">
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">02</span>
+      <div>
+        <h2 class="section-heading">Gallery</h2>
+        <p class="section-subhead">
+          A glimpse of recent work—precision line work, luxury piercings, and
+          healed pieces.
+        </p>
+      </div>
+    </div>
+    <div class="luxe-card">
       <Gallery client:load />
     </div>
   </section>
 
+  <!-- COMMUNITY SUPPORT -->
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">03</span>
+      <div>
+        <h2 class="section-heading">Community Care</h2>
+        <p class="section-subhead">
+          With SNAP benefits paused, we’re rallying to keep households stocked. Share the message, grab supplies, or volunteer alongside us.
+        </p>
+      </div>
+    </div>
+
+    <div class="luxe-card community-card">
+      <div class="community-copy">
+        <p>
+          We’re partnering with local food banks and neighbors to assemble care packages, organize drop-offs, and make sure no one goes hungry during the shutdown.
+          Every donation or extra set of hands amplifies the impact.
+        </p>
+        <ul>
+          <li>Pick up pantry staples and hygiene kits at the studio</li>
+          <li>Register to deliver to families who can’t travel</li>
+          <li>Spread the word so anyone in need knows where to find help</li>
+        </ul>
+        <a href="/contact" class="btn-outline">Offer Support</a>
+      </div>
+      <div class="community-embed">
+        <iframe
+          title="Catharsis Body Art community support reel"
+          loading="lazy"
+          src="https://www.facebook.com/plugins/video.php?height=650&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1140637124856449%2F&show_text=false&width=400&t=0"
+          style="border: none; overflow: hidden;"
+          scrolling="no"
+          frameborder="0"
+          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+    </div>
+  </section>
+
   <!-- MERCHANDISE SHOWCASE -->
-  <section class="merchandise-showcase mt-24">
-    <h2 class="font-serif text-4xl heading-blue mb-8">Studio Merchandise</h2>
+  <section class="section-block">
+    <div class="section-header">
+      <span class="section-label">04</span>
+      <div>
+        <h2 class="section-heading">Studio Merchandise</h2>
+        <p class="section-subhead">
+          Limited drops that travel the Catharsis ethos beyond the studio walls.
+        </p>
+      </div>
+    </div>
 
-    <div class="card p-8">
-      <div class="grid gap-8 lg:grid-cols-2 items-center">
-        <!-- Product Image -->
-        <div class="relative group">
-          <div class="relative overflow-hidden rounded-xl">
-            <img
-              src="/images/studio/CBA_MerchBlackTShirt.jpg"
-              alt="You Matter - Catharsis Body Art T-Shirt"
-              class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105"
-              loading="lazy"
-              decoding="async"
-            />
-            <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-
-          <!-- Floating badge -->
-          <div class="absolute -top-4 -right-4 bg-red-600 text-white px-4 py-2 rounded-full font-accent text-sm font-bold shadow-lg">
-            NEW
-          </div>
-        </div>
-
-        <!-- Product Details -->
-        <div class="space-y-6">
-          <div>
-            <h3 class="font-serif text-3xl mb-2">"You Matter" T-Shirt</h3>
-            <p class="text-white/80 text-lg leading-relaxed">
-              A powerful message of self-worth and empowerment, designed to remind you of your value every day.
-            </p>
-          </div>
-
-          <div class="space-y-3">
-            <div class="flex items-center gap-3">
-              <div class="w-3 h-3 bg-red-600 rounded-full"></div>
-              <span class="text-white/90">Premium cotton blend</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="w-3 h-3 bg-red-600 rounded-full"></div>
-              <span class="text-white/90">Unisex fit</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <div class="w-3 h-3 bg-red-600 rounded-full"></div>
-              <span class="text-white/90">Available in multiple sizes</span>
-            </div>
-          </div>
-
-          <div class="bg-white/5 rounded-xl p-4 border border-white/10">
-            <p class="text-white/70 text-sm italic">
-              "This design represents our core belief that every person who walks through our doors matters.
-              Whether you're getting your first tattoo or your twentieth, your story, your choices, and your journey are important."
-            </p>
-          </div>
-
-          <div class="flex flex-col sm:flex-row gap-4">
-            <a href="tel:+13172867092" class="btn-cta text-center">
-              Call to Inquire
-            </a>
-            <a href="/our-studio" class="btn-outline text-center">
-              Visit Our Studio
-            </a>
-          </div>
+    <div class="luxe-card merch-grid">
+      <div class="merch-visual">
+        <img
+          src="/images/studio/CBA_MerchBlackTShirt.jpg"
+          alt="You Matter - Catharsis Body Art T-Shirt"
+          loading="lazy"
+          decoding="async"
+        />
+        <span class="merch-badge">New</span>
+      </div>
+      <div class="merch-copy">
+        <h3>"You Matter" T-Shirt</h3>
+        <p>
+          A wearable reminder of the affirmation we give every guest. Soft,
+          durable, and screen-printed locally.
+        </p>
+        <ul>
+          <li>Premium cotton blend</li>
+          <li>Unisex tailored fit</li>
+          <li>Sizes XS — 3XL</li>
+        </ul>
+        <blockquote>
+          “Every design we release honors the stories we’re trusted with. You
+          matter when you walk in, and long after you leave.”
+        </blockquote>
+        <div class="merch-actions">
+          <a href="tel:+13172867092" class="btn-cta">Call to inquire</a>
+          <a href="/our-studio" class="btn-outline">Visit the studio</a>
         </div>
       </div>
     </div>
   </section>
 
   <!-- BOOKING CTA BAND -->
-  <section class="mt-24 card p-12 text-center">
-    <h2 class="font-accent text-6xl mb-4">
-      <span class="bg-black/60 rounded-xl px-4 py-2 backdrop-blur-lg">Ready when you are.</span>
-    </h2>
-    <p class="mt-4 text-white/80 text-lg max-w-2xl mx-auto">
-      Book a consult for tattoos or piercings. Clean, precise, and personal.
-    </p>
-    <a
-      href="/contact"
-      class="btn-cta mt-6 inline-block px-8 py-4 rounded-xl text-lg"
-      data-open-contact="true"
-      >Book Now</a
-    >
+  <section class="section-block">
+    <div class="cta-banner">
+      <div class="cta-banner__content">
+        <h2>Ready when you are.</h2>
+        <p>
+          Secure a consult for tattoos or piercings. We’ll map lighting,
+          jewelry, and healing before needles ever touch skin.
+        </p>
+      </div>
+      <a href="/contact" class="btn-cta" data-open-contact="true"> Book Now </a>
+    </div>
   </section>
 
   <!-- AFTERCARE + CONTACT TEASERS -->
-  <section class="mt-24 grid gap-8 md:grid-cols-2">
-    <div class="card p-8 group">
-      <h2 class="font-serif text-3xl mb-4">Aftercare</h2>
-      <p class="text-white/80 mb-6">
-        Keep your new work pristine. Our step-by-step aftercare covers
-        cleansing, moisture balance, and what to avoid.
+  <section class="section-block split-grid">
+    <article class="resource-card">
+      <header>
+        <span class="section-label">05</span>
+        <h3>Aftercare</h3>
+      </header>
+      <p>
+        Keep your new work pristine. Follow our step-by-step guide for
+        cleansing, hydration, and when to reach out.
       </p>
-      <a class="btn-outline inline-block" href="/aftercare"
-        >View Aftercare Guide</a
-      >
-    </div>
-    <div class="card p-8 group">
-      <h2 class="font-serif text-3xl mb-4">Contact Us</h2>
-      <p class="text-white/80 mb-6">
-        5801 N. Green St, Suite 106, Brownsburg, IN 46112 •<br>
-        <a class="text-blue-400 hover:text-blue-300 transition-colors" href="tel:+13172867092">(317) 286-7092</a>
+      <a class="btn-outline" href="/aftercare"> View Aftercare Guide </a>
+    </article>
+    <article class="resource-card">
+      <header>
+        <span class="section-label">06</span>
+        <h3>Visit or call</h3>
+      </header>
+      <p>
+        5801 N. Green St. Suite 106, Brownsburg, IN 46112<br />
+        <a href="tel:+13172867092" class="resource-link">(317) 286-7092</a>
       </p>
-      <a
-        href="/contact"
-        class="btn-outline inline-block"
-        >Open Contact Page</a
-      >
-    </div>
+      <a href="/contact" class="btn-outline"> Open Contact Page </a>
+    </article>
   </section>
 </BaseLayout>
