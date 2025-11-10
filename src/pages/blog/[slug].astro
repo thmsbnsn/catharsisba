@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import {portableTextToHtml, urlForImage, getAllBlogSlugs, getBlogPostBySlug} from '../../lib/sanity'
+
+export async function getStaticPaths() {
+  const slugs = await getAllBlogSlugs()
+  return slugs.map((slug: string) => ({params: {slug}}))
+}
+
+const {slug} = Astro.params
+const post = await getBlogPostBySlug(slug)
+
+if (!post) {
+  return Astro.redirect('/blog')
+}
+
+const heroBuilder = post.coverImage?.asset ? urlForImage(post.coverImage.asset) : null
+const heroImage =
+  heroBuilder?.width(1600).height(900).fit('crop').auto('format').url() ?? post.coverImage?.asset?.url ?? ''
+const heroLqip = post.coverImage?.asset?.metadata?.lqip ?? ''
+const formattedDate = post.publishedAt
+  ? new Date(post.publishedAt).toLocaleDateString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+    })
+  : ''
+
+const bodyHtml = portableTextToHtml(post.body || [])
+
+const extraImages = (post.extraImages || [])
+  .map((image: any) => {
+    const builder = image?.asset ? urlForImage(image.asset) : null
+    const url = builder?.width(1400).auto('format').url() ?? image?.asset?.url ?? ''
+    if (!url) return null
+    return {
+      url,
+      alt: image?.alt || post.title,
+      lqip: image?.asset?.metadata?.lqip ?? '',
+    }
+  })
+  .filter(Boolean)
+---
+
+<BaseLayout
+  title={post.title}
+  description={post.excerpt}
+  image={heroImage || undefined}
+>
+  <article class="blog-article">
+    <header class="blog-article__hero" style={`--accent-color:${post.category?.color ?? '#CBA774'};`}>
+      <div class="blog-article__meta">
+        {post.category?.title && (
+          <span class="blog-article__category" style={`--accent-color:${post.category?.color ?? '#CBA774'};`}>
+            {post.category.title}
+          </span>
+        )}
+        <div class="blog-article__meta-items">
+          <span>{post.author}</span>
+          {formattedDate && <span>{formattedDate}</span>}
+        </div>
+      </div>
+      <h1 class="blog-article__title">{post.title}</h1>
+      <p class="blog-article__excerpt">{post.excerpt}</p>
+      <div class="blog-article__hero-image" style={heroLqip ? `background-image:url('${heroLqip}')` : undefined}>
+        {heroImage && (
+          <img src={heroImage} alt={post.coverImage?.alt || post.title} loading="lazy" decoding="async" />
+        )}
+      </div>
+    </header>
+
+    <section class="blog-article__body" set:html={bodyHtml}></section>
+
+    {extraImages.length > 0 && (
+      <section class="blog-article__gallery">
+        <h2 class="blog-article__gallery-heading">Gallery</h2>
+        <div class="blog-article__gallery-grid">
+          {extraImages.map((image) => (
+            <figure class="blog-article__gallery-item" style={image.lqip ? `background-image:url('${image.lqip}')` : undefined}>
+              <img src={image.url} alt={image.alt} loading="lazy" decoding="async" />
+              {image.alt && <figcaption>{image.alt}</figcaption>}
+            </figure>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <footer class="blog-article__footer">
+      <a class="blog-article__back" href="/blog">
+        ← Back to Studio Stories
+      </a>
+    </footer>
+  </article>
+</BaseLayout>
+

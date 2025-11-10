@@ -16,28 +16,12 @@
     "height": 720
   },
   {
-    "file": "background4.webp",
-    "folder": "public/images/webpages",
-    "path": "/images/webpages/background4.webp",
-    "sizeKB": 14,
-    "width": 341,
-    "height": 512
-  },
-  {
     "file": "background5.webp",
     "folder": "public/images/webpages",
     "path": "/images/webpages/background5.webp",
     "sizeKB": 732,
     "width": 2693,
     "height": 1243
-  },
-  {
-    "file": "hero-404page.webp",
-    "folder": "public/images/webpages",
-    "path": "/images/webpages/hero-404page.webp",
-    "sizeKB": 261,
-    "width": 1792,
-    "height": 1024
   },
   {
     "file": "hero-aftercare.webp",

@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import BlogExplorer from '../components/BlogExplorer.jsx'
+import {getBlogCategories, getBlogPosts, urlForImage} from '../lib/sanity'
+
+const postsRaw = await getBlogPosts()
+const categories = await getBlogCategories()
+
+const posts = postsRaw.map((post: any) => {
+  const builder = post.coverImage?.asset ? urlForImage(post.coverImage?.asset) : null
+  const coverImageUrl = builder?.width(1200).height(800).fit('crop').auto('format').url() ?? post.coverImage?.asset?.url ?? ''
+  return {
+    ...post,
+    coverImageUrl,
+    coverImageAlt: post.coverImage?.alt || post.title,
+    coverImageLqip: post.coverImage?.asset?.metadata?.lqip ?? '',
+  }
+})
+
+const description =
+  'Studio stories, piercing insights, and community spotlights from Catharsis Body Art in Brownsburg, Indiana.'
+---
+
+<BaseLayout title="Studio Stories" description={description}>
+  <section class="blog-hero section-block">
+    <div class="blog-hero__content">
+      <span class="blog-hero__tag">Catharsis Dispatch</span>
+      <h1 class="blog-hero__headline">
+        Ink, piercings, and community threads told by the artists who live them.
+      </h1>
+      <p class="blog-hero__description">
+        Dive into aftercare rituals, behind-the-needle process, and the local causes we rally behind.
+        Filter by what matters most to you or explore every story in the archive.
+      </p>
+    </div>
+  </section>
+
+  <section class="blog-section">
+    <BlogExplorer client:load posts={posts} categories={categories} />
+  </section>
+</BaseLayout>
+

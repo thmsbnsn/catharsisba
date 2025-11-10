@@ -32,7 +32,8 @@ export default function OffCanvasNav() {
     { href: "/faq", title: "FAQ", iconSrc: "/icons/faq.svg", description: "Common questions" },
     { href: "/our-studio", title: "Our Studio", iconSrc: "/icons/OurStudio_Icon.svg", description: "Visit us" },
     { href: "/aftercare", title: "Aftercare", iconSrc: "/icons/Aftercare_Icon.svg", description: "Healing guide" },
-    { href: "/contact", title: "Contact", iconSrc: "/icons/Contact_Icon.svg", description: "Book & questions" }
+    { href: "/contact", title: "Contact", iconSrc: "/icons/Contact_Icon.svg", description: "Book & questions" },
+    { href: "/blog", title: "Blog", iconSrc: "/icons/nav_blog.svg", description: "Stories & updates" }
   ];
 
   return (

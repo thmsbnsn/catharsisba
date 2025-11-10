@@ -1,28 +1,31 @@
 # Launch Roadmap & Handoff Prep
 
 ## Current status
-- Vercel deployment is live and serving the redesigned site.
-- Visual refresh is complete across primary and secondary pages.
-- Footer, navigation, and CTAs are aligned with the new luxe aesthetic.
-- Documentation still references the old migration plan and needs pruning.
+- Vercel production build (`catharsisba-k8epi9jyt`) contains the latest hero, header, footer, and events updates.
+- Blog hub is themed to match the landing hero, with seeded categories (Tattoo, Piercing, Community, Aftercare, Studio News) and Studio color pickers for non-dev editors.
+- Sanity Studio is live again (`sld92wg1`) after fixing the project ID, correcting CORS, and adding the legacy theme; publish/save buttons are more visible.
+- Navigation/CTA pass: header now includes “Call Us” CTA + animated menu button, menu cards scale better on mobile/light mode, and icons fill their frames.
+- Footer polish is in place (centered columns, gold/black logo, restrained social chips, CTA button styling, lighter text).
+- Events page uses “Booking” terminology, centered card layout, and improved hierarchy.
+- Local `npm run build` (Astro) succeeds; lint warnings are limited to vendor ordering (backdrop-filter) that we’ll clear in a final sweep.
 
 ## Remaining launch tasks
-1. **Supabase integration**
-   - Create `contact_submissions` table and configure service/anon keys.
-   - Replace PHPMailer endpoint with Supabase function & rate-limiting.
-   - Pipe notifications to Resend/SMTP and add simple monitoring.
-2. **Sanity wiring**
-   - Finalize `event`, `review`, `pageSettings`, `globalSettings` schemas.
-   - Build GROQ utilities and switch Astro pages (`artists`, `events`, etc.) to Sanity data.
-   - Migrate hero/background assets into `pageSettings` and remove local duplicates.
-3. **QA & performance**
-   - Run responsive audit (mobile/tablet/desktop) and Lighthouse/axe checks.
-   - Verify build via `npm run build` and resolve lingering lint warnings (backdrop-filter ordering).
-   - Add end-to-end smoke test (nav, forms, gallery lightbox).
-4. **Operational readiness**
-   - Configure Supabase + Sanity backups and seed production content.
-   - Enable analytics (Vercel Analytics or GA4) + privacy banner.
-   - Validate domain & DNS records, then run final regression prior to launch sign-off.
+1. **Supabase contact pipeline**
+   - Create `contact_submissions` table and secure keys.
+   - Replace PHPMailer endpoint with Supabase function + throttling.
+   - Wire notifications (Resend/SMTP) and basic alerting.
+2. **Sanity-driven content**
+   - Finish GROQ utilities and move remaining Astro pages (`artists`, `events`, `aftercare`, etc.) to live Sanity data.
+   - Migrate hero/background art into `pageSettings` instead of local assets.
+   - Add simple vision previews for event cards and footer CTAs.
+3. **Polish & QA**
+   - Resolve CSS warnings (ordering of `-webkit-backdrop-filter`, `mask-composite`).
+   - Run Lighthouse + axe, and tighten responsive breakpoints (especially mobile nav + footer).
+   - Smoke-test blog filters, menu interactions, booking links, and gallery lightbox.
+4. **Ops / DX**
+   - Document Supabase + Sanity backup routines; seed production with starter content.
+   - Enable analytics (Vercel Analytics or GA4) and update privacy banner copy.
+   - Verify DNS/domain settings and run a final regression before launch sign-off.
 
 ## Client handoff checklist
 - Produce `docs/client-guide.md` outlining Sanity workflows, deploys, and aftercare procedures.
@@ -31,9 +34,8 @@
 - Schedule training session and agree on post-launch support SLA.
 
 ## Improvement ideas & discussions
-- **Hero redesign**: Explore stretching `index.astro` hero image edge-to-edge (full viewport height) with repositioned headings/CTAs for a cinematic first impression—pair with scroll cue and subtle motion.
-- **Supabase + analytics**: Track contact conversions, page views, and event interest for data-backed decisions.
-- **Content ops**: Introduce Sanity-driven blog/merch/event modules once schemas are stable.
-- **Performance polish**: Tighten image optimization (AVIF/WebP, srcset) and consider incremental static regeneration when Sanity is wired.
-- **Accessibility & micro-interactions**: Add focus-visible polish, haptic cues, and optional reduced-motion toggles across new animations.
+- **Hero experience**: consider a cinematic, edge-to-edge hero variant once Sanity-driven assets land.
+- **Insights loop**: expand analytics to track bookings, blog reads, and event clicks for data-backed planning.
+- **ISR/Streaming**: revisit incremental static regeneration after Sanity wiring to reduce rebuild times.
+- **Accessibility & motion**: audit focus-visible states post-animated menu/footer updates; offer reduced-motion toggles.
 

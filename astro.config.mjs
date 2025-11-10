@@ -3,9 +3,10 @@ import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import vercel from "@astrojs/vercel";
 
+const siteUrl = process.env.VITE_SITE_URL || process.env.SITE || undefined
+
 export default defineConfig({
-  // Use VITE_ prefix so Astro/Vite can read it
-  site: import.meta.env.VITE_SITE_URL,
+  site: siteUrl,
   output: "static",
   adapter: vercel(),
   integrations: [react(), tailwind()],

@@ -35,6 +35,13 @@ function LightboxWrapper({ images, galleryId }) {
       pswpModule: () => import("photoswipe"),
     });
 
+    lightbox.on("contentLoadError", (e) => {
+      console.error(
+        `[Gallery] Failed to load slide content for ${galleryId}`,
+        e?.content?.data?.src || e?.content?.data?.element?.getAttribute("href"),
+      );
+    });
+
     lightbox.init();
 
     return () => {
@@ -109,8 +116,9 @@ function LightboxWrapper({ images, galleryId }) {
           >
             <a
               href={img.path}
-              data-pswp-width={img.width}
-              data-pswp-height={img.height}
+              data-pswp-src={img.path}
+              data-pswp-width={img.width || 1600}
+              data-pswp-height={img.height || 1200}
               className="block group"
             >
               <picture>

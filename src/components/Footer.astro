@@ -1,5 +1,4 @@
 ---
-import Icon from "./Icon.jsx";
 ---
 
 <footer class="site-footer">
@@ -15,8 +14,8 @@ import Icon from "./Icon.jsx";
           Tuesday – Saturday · 11a – 7p<br />Sunday · By appointment
         </p>
         <div class="footer-actions">
-          <a href="tel:+13172867092" class="btn-outline">Call (317) 286-7092</a>
-          <a href="mailto:info@catharsisba.com" class="btn-outline">Email us</a>
+          <a href="mailto:info@catharsisba.com" class="btn-cta footer-cta">Email us</a>
+          <a href="tel:+13172867092" class="btn-cta footer-cta footer-cta--ghost">Call (317) 286-7092</a>
         </div>
       </section>
 
@@ -32,9 +31,27 @@ import Icon from "./Icon.jsx";
               class="footer-link"
               href="https://neetocal.com/embed/catharsis-body-art"
               target="_blank"
-              rel="noopener noreferrer">NeetoCal booking</a>
+              rel="noopener noreferrer">Booking portal</a>
           </li>
           <li><a class="footer-link" href="/contact">Contact</a></li>
+          <li class="footer-social-links">
+            <a
+              href="https://instagram.com/catharsisbodyart"
+              aria-label="Instagram"
+              class="footer-social-chip">
+              <span aria-hidden="true">📷</span>
+              <span>Instagram</span>
+            </a>
+          </li>
+          <li class="footer-social-links">
+            <a
+              href="https://facebook.com/catharsisbodyart"
+              aria-label="Facebook"
+              class="footer-social-chip">
+              <span aria-hidden="true">📘</span>
+              <span>Facebook</span>
+            </a>
+          </li>
         </ul>
       </section>
 
@@ -75,18 +92,12 @@ import Icon from "./Icon.jsx";
     <div class="footer-bottom">
       <div class="footer-meta">
         <div class="footer-brand">
-          <picture>
-            <source
-              srcset="/images/branding/cba-logo-nobackground.avif"
-              type="image/avif"
-            />
-            <img
-              src="/images/branding/cba-logo-nobackground.webp"
-              alt="Catharsis Body Art logo"
-              loading="lazy"
-              decoding="async"
-            />
-          </picture>
+          <img
+            src="/images/branding/gold_black_logo.svg"
+            alt="Catharsis Body Art logo"
+            loading="lazy"
+            decoding="async"
+          />
           <span>Catharsis Body Art</span>
         </div>
         <nav class="footer-legal">
@@ -95,15 +106,6 @@ import Icon from "./Icon.jsx";
           <a href="/cookies">Cookies</a>
           <a href="/accessibility">Accessibility</a>
         </nav>
-        <div class="footer-social">
-          <a
-            href="https://instagram.com/catharsisbodyart"
-            aria-label="Instagram">📷</a
-          >
-          <a href="https://facebook.com/catharsisbodyart" aria-label="Facebook"
-            >📘</a
-          >
-        </div>
       </div>
       <p class="footer-copy">
         © {new Date().getFullYear()} Catharsis Body Art · All rights reserved.

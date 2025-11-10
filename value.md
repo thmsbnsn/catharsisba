@@ -16,7 +16,7 @@
 - Licensed, insured, and inspected studio with documented protocols accessible to clients.
 
 ## Transparent partnership from booking to touch-up
-- NeetoCal scheduling, Supabase-powered contact form, and rapid response SLAs keep communication tight.
+- Online booking calendar, responsive contact channels, and rapid response SLAs keep communication tight.
 - Honest pricing estimates, deposit policies, and session planning reduce surprises.
 - Free touch-ups within three months and loyalty perks reward repeat clients.
 

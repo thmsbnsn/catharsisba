@@ -21,6 +21,13 @@ export default function ArtistGallery({ images = [] }) {
       pswpModule: () => import("photoswipe"),
     });
 
+    lightbox.on("contentLoadError", (e) => {
+      console.error(
+        "[ArtistGallery] Failed to load slide content",
+        e?.content?.data?.src || e?.content?.data?.element?.getAttribute("href"),
+      );
+    });
+
     lightbox.init();
 
     return () => {

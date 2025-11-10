@@ -2,7 +2,12 @@
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Gallery from "../components/Gallery.jsx";
 import { getCollection } from "astro:content";
-import { getPageSettings, urlForImage } from "../lib/sanity";
+import {
+  getAllArtists,
+  getBlogPosts,
+  getPageSettings,
+  urlForImage,
+} from "../lib/sanity";
 
 type ManifestImage = {
   path: string;
@@ -16,10 +21,75 @@ type HeroCta = {
   href: string;
 };
 
-// Load all artists
-const artists = await getCollection("artists");
+type SanityImageAsset = {
+  asset?: {
+    _ref?: string;
+    url?: string;
+    metadata?: {
+      lqip?: string;
+      dimensions?: { width?: number; height?: number };
+    };
+  };
+  crop?: Record<string, unknown>;
+  hotspot?: Record<string, unknown>;
+  alt?: string;
+};
 
-// Helper: load manifest per slug
+type ArtistListItem = {
+  name: string;
+  slug: string;
+  position?: string;
+  shortBio?: string;
+  bio?: string;
+  styles?: string[];
+  profileImage?: SanityImageAsset;
+};
+
+type ProcessedArtist = {
+  slug: string;
+  name: string;
+  label?: string;
+  summary: string;
+  profileImageUrl: string | null;
+  profileImageAlt: string;
+  profileImageLqip?: string;
+};
+
+type BlogPostSummary = {
+  title: string;
+  slug: string;
+  excerpt?: string;
+  author?: string;
+  publishedAt?: string;
+  coverImage?: SanityImageAsset;
+  category?: {
+    title?: string;
+    slug?: string;
+    color?: string;
+  };
+};
+
+function buildImageUrl(
+  image: SanityImageAsset | undefined,
+  options: {
+    width?: number;
+    height?: number;
+    quality?: number;
+    fit?: "crop" | "clip" | "fill";
+  } = {},
+) {
+  if (image?.asset?._ref) {
+    let builder = urlForImage(image);
+    if (!builder) return undefined;
+    if (options.width) builder = builder.width(options.width);
+    if (options.height) builder = builder.height(options.height);
+    if (options.quality) builder = builder.quality(options.quality);
+    if (options.fit) builder = builder.fit(options.fit);
+    return builder.auto("format").url();
+  }
+  return image?.asset?.url;
+}
+
 async function loadManifest(slug: string): Promise<ManifestImage[]> {
   try {
     const mod = await import(`../../image-manifests/${slug}.json`);
@@ -29,22 +99,115 @@ async function loadManifest(slug: string): Promise<ManifestImage[]> {
   }
 }
 
-// Build array of artist + profile image
-const artistData = [];
-for (const a of artists) {
-  const slug = a.slug;
-  const manifest = await loadManifest(slug);
-  const hero =
-    manifest.find((img) => img.folder.includes("profile-images")) ||
-    manifest[0] ||
-    null;
-
-  artistData.push({
-    slug,
-    ...a.data,
-    hero,
-  });
+let rawArtists: ArtistListItem[] = [];
+try {
+  rawArtists = (await getAllArtists()) as ArtistListItem[];
+} catch (error) {
+  console.warn(
+    "[home] Failed to fetch artists from Sanity, falling back to local content.",
+    error,
+  );
 }
+
+if (!rawArtists?.length) {
+  const contentArtists = await getCollection("artists");
+  rawArtists = [];
+  for (const entry of contentArtists) {
+    const manifest = await loadManifest(entry.slug);
+    const hero =
+      manifest.find((img) => img.folder.includes("profile-images")) ||
+      manifest[0] ||
+      null;
+    rawArtists.push({
+      name: entry.data.name,
+      slug: entry.slug,
+      position: entry.data.styles?.[0] ?? "Artist",
+      shortBio: entry.data.bio,
+      bio: entry.data.bio,
+      styles: entry.data.styles ?? [],
+      profileImage: hero
+        ? {
+            asset: {
+              url: hero.path,
+              metadata: {
+                dimensions: {
+                  width: hero.width ?? 1600,
+                  height: hero.height ?? 1067,
+                },
+              },
+            },
+          }
+        : entry.data.hero
+          ? { asset: { url: entry.data.hero } }
+          : undefined,
+    });
+  }
+}
+
+const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
+  const profileImageUrl =
+    buildImageUrl(artist.profileImage, {
+      width: 640,
+      height: 640,
+      fit: "crop",
+    }) ?? artist.profileImage?.asset?.url ?? null;
+  const summarySource = artist.shortBio || artist.bio || "";
+  const summary =
+    summarySource.length > 220
+      ? `${summarySource.slice(0, 217)}…`
+      : summarySource;
+  const label =
+    artist.position ||
+    (artist.styles && artist.styles.length > 0
+      ? artist.styles.join(" · ")
+      : undefined);
+  return {
+    slug: artist.slug,
+    name: artist.name,
+    label,
+    summary:
+      summary ||
+      "Custom artistry tailored to your story. Consult to shape your session.",
+    profileImageUrl,
+    profileImageAlt: `${artist.name} portrait`,
+    profileImageLqip: artist.profileImage?.asset?.metadata?.lqip,
+  };
+});
+
+let blogPostsRaw: BlogPostSummary[] = [];
+try {
+  blogPostsRaw = (await getBlogPosts()) as BlogPostSummary[];
+} catch (error) {
+  console.warn("[home] Failed to fetch blog posts from Sanity.", error);
+}
+
+const blogHighlights = (blogPostsRaw ?? [])
+  .filter((post) => post?.slug)
+  .slice(0, 3)
+  .map((post) => {
+    const coverBuilder = urlForImage(post.coverImage);
+    const coverImageUrl =
+      coverBuilder
+        ?.width(900)
+        .height(600)
+        .fit("crop")
+        .auto("format")
+        .url() ?? post.coverImage?.asset?.url ?? "";
+    const coverImageLqip = post.coverImage?.asset?.metadata?.lqip ?? "";
+    const formattedDate = post.publishedAt
+      ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "";
+    return {
+      ...post,
+      coverImageUrl,
+      coverImageLqip,
+      formattedDate,
+    };
+  });
 
 const pageSettings = await getPageSettings("index");
 const heroImageBuilder = urlForImage(pageSettings?.heroMedia);
@@ -56,7 +219,9 @@ const heroBackground =
 const heroOverlay =
   pageSettings?.backgroundOverlay ??
   "linear-gradient(180deg, rgba(8,7,7,0.88) 0%, rgba(8,7,7,0.65) 55%, rgba(8,7,7,0.92) 100%)";
-const heroTitle = pageSettings?.heroTitle ?? "Release Through Artistry";
+const heroTitle =
+  pageSettings?.heroTitle ??
+  "More Than Ink Therapy – This is Release.";
 const heroSubtitle =
   pageSettings?.heroSubtitle ??
   "Upscale tattoo and piercing sessions inside a studio that obsesses over detail, safety, and soul. Step in with a vision—leave with catharsis.";
@@ -134,7 +299,6 @@ const heroCta: HeroCta =
   <!-- MEET THE ARTISTS -->
   <section id="artists" class="section-block">
     <div class="section-header">
-      <span class="section-label">01</span>
       <div>
         <h2 class="section-heading">Meet the Artists</h2>
         <p class="section-subhead">
@@ -145,51 +309,117 @@ const heroCta: HeroCta =
     </div>
 
     <div class="artist-grid">
-      {
-        artistData.map((artist) => {
-          const heroImage =
-            artist.hero?.path ??
-            artist.hero ??
-            "/images/branding/cba-logo-nobackground.webp";
-          const summary = artist.bio
-            ? `${artist.bio.split(" ").slice(0, 26).join(" ")}${artist.bio.split(" ").length > 26 ? "…" : ""}`
-            : "Custom artistry tailored to your story.";
-
-          return (
-            <article class="artist-luxe" data-artist={artist.slug}>
-              <div class="artist-avatar">
-                <div class="artist-avatar__frame">
+      {artistData.map((artist) => (
+        <article class="artist-luxe" data-artist={artist.slug}>
+          <div class="artist-avatar">
+            <div class="artist-avatar__frame">
+              {
+                artist.profileImageUrl ? (
                   <img
-                    src={heroImage}
-                    alt={`${artist.name} portrait`}
+                    src={artist.profileImageUrl}
+                    alt={artist.profileImageAlt}
                     loading="lazy"
                     decoding="async"
+                    style={
+                      artist.profileImageLqip
+                        ? { backgroundImage: `url(${artist.profileImageLqip})` }
+                        : undefined
+                    }
                   />
-                </div>
-              </div>
-              <div class="artist-meta">
-                {artist.styles && artist.styles.length > 0 && (
-                  <span class="artist-style">{artist.styles.join(" · ")}</span>
-                )}
-                <h3 class="artist-name">{artist.name}</h3>
-                <p class="artist-bio">{summary}</p>
-              </div>
-              <div class="artist-actions">
-                <a href={`/artists/${artist.slug}/`} class="btn-outline">
-                  View Profile
-                </a>
-              </div>
-            </article>
-          );
-        })
-      }
+                ) : (
+                  <div class="artist-avatar__fallback">
+                    {artist.name.slice(0, 2).toUpperCase()}
+                  </div>
+                )
+              }
+            </div>
+          </div>
+          <div class="artist-meta">
+            {artist.label && <span class="artist-style">{artist.label}</span>}
+            <h3 class="artist-name">{artist.name}</h3>
+            <p class="artist-bio">{artist.summary}</p>
+          </div>
+          <div class="artist-actions">
+            <a href={`/artists/${artist.slug}/`} class="btn-outline">
+              View Profile
+            </a>
+          </div>
+        </article>
+      ))}
     </div>
   </section>
+
+  {
+    blogHighlights.length > 0 && (
+      <section class="section-block">
+        <div class="section-header">
+          <div>
+            <h2 class="section-heading">Studio Stories</h2>
+            <p class="section-subhead">
+              Latest essays, aftercare wisdom, and community spotlights direct
+              from the team.
+            </p>
+          </div>
+          <a class="btn-outline" href="/blog">
+            View all posts
+          </a>
+        </div>
+        <div class="blog-grid">
+          {blogHighlights.map((post) => {
+            const accentColor = post.category?.color ?? "#CBA774";
+            const accentStyle = `--accent-color:${accentColor};`;
+            const coverStyle = post.coverImageLqip
+              ? `background-image:url('${post.coverImageLqip}');`
+              : undefined;
+            return (
+              <article class="blog-card" style={accentStyle}>
+                <a
+                  href={`/blog/${post.slug}/`}
+                  class="blog-card__image"
+                  aria-label={`Read ${post.title}`}
+                  style={coverStyle}
+                >
+                  {post.coverImageUrl && (
+                    <img
+                      src={post.coverImageUrl}
+                      alt={post.coverImage?.alt || post.title}
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  )}
+                  <span class="blog-card__image-overlay" />
+                </a>
+                <div class="blog-card__content">
+                  {post.category?.title && (
+                    <span class="blog-card__category" style={accentStyle}>
+                      {post.category.title}
+                    </span>
+                  )}
+                  <h3 class="blog-card__title">
+                    <a href={`/blog/${post.slug}/`}>{post.title}</a>
+                  </h3>
+                  {post.excerpt && (
+                    <p class="blog-card__excerpt">{post.excerpt}</p>
+                  )}
+                  <div class="blog-card__meta">
+                    {post.author && <span>{post.author}</span>}
+                    {post.formattedDate && <span>{post.formattedDate}</span>}
+                  </div>
+                  <a class="blog-card__cta" href={`/blog/${post.slug}/`}>
+                    Read Story
+                  </a>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+    )
+  }
 
   <!-- GALLERY TEASER -->
   <section class="section-block">
     <div class="section-header">
-      <span class="section-label">02</span>
       <div>
         <h2 class="section-heading">Gallery</h2>
         <p class="section-subhead">
@@ -206,7 +436,6 @@ const heroCta: HeroCta =
   <!-- COMMUNITY SUPPORT -->
   <section class="section-block">
     <div class="section-header">
-      <span class="section-label">03</span>
       <div>
         <h2 class="section-heading">Community Care</h2>
         <p class="section-subhead">
@@ -216,6 +445,20 @@ const heroCta: HeroCta =
     </div>
 
     <div class="luxe-card community-card">
+      <div class="community-media">
+        <div class="community-video">
+          <iframe
+            class="community-video__iframe"
+            title="Catharsis Body Art community support reel"
+            loading="lazy"
+            src="https://www.facebook.com/plugins/video.php?height=476&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1140637124856449%2F&show_text=false&width=848&t=0"
+            frameborder="0"
+            scrolling="no"
+            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
+            allowfullscreen
+          ></iframe>
+        </div>
+      </div>
       <div class="community-copy">
         <p>
           We’re partnering with local food banks and neighbors to assemble care packages, organize drop-offs, and make sure no one goes hungry during the shutdown.
@@ -226,19 +469,10 @@ const heroCta: HeroCta =
           <li>Register to deliver to families who can’t travel</li>
           <li>Spread the word so anyone in need knows where to find help</li>
         </ul>
-        <a href="/contact" class="btn-outline">Offer Support</a>
-      </div>
-      <div class="community-embed">
-        <iframe
-          title="Catharsis Body Art community support reel"
-          loading="lazy"
-          src="https://www.facebook.com/plugins/video.php?height=650&href=https%3A%2F%2Fwww.facebook.com%2Freel%2F1140637124856449%2F&show_text=false&width=400&t=0"
-          style="border: none; overflow: hidden;"
-          scrolling="no"
-          frameborder="0"
-          allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-          allowfullscreen
-        ></iframe>
+        <div class="community-actions">
+          <a href="tel:+13172867092" class="btn-cta">Call Now</a>
+          <a href="/contact" class="btn-outline btn-outline--soft">Offer Support</a>
+        </div>
       </div>
     </div>
   </section>
@@ -246,7 +480,6 @@ const heroCta: HeroCta =
   <!-- MERCHANDISE SHOWCASE -->
   <section class="section-block">
     <div class="section-header">
-      <span class="section-label">04</span>
       <div>
         <h2 class="section-heading">Studio Merchandise</h2>
         <p class="section-subhead">
@@ -306,7 +539,6 @@ const heroCta: HeroCta =
   <section class="section-block split-grid">
     <article class="resource-card">
       <header>
-        <span class="section-label">05</span>
         <h3>Aftercare</h3>
       </header>
       <p>
@@ -317,7 +549,6 @@ const heroCta: HeroCta =
     </article>
     <article class="resource-card">
       <header>
-        <span class="section-label">06</span>
         <h3>Visit or call</h3>
       </header>
       <p>

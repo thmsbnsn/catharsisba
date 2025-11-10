@@ -34,6 +34,15 @@ const previewClient = token
 
 const getClient = () => (import.meta.env.DEV && token ? previewClient : client)
 
+async function fetchSanity<T>(query: string, params: Record<string, unknown> = {}): Promise<T | null> {
+  try {
+    return await getClient().fetch<T>(query, params)
+  } catch (error) {
+    console.warn('[sanity] Fetch failed', {query, params, error})
+    return null
+  }
+}
+
 const imageBuilder = imageUrlBuilder(client)
 
 export const urlForImage = (source: unknown) => (source ? imageBuilder.image(source) : null)
@@ -42,12 +51,41 @@ export const portableTextToHtml = (blocks: unknown) =>
   Array.isArray(blocks)
     ? toHTML(blocks, {
         components: {
-          block: ({children}) => `<p>${children}</p>`,
+          block: ({children, value}) => {
+            const tag = value?.style || 'normal'
+            switch (tag) {
+              case 'h1':
+                return `<h1>${children}</h1>`
+              case 'h2':
+                return `<h2>${children}</h2>`
+              case 'h3':
+                return `<h3>${children}</h3>`
+              case 'h4':
+                return `<h4>${children}</h4>`
+              case 'blockquote':
+                return `<blockquote>${children}</blockquote>`
+              default:
+                return `<p>${children}</p>`
+            }
+          },
+          list: ({children, type}) =>
+            type === 'number' ? `<ol>${children}</ol>` : `<ul>${children}</ul>`,
+          listItem: ({children}) => `<li>${children}</li>`,
           marks: {
             link: ({value, children}) => {
               const href = value?.href || '#'
               const rel = href.startsWith('/') ? 'noopener' : 'noopener noreferrer'
               return `<a href="${href}" rel="${rel}" target="_blank">${children}</a>`
+            },
+          },
+          types: {
+            image: ({value}) => {
+              const builder = urlForImage(value?.asset || value)
+              const src = builder?.width(1400).auto('format').url()
+              if (!src) return ''
+              const alt = value?.alt || ''
+              const caption = alt ? `<figcaption>${alt}</figcaption>` : ''
+              return `<figure class="portable-image"><img src="${src}" alt="${alt}" loading="lazy" decoding="async" />${caption}</figure>`
             },
           },
         },
@@ -167,31 +205,146 @@ const pageSettingsQuery = groq`*[_type == "pageSettings" && route == $route][0]{
   }
 }`
 
+const blogCategoriesQuery = groq`*[_type == "blogCategory"] | order(title asc){
+  title,
+  "slug": slug.current,
+  color
+}`
+
+const blogPostsQuery = groq`*[_type == "blogPost"] | order(publishedAt desc){
+  title,
+  "slug": slug.current,
+  author,
+  publishedAt,
+  excerpt,
+  "coverImage": {
+    "asset": coverImage.asset->{
+      _id,
+      url,
+      metadata {
+        dimensions {width, height},
+        lqip,
+        palette
+      }
+    },
+    "crop": coverImage.crop,
+    "hotspot": coverImage.hotspot,
+    "alt": coalesce(coverImage.alt, "")
+  },
+  "category": category->{
+    title,
+    "slug": slug.current,
+    color
+  }
+}`
+
+const blogPostDetailQuery = groq`*[_type == "blogPost" && slug.current == $slug][0]{
+  title,
+  "slug": slug.current,
+  author,
+  publishedAt,
+  excerpt,
+  body[]{
+    ...,
+    ...select(
+      _type == "image" => {
+        "asset": asset->{
+          _id,
+          url,
+          metadata {
+            dimensions {width, height},
+            lqip,
+            palette
+          }
+        },
+        alt
+      },
+      {}
+    )
+  },
+  "coverImage": {
+    "asset": coverImage.asset->{
+      _id,
+      url,
+      metadata {
+        dimensions {width, height},
+        lqip,
+        palette
+      }
+    },
+    "crop": coverImage.crop,
+    "hotspot": coverImage.hotspot,
+    "alt": coalesce(coverImage.alt, "")
+  },
+  "category": category->{
+    title,
+    "slug": slug.current,
+    color
+  },
+  "extraImages": extraImages[]{
+    ...,
+    "asset": asset->{
+      _id,
+      url,
+      metadata {
+        dimensions {width, height},
+        lqip,
+        palette
+      }
+    },
+    alt
+  }
+}`
+
+const blogSlugsQuery = groq`*[_type == "blogPost" && defined(slug.current)]{
+  "slug": slug.current
+}`
+
 export async function getAllArtists() {
-  const data = await getClient().fetch(artistListQuery)
-  return data || []
+  const data = await fetchSanity<unknown[]>(artistListQuery)
+  return data ?? []
 }
 
 export async function getArtistBySlug(slug: string) {
   if (!slug) return null
-  return await getClient().fetch(artistDetailQuery, {slug})
+  return await fetchSanity(artistDetailQuery, {slug})
 }
 
 export async function getAllArtistSlugs() {
-  const data = await getClient().fetch(artistSlugsQuery)
-  return (data || []).map((item: {slug: string}) => item.slug)
+  const data = await fetchSanity<{slug: string}[]>(artistSlugsQuery)
+  return (data ?? []).map((item) => item.slug)
 }
 
 export async function getEvents() {
-  const data = await getClient().fetch(eventsQuery)
-  return data || []
+  const data = await fetchSanity<unknown[]>(eventsQuery)
+  return data ?? []
 }
 
 export async function getGlobalSettings() {
-  return await getClient().fetch(globalSettingsQuery)
+  return await fetchSanity(globalSettingsQuery)
 }
 
 export async function getPageSettings(route: string) {
-  return await getClient().fetch(pageSettingsQuery, {route})
+  return await fetchSanity(pageSettingsQuery, {route})
+}
+
+export async function getBlogCategories() {
+  const data = await fetchSanity<unknown[]>(blogCategoriesQuery)
+  return data ?? []
+}
+
+export async function getBlogPosts() {
+  const data = await fetchSanity<unknown[]>(blogPostsQuery)
+  return data ?? []
+}
+
+export async function getBlogPostBySlug(slug: string) {
+  if (!slug) return null
+  return await fetchSanity(blogPostDetailQuery, {slug})
+}
+
+export async function getAllBlogSlugs() {
+  const data = await fetchSanity<{slug: string}[]>(blogSlugsQuery)
+  return (data ?? []).map((item) => item.slug)
 }
 

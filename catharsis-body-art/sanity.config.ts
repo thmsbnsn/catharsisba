@@ -8,7 +8,7 @@ export default defineConfig({
   name: 'default',
   title: 'Catharsis Body Art',
 
-  projectId: 's1d92wg1',
+  projectId: 'sld92wg1',
   dataset: 'production',
 
   plugins: [structureTool(), visionTool()],

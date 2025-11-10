@@ -45,35 +45,28 @@ const {
 
     <header class="sticky top-0 z-40 backdrop-blur-md">
       <div class="max-w-6xl mx-auto px-4 py-4 lg:py-5">
-        <div
-          class="flex items-center justify-between rounded-full bg-[rgba(21,20,21,0.72)] border border-[color:var(--outline-soft)] px-4 lg:px-6 py-3 shadow-[var(--shadow-soft)]"
-        >
-          <a href="/" class="flex items-center gap-2 md:gap-3 group">
-            <picture>
-              <source srcset={siteConfig.logo.avif} type="image/avif" />
-              <img
-                src={siteConfig.logo.webp}
-                alt={siteConfig.name}
-                class="h-10 md:h-12 w-auto drop-shadow transition-transform duration-200 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
-              />
-            </picture>
-            <div class="hidden sm:block">
-              <h1
-                class="font-display text-sm md:text-base lg:text-lg tracking-[0.35em] uppercase text-[color:var(--text)]/90"
-              >
-                Catharsis
-              </h1>
-              <p
-                class="text-[11px] tracking-[0.4em] font-accent uppercase text-[color:var(--muted)]"
-              >
-                Body Art
-              </p>
+        <div class="header-shell">
+          <a href="/" class="header-brand group">
+            <img
+              src="/images/branding/gold_black_logo.svg"
+              alt={siteConfig.name}
+              class="header-logo"
+              loading="lazy"
+              decoding="async"
+            />
+            <div class="header-wordmark">
+              <h1>Catharsis</h1>
+              <p>Body Art</p>
             </div>
           </a>
 
-          <OffCanvasNav client:load />
+          <div class="header-actions">
+            <a href="tel:+13172867092" class="header-call">
+              <span>Call Us</span>
+              <strong>(317) 286-7092</strong>
+            </a>
+            <OffCanvasNav client:load />
+          </div>
         </div>
       </div>
     </header>

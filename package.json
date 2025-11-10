@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "gen:images": "node scripts/gen-image-manifests.mjs",
+    "gen:images": "node src/scripts/gen-image-manifests.mjs",
     "build": "npm run gen:images && astro build",
     "deploy:staging": "npm run build && git add -A && (git commit -m \"staging: deploy\" || echo \"no changes to commit\") && git push origin HEAD:staging --force",
     "deploy:staging:local": "npm run build && npm run deploy:staging",
@@ -25,6 +25,7 @@
     "@portabletext/to-html": "^2.0.2",
     "@sanity/client": "^6.21.2",
     "@sanity/image-url": "^1.0.2",
+    "@vercel/analytics": "^1.5.0",
     "astro": "^5.0.0",
     "framer-motion": "^12.23.16",
     "groq": "^3.50.1",

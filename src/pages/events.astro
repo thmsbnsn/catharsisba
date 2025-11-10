@@ -76,7 +76,7 @@ const partners = [
   },
 ];
 
-const NEETOCAL_EMBED = "https://neetocal.com/embed/catharsis-body-art";
+const BOOKING_EMBED = "https://neetocal.com/embed/catharsis-body-art";
 
 const pageSettings = await getPageSettings("events");
 const globalSettings = await getGlobalSettings();
@@ -121,7 +121,7 @@ const formatDateRange = (
   return `${startFormatter.format(startDate)} – ${endFormatter.format(endDate)}`;
 };
 
-const events: ProcessedEvent[] = eventsRaw
+const events: ProcessedEvent[] = (eventsRaw || [])
   .map((event) => {
     const start = event.startDate ? new Date(event.startDate) : null;
     const end = event.endDate ? new Date(event.endDate) : null;
@@ -160,87 +160,11 @@ const upcomingEvents: ProcessedEvent[] = events
     return a.start.getTime() - b.start.getTime();
   });
 
-const recentEvents: ProcessedEvent[] = events
-  .filter((event) => {
-    if (!event.start) return false;
-    const comparisonDate = event.end || event.start;
-    return comparisonDate < now;
-  })
-  .slice(-3)
-  .reverse();
-
-const heroTitle = pageSettings?.heroTitle || "Schedule with NeetoCal";
+const heroTitle = pageSettings?.heroTitle || "Schedule Your Session";
 const heroSubtitle =
   pageSettings?.heroSubtitle ||
-  "Reserve your next tattoo or piercing session through our NeetoCal calendar. Pick a slot that works for you, and we’ll follow up with confirmation details.";
+  "Reserve your next tattoo or piercing session through our booking calendar. Pick a slot that works for you, and we’ll follow up with confirmation details.";
 const heroCta = pageSettings?.cta;
-const urlParams = new URLSearchParams(Astro.url.search);
-
-let month = parseInt(urlParams.get("m") || "");
-let year = parseInt(urlParams.get("y") || "");
-
-if (isNaN(month) || month < 0 || month > 11) {
-  month = now.getMonth();
-}
-if (isNaN(year) || year < 2020 || year > 2035) {
-  year = now.getFullYear();
-}
-
-const firstDay = new Date(year, month, 1);
-const lastDay = new Date(year, month + 1, 0);
-const startDay = firstDay.getDay();
-const daysInMonth = lastDay.getDate();
-
-const holidays: Record<string, string> = {
-  "1-1": "New Year's Day",
-  "7-4": "Independence Day",
-  "12-25": "Christmas Day",
-};
-
-const cells: CalendarCell[] = [];
-for (let i = 0; i < startDay; i++) {
-  cells.push({ day: "", isCurrentMonth: false });
-}
-
-for (let day = 1; day <= daysInMonth; day++) {
-  const isToday =
-    year === now.getFullYear() &&
-    month === now.getMonth() &&
-    day === now.getDate();
-  const holidayKey = `${month + 1}-${day}`;
-  const holiday = holidays[holidayKey];
-
-  cells.push({
-    day: day.toString(),
-    isCurrentMonth: true,
-    isToday,
-    holiday,
-  });
-}
-
-while (cells.length % 7 !== 0) {
-  cells.push({ day: "", isCurrentMonth: false });
-}
-
-const prevMonth = month === 0 ? 11 : month - 1;
-const prevYear = month === 0 ? year - 1 : year;
-const nextMonth = month === 11 ? 0 : month + 1;
-const nextYear = month === 11 ? year + 1 : year;
-
-const monthNames = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
-];
 ---
 
 <BaseLayout
@@ -272,8 +196,8 @@ const monthNames = [
     <div class="luxe-card">
       <div class="booking-embed">
         <iframe
-          src={NEETOCAL_EMBED}
-          title="NeetoCal booking"
+          src={BOOKING_EMBED}
+          title="Book an appointment"
           loading="lazy"
           class="booking-embed__iframe"
           allow="payment *; microphone *; camera *"></iframe>
@@ -349,12 +273,12 @@ const monthNames = [
                     </a>
                   )}
                   <a
-                    href={NEETOCAL_EMBED}
+                    href={BOOKING_EMBED}
                     class="btn-outline"
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Book via NeetoCal
+                    Book online
                   </a>
                 </div>
               </div>
@@ -371,88 +295,6 @@ const monthNames = [
       }
     </div>
   </section>
-
-  <section class="section-block">
-    <div class="section-header">
-      <span class="section-label">Calendar</span>
-      <div>
-        <h2 class="section-heading">{monthNames[month]} {year}</h2>
-        <p class="section-subhead">
-          Track flash days, guest artist residencies, and studio closures. Tap
-          any day to start booking through NeetoCal.
-        </p>
-      </div>
-    </div>
-    <div class="luxe-card calendar-shell">
-      <div class="calendar-nav">
-        <a class="btn-outline" href={`?m=${prevMonth}&y=${prevYear}`}>
-          <span aria-hidden="true">←</span>
-          Previous
-        </a>
-        <a
-          class="btn-outline"
-          href={`?m=${now.getMonth()}&y=${now.getFullYear()}`}
-        >
-          Today
-        </a>
-        <a class="btn-outline" href={`?m=${nextMonth}&y=${nextYear}`}>
-          Next
-          <span aria-hidden="true">→</span>
-        </a>
-      </div>
-      <div class="calendar-grid calendar-grid--labels">
-        <span>Sun</span>
-        <span>Mon</span>
-        <span>Tue</span>
-        <span>Wed</span>
-        <span>Thu</span>
-        <span>Fri</span>
-        <span>Sat</span>
-      </div>
-      <div class="calendar-grid">
-        {
-          cells.map((cell) =>
-            cell.isCurrentMonth ? (
-              <a
-                href={NEETOCAL_EMBED}
-                target="_blank"
-                rel="noopener noreferrer"
-                class={`calendar-cell${cell.isToday ? " is-today" : ""}${cell.holiday ? " is-holiday" : ""}`}
-              >
-                <span class="calendar-date">{cell.day}</span>
-                {cell.holiday && (
-                  <span class="calendar-note">{cell.holiday}</span>
-                )}
-                <span class="calendar-cta">Book</span>
-              </a>
-            ) : (
-              <span class="calendar-cell is-muted">
-                <span class="calendar-date">{cell.day}</span>
-              </span>
-            ),
-          )
-        }
-      </div>
-    </div>
-  </section>
-
-  {
-    recentEvents.length > 0 && (
-      <section class="section-block">
-        <div class="luxe-card event-archive">
-          <h3>Recent highlights</h3>
-          <ul>
-            {recentEvents.map((event) => (
-              <li>
-                <span>{event.displayDate}</span>
-                <span>{event.title}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-    )
-  }
 
   <section class="section-block">
     <div class="section-header">

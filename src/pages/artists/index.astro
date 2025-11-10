@@ -2,9 +2,12 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArtistCard from "../../components/ArtistCard.jsx";
 import { getAllArtists, urlForImage } from "../../lib/sanity";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
 type SanityImageAsset = {
   asset?: {
+    _ref?: string;
     url?: string;
     metadata?: {
       lqip?: string;
@@ -30,17 +33,58 @@ type ProcessedArtist = ArtistListItem & {
   profileImageLqip?: string;
 };
 
-const rawArtists = (await getAllArtists()) as ArtistListItem[];
+function buildImageUrl(
+  image: SanityImageAsset | undefined,
+  options: { width?: number; height?: number; fit?: "crop" | "clip" | "fill"; quality?: number } = {},
+) {
+  if (image?.asset?._ref) {
+    let builder = urlForImage(image);
+    if (!builder) return undefined;
+    if (options.width) builder = builder.width(options.width);
+    if (options.height) builder = builder.height(options.height);
+    if (options.fit) builder = builder.fit(options.fit);
+    if (options.quality) builder = builder.quality(options.quality);
+    return builder.auto("format").url() ?? undefined;
+  }
+  return image?.asset?.url;
+}
+
+let rawArtists: ArtistListItem[] = [];
+
+try {
+  rawArtists = (await getAllArtists()) as ArtistListItem[];
+} catch (error) {
+  console.warn("[artists] Failed to fetch artists from Sanity, falling back to local content.", error);
+}
+
+if (!rawArtists?.length) {
+  const contentArtists = await getCollection("artists");
+  rawArtists = contentArtists.map((entry: CollectionEntry<"artists">) => ({
+    name: entry.data.name,
+    slug: entry.slug,
+    position: entry.data.styles?.[0] ?? "Artist",
+    shortBio: entry.data.bio,
+    profileImage: entry.data.hero
+      ? {
+          asset: {
+            url: entry.data.hero,
+          },
+        }
+      : undefined,
+    socialLinks: entry.data.socialLinks ?? {},
+  }));
+}
 
 const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
-  const imageBuilder = urlForImage(artist.profileImage);
-  const profileImageUrl = imageBuilder
-    ? imageBuilder.width(640).height(640).fit("crop").auto("format").url()
-    : null;
+  const profileImageUrl = buildImageUrl(artist.profileImage, {
+    width: 640,
+    height: 640,
+    fit: "crop",
+  });
 
   return {
     ...artist,
-    profileImageUrl,
+    profileImageUrl: profileImageUrl ?? null,
     profileImageAlt: `${artist.name} portrait`,
     profileImageLqip: artist.profileImage?.asset?.metadata?.lqip,
   };
@@ -53,7 +97,6 @@ const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
 >
   <section class="section-block">
     <div class="section-header">
-      <span class="section-label">01</span>
       <div>
         <h1 class="section-heading">Meet the Artists</h1>
         <p class="section-subhead">

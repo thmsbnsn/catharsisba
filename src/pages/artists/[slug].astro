@@ -7,9 +7,12 @@ import {
   portableTextToHtml,
   urlForImage,
 } from "../../lib/sanity";
+import { getCollection } from "astro:content";
+import type { CollectionEntry } from "astro:content";
 
 type SanityImageAsset = {
   asset?: {
+    _ref?: string;
     url?: string;
     metadata?: {
       lqip?: string;
@@ -20,6 +23,8 @@ type SanityImageAsset = {
   hotspot?: Record<string, unknown>;
   alt?: string;
 };
+
+type ArtistContentEntry = CollectionEntry<"artists">;
 
 type ArtistDetail = {
   name: string;
@@ -45,35 +50,109 @@ type GalleryImage = {
   lqip?: string;
 };
 
+function buildImageUrl(
+  image: SanityImageAsset | undefined,
+  options: {
+    width?: number;
+    height?: number;
+    quality?: number;
+    fit?: "crop" | "clip" | "fill";
+  } = {},
+) {
+  if (image?.asset?._ref) {
+    let builder = urlForImage(image);
+    if (!builder) return undefined;
+    if (options.width) builder = builder.width(options.width);
+    if (options.height) builder = builder.height(options.height);
+    if (options.quality) builder = builder.quality(options.quality);
+    if (options.fit) builder = builder.fit(options.fit);
+    return builder.auto("format").url();
+  }
+  return image?.asset?.url;
+}
+
 export async function getStaticPaths() {
-  const slugs = (await getAllArtistSlugs()) as string[];
-  return slugs.map((slug) => ({
+  let sanitySlugs: string[] = [];
+  try {
+    sanitySlugs = (await getAllArtistSlugs()) as string[];
+  } catch (error) {
+    console.warn(
+      "[artists] Failed to load Sanity slugs, falling back to content collection.",
+    );
+  }
+  const contentEntries = await getCollection("artists");
+  const fallbackSlugs = contentEntries.map(
+    (artist: ArtistContentEntry) => artist.slug,
+  );
+  const uniqueSlugs = Array.from(new Set([...sanitySlugs, ...fallbackSlugs]));
+  return uniqueSlugs.map((slug) => ({
     params: { slug },
   }));
 }
 
 const slug = Astro.params.slug as string;
-const artist = (await getArtistBySlug(slug)) as ArtistDetail | null;
+let artist = null as ArtistDetail | null;
+
+try {
+  artist = (await getArtistBySlug(slug)) as ArtistDetail | null;
+} catch (error) {
+  console.warn(
+    `[artists] Failed to fetch Sanity artist for slug "${slug}", checking content collection.`,
+  );
+}
 
 if (!artist) {
-  throw new Error(`Artist not found in Sanity: ${slug}`);
+  const contentEntries = await getCollection("artists");
+  const fallback = contentEntries.find(
+    (entry: ArtistContentEntry) => entry.slug === slug,
+  );
+  if (fallback) {
+    const images = fallback.data.images || [];
+    artist = {
+      name: fallback.data.name,
+      slug: fallback.slug,
+      position: fallback.data.styles?.[0] ?? "Artist",
+      shortBio: fallback.data.bio,
+      bio: [],
+      email: fallback.data.email,
+      socialLinks: {
+        instagram: fallback.data.instagram,
+      },
+      profileImage: fallback.data.hero
+        ? { asset: { url: fallback.data.hero } }
+        : undefined,
+      gallery: images.map((image: any) => ({
+        asset: {
+          url: image.src,
+          metadata: {
+            dimensions: { width: image.w ?? 1600, height: image.h ?? 1067 },
+          },
+        },
+        alt: image.alt,
+      })),
+    } as ArtistDetail;
+  }
+}
+
+if (!artist) {
+  throw new Error(`Artist not found: ${slug}`);
 }
 
 const firstName = artist.name.split(" ")[0];
 const position = artist.position || "Artist";
 const pageTitle = `${artist.name} — ${position}`;
 
-const heroBuilder = urlForImage(artist.profileImage);
-const heroImageUrl = heroBuilder
-  ? heroBuilder.width(900).height(900).fit("crop").auto("format").url()
-  : artist.profileImage?.asset?.url;
+const heroImageUrl = buildImageUrl(artist.profileImage, {
+  width: 900,
+  height: 900,
+  fit: "crop",
+});
 const heroImageLqip = artist.profileImage?.asset?.metadata?.lqip;
 
 const galleryImages: GalleryImage[] = (artist.gallery || []).map(
   (image, index) => {
-    const builder = urlForImage(image);
     const url =
-      builder?.width(1600).quality(85).auto("format").url() ||
+      buildImageUrl(image, { width: 1600, quality: 85, fit: "crop" }) ||
       image.asset?.url ||
       "";
     return {
@@ -86,7 +165,12 @@ const galleryImages: GalleryImage[] = (artist.gallery || []).map(
   },
 );
 
-const bioHtml = artist.bio?.length ? portableTextToHtml(artist.bio) : "";
+const bioHtml =
+  Array.isArray(artist.bio) && artist.bio.length
+    ? portableTextToHtml(artist.bio)
+    : artist.shortBio
+      ? `<p>${artist.shortBio}</p>`
+      : "";
 const instagramUrl = artist.socialLinks?.instagram || "";
 const facebookUrl = artist.socialLinks?.facebook || "";
 ---
@@ -200,7 +284,7 @@ const facebookUrl = artist.socialLinks?.facebook || "";
                 frameborder="0"
                 allowfullscreen="true"
                 allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-              ></iframe>
+              />
             </div>
           </div>
         </div>
