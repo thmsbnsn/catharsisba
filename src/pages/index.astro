@@ -13,7 +13,9 @@ const artistData = artists.map((artist) => {
     typeof artist.shortBio === "string"
       ? artist.shortBio
       : Array.isArray(artist.bio)
-        ? artist.bio.map((block) => (typeof block === "string" ? block : "")).join(" ")
+        ? artist.bio
+            .map((block) => (typeof block === "string" ? block : ""))
+            .join(" ")
         : typeof artist.bio === "string"
           ? artist.bio
           : "";
@@ -23,14 +25,20 @@ const artistData = artists.map((artist) => {
       : summarySource ||
         "Custom artistry tailored to your story. Consult to shape your session.";
   const label =
-    artist.position || (artist.styles && artist.styles.length ? artist.styles.join(" · ") : undefined);
+    artist.position ||
+    (artist.styles && artist.styles.length
+      ? artist.styles.join(" · ")
+      : undefined);
 
   return {
     slug: artist.slug,
     name: artist.name,
     label,
     summary,
-    profileImageUrl: imagePresets.card(artist.profileImage) || artist.profileImage?.url || null,
+    profileImageUrl:
+      imagePresets.card(artist.profileImage) ||
+      artist.profileImage?.url ||
+      null,
     profileImageAlt: `${artist.name} portrait`,
     profileImageLqip: artist.profileImage?.lqip,
   };
@@ -39,7 +47,8 @@ const artistData = artists.map((artist) => {
 const blogHighlightsRaw = await getBlogHighlights();
 const blogHighlights = blogHighlightsRaw.map((post) => ({
   ...post,
-  coverImageUrl: imagePresets.card(post.coverImage) || post.coverImage?.url || "",
+  coverImageUrl:
+    imagePresets.card(post.coverImage) || post.coverImage?.url || "",
   coverImageLqip: post.coverImage?.lqip,
 }));
 
@@ -52,15 +61,14 @@ const heroOverlay =
   pageSettings?.backgroundOverlay ??
   "linear-gradient(180deg, rgba(8,7,7,0.88) 0%, rgba(8,7,7,0.65) 55%, rgba(8,7,7,0.92) 100%)";
 const heroTitle =
-  pageSettings?.heroTitle ??
-  "More Than Ink Therapy – This is Release.";
+  pageSettings?.heroTitle ?? "More Than Ink Therapy – This is Release.";
 const heroSubtitle =
   pageSettings?.heroSubtitle ??
-  "Upscale tattoo and piercing sessions inside a studio that obsesses over detail, safety, and soul. Step in with a vision—leave with catharsis.";
+  "Precision tattoos and curated piercings in a studio where detail, safety, and artistry are everything. Bring your vision, leave transformed.";
 const heroCta =
   pageSettings?.cta && pageSettings.cta.label && pageSettings.cta.href
     ? pageSettings.cta
-    : { label: "Book Consultation", href: "/contact" };
+    : { label: "Get Started", href: "/contact" };
 ---
 
 <BaseLayout
@@ -98,12 +106,12 @@ const heroCta =
 
         <ul class="hero-metrics" aria-label="Studio highlights">
           <li>
-            <span class="metric-label">Piercing Walk-ins</span>
+            <span class="metric-label">Piercing & Tattoo Walk-Ins</span>
             <span class="metric-value">Welcomed daily</span>
           </li>
           <li>
             <span class="metric-label">Studio Finish</span>
-            <span class="metric-value">Medical-grade sterilization</span>
+            <span class="metric-value">Medical-grade Sterilization</span>
           </li>
         </ul>
       </div>
@@ -112,13 +120,12 @@ const heroCta =
         <span class="definition-term">cath·ar·sis</span>
         <span class="definition-pronounce">(kə-ˈthär-səs)</span>
         <p class="definition-body">
-          The release that comes from transforming your story into something
-          worn with pride. Every session is a ritual of care, intention, and
-          precision.
+          the process of releasing, and thereby providing relief from, strong or
+          repressed emotions.
         </p>
         <div class="definition-footer">
           <span class="glow-dot" aria-hidden="true"></span>
-          <span>Honoring your narrative since 2021</span>
+          <span>Honoring your narrative since 2025</span>
         </div>
       </aside>
     </div>
@@ -134,19 +141,21 @@ const heroCta =
       <div>
         <h2 class="section-heading">Meet the Artists</h2>
         <p class="section-subhead">
-          The humans behind the needles—meticulous, intuitive, and obsessed with
-          your comfort.
+          At Catharsis Body Art, our artists are more than needle jockeys —
+          they're storytellers. Each brings their own style, passion, and
+          expertise to help you express yourself through art that lasts a
+          lifetime.
         </p>
       </div>
     </div>
 
     <div class="artist-grid">
-      {artistData.map((artist) => (
-        <article class="artist-luxe" data-artist={artist.slug}>
-          <div class="artist-avatar">
-            <div class="artist-avatar__frame">
-              {
-                artist.profileImageUrl ? (
+      {
+        artistData.map((artist) => (
+          <article class="artist-luxe" data-artist={artist.slug}>
+            <div class="artist-avatar">
+              <div class="artist-avatar__frame">
+                {artist.profileImageUrl ? (
                   <img
                     src={artist.profileImageUrl}
                     alt={artist.profileImageAlt}
@@ -162,22 +171,22 @@ const heroCta =
                   <div class="artist-avatar__fallback">
                     {artist.name.slice(0, 2).toUpperCase()}
                   </div>
-                )
-              }
+                )}
+              </div>
             </div>
-          </div>
-          <div class="artist-meta">
-            {artist.label && <span class="artist-style">{artist.label}</span>}
-            <h3 class="artist-name">{artist.name}</h3>
-            <p class="artist-bio">{artist.summary}</p>
-          </div>
-          <div class="artist-actions">
-            <a href={`/artists/${artist.slug}/`} class="btn-outline">
-              View Profile
-            </a>
-          </div>
-        </article>
-      ))}
+            <div class="artist-meta">
+              {artist.label && <span class="artist-style">{artist.label}</span>}
+              <h3 class="artist-name">{artist.name}</h3>
+              <p class="artist-bio">{artist.summary}</p>
+            </div>
+            <div class="artist-actions">
+              <a href={`/artists/${artist.slug}/`} class="btn-outline">
+                View Profile
+              </a>
+            </div>
+          </article>
+        ))
+      }
     </div>
   </section>
 
@@ -188,7 +197,7 @@ const heroCta =
           <div>
             <h2 class="section-heading">Studio Stories</h2>
             <p class="section-subhead">
-              Latest essays, aftercare wisdom, and community spotlights direct
+              Latest essays, aftercare wisdom, and community spotlights directly
               from the team.
             </p>
           </div>
@@ -255,8 +264,7 @@ const heroCta =
       <div>
         <h2 class="section-heading">Gallery</h2>
         <p class="section-subhead">
-          A glimpse of recent work—precision line work, luxury piercings, and
-          healed pieces.
+          Catharsis in motion — ink that breathes, piercings that define.
         </p>
       </div>
     </div>
@@ -271,7 +279,8 @@ const heroCta =
       <div>
         <h2 class="section-heading">Community Care</h2>
         <p class="section-subhead">
-          With SNAP benefits paused, we’re rallying to keep households stocked. Share the message, grab supplies, or volunteer alongside us.
+          With SNAP benefits paused, we’re rallying to keep households stocked.
+          Share the message, grab supplies, or volunteer alongside us.
         </p>
       </div>
     </div>
@@ -287,23 +296,21 @@ const heroCta =
             frameborder="0"
             scrolling="no"
             allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share"
-            allowfullscreen
-          ></iframe>
+            allowfullscreen></iframe>
         </div>
       </div>
       <div class="community-copy">
         <p>
-          We’re partnering with local food banks and neighbors to assemble care packages, organize drop-offs, and make sure no one goes hungry during the shutdown.
-          Every donation or extra set of hands amplifies the impact.
+          Panoony's Pizza and Wings and Catharsis Body Art are launching
+          initiatives to help feed families this month in effort to combat the
+          devastating loss of food benefits that millions of Americans are
+          facing.
         </p>
-        <ul>
-          <li>Pick up pantry staples and hygiene kits at the studio</li>
-          <li>Register to deliver to families who can’t travel</li>
-          <li>Spread the word so anyone in need knows where to find help</li>
-        </ul>
         <div class="community-actions">
           <a href="tel:+13172867092" class="btn-cta">Call Now</a>
-          <a href="/contact" class="btn-outline btn-outline--soft">Offer Support</a>
+          <a href="/contact" class="btn-outline btn-outline--soft"
+            >Offer Support</a
+          >
         </div>
       </div>
     </div>
@@ -346,7 +353,7 @@ const heroCta =
           matter when you walk in, and long after you leave.”
         </blockquote>
         <div class="merch-actions">
-          <a href="tel:+13172867092" class="btn-cta">Call to inquire</a>
+          <a href="tel:+13172867092" class="btn-cta">Call to Inquire</a>
           <a href="/our-studio" class="btn-outline">Visit the studio</a>
         </div>
       </div>
@@ -359,8 +366,8 @@ const heroCta =
       <div class="cta-banner__content">
         <h2>Ready when you are.</h2>
         <p>
-          Secure a consult for tattoos or piercings. We’ll map lighting,
-          jewelry, and healing before needles ever touch skin.
+          Give us a call or book a consult for tattoos or piercings. We’ll map
+          lighting, jewelry, and healing before needles ever touch skin.
         </p>
       </div>
       <a href="/contact" class="btn-cta" data-open-contact="true"> Book Now </a>
@@ -387,7 +394,7 @@ const heroCta =
         5801 N. Green St. Suite 106, Brownsburg, IN 46112<br />
         <a href="tel:+13172867092" class="resource-link">(317) 286-7092</a>
       </p>
-      <a href="/contact" class="btn-outline"> Open Contact Page </a>
+      <a href="/contact" class="btn-outline"> VisitContact Page </a>
     </article>
   </section>
 </BaseLayout>

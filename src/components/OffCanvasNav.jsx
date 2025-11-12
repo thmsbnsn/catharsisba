@@ -40,9 +40,9 @@ export default function OffCanvasNav() {
 
   const navItems = [
     { href: "/", title: "Home", iconSrc: "/icons/Homepage_Icon.svg", description: "Main page" },
-    { href: "/artists", title: "Meet the Artists", iconSrc: "/icons/MeetTheArtists_Icon.svg", description: "Chris & Austin" },
+    { href: "/artists", title: "Meet the Artists", iconSrc: "/icons/MeetTheArtists_Icon.svg", description: "Our Artists" },
     { href: "/gallery", title: "Gallery", iconSrc: "/icons/Gallery_Icon.svg", description: "Selected works" },
-    { href: "/events", title: "Events", iconSrc: "/icons/events.svg", description: "This month & partners" },
+    { href: "/events", title: "Events", iconSrc: "/icons/events.svg", description: "This month" },
     { href: "/faq", title: "FAQ", iconSrc: "/icons/faq.svg", description: "Common questions" },
     { href: "/our-studio", title: "Our Studio", iconSrc: "/icons/OurStudio_Icon.svg", description: "Visit us" },
     { href: "/aftercare", title: "Aftercare", iconSrc: "/icons/Aftercare_Icon.svg", description: "Healing guide" },

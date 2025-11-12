@@ -9,7 +9,7 @@ const {
   title = siteConfig.name,
   description = siteConfig.tagline,
   url = siteConfig.url,
-  image = siteConfig.logo.webp,
+  image = siteConfig.logo.svg,
   backgroundImage = "/images/webpages/background1.webp",
 } = Astro.props;
 ---
@@ -48,7 +48,7 @@ const {
         <div class="header-shell">
           <a href="/" class="header-brand group">
             <img
-              src="/images/branding/gold_black_logo.svg"
+              src="/images/branding/colored_logo.svg"
               alt={siteConfig.name}
               class="header-logo"
               loading="lazy"
@@ -63,7 +63,6 @@ const {
           <div class="header-actions">
             <a href="tel:+13172867092" class="header-call">
               <span>Call Us</span>
-              <strong>(317) 286-7092</strong>
             </a>
             <OffCanvasNav client:load />
           </div>

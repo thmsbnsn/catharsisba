@@ -9,6 +9,7 @@ Desktop.ini
 # OneDrive temp
 ~$*
 Icon?
+!public/icons/
 *.lnk
 
 # Ignore environment files containing secrets (keep secrets in GitHub Actions secrets)

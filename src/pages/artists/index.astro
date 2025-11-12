@@ -1,94 +1,25 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArtistCard from "../../components/ArtistCard.jsx";
-import { getAllArtists, urlForImage } from "../../lib/sanity";
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
+import { getArtists } from "../../lib/data-sources";
+import { imagePresets } from "../../lib/image-helpers";
+import type { NormalizedArtist } from "../../lib/data-sources";
 
-type SanityImageAsset = {
-  asset?: {
-    _ref?: string;
-    url?: string;
-    metadata?: {
-      lqip?: string;
-      dimensions?: { width?: number; height?: number };
-    };
-  };
-  crop?: Record<string, unknown>;
-  hotspot?: Record<string, unknown>;
-};
-
-type ArtistListItem = {
-  name: string;
-  slug: string;
-  position?: string;
-  shortBio?: string;
-  profileImage?: SanityImageAsset;
-  socialLinks?: Record<string, string>;
-};
-
-type ProcessedArtist = ArtistListItem & {
+type ArtistCardData = NormalizedArtist & {
   profileImageUrl: string | null;
   profileImageAlt: string;
   profileImageLqip?: string;
 };
 
-function buildImageUrl(
-  image: SanityImageAsset | undefined,
-  options: { width?: number; height?: number; fit?: "crop" | "clip" | "fill"; quality?: number } = {},
-) {
-  if (image?.asset?._ref) {
-    let builder = urlForImage(image);
-    if (!builder) return undefined;
-    if (options.width) builder = builder.width(options.width);
-    if (options.height) builder = builder.height(options.height);
-    if (options.fit) builder = builder.fit(options.fit);
-    if (options.quality) builder = builder.quality(options.quality);
-    return builder.auto("format").url() ?? undefined;
-  }
-  return image?.asset?.url;
-}
+const artists = await getArtists();
 
-let rawArtists: ArtistListItem[] = [];
-
-try {
-  rawArtists = (await getAllArtists()) as ArtistListItem[];
-} catch (error) {
-  console.warn("[artists] Failed to fetch artists from Sanity, falling back to local content.", error);
-}
-
-if (!rawArtists?.length) {
-  const contentArtists = await getCollection("artists");
-  rawArtists = contentArtists.map((entry: CollectionEntry<"artists">) => ({
-    name: entry.data.name,
-    slug: entry.slug,
-    position: entry.data.styles?.[0] ?? "Artist",
-    shortBio: entry.data.bio,
-    profileImage: entry.data.hero
-      ? {
-          asset: {
-            url: entry.data.hero,
-          },
-        }
-      : undefined,
-    socialLinks: entry.data.socialLinks ?? {},
-  }));
-}
-
-const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
-  const profileImageUrl = buildImageUrl(artist.profileImage, {
-    width: 640,
-    height: 640,
-    fit: "crop",
-  });
-
-  return {
-    ...artist,
-    profileImageUrl: profileImageUrl ?? null,
-    profileImageAlt: `${artist.name} portrait`,
-    profileImageLqip: artist.profileImage?.asset?.metadata?.lqip,
-  };
-});
+const artistData: ArtistCardData[] = artists.map((artist) => ({
+  ...artist,
+  profileImageUrl:
+    imagePresets.card(artist.profileImage) || artist.profileImage?.url || null,
+  profileImageAlt: `${artist.name} portrait`,
+  profileImageLqip: artist.profileImage?.lqip,
+}));
 ---
 
 <BaseLayout
@@ -100,14 +31,13 @@ const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
       <div>
         <h1 class="section-heading">Meet the Artists</h1>
         <p class="section-subhead">
-          Each artist curates an experience tailored to you—custom design
-          consults, jewelry styling, and a calming studio presence that lets you
-          exhale.
+          Each artist crafts a personalized experience—custom design consults,
+          jewelry styling, and a calm studio vibe that lets you exhale.
         </p>
       </div>
     </div>
     <div class="artist-grid">
-      {artistData.map((artist) => <ArtistCard artist={artist} client:load />)}
+      {artistData.map((artist) => <ArtistCard artist={artist} />)}
     </div>
   </section>
 </BaseLayout>
