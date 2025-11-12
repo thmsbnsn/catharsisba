@@ -4,7 +4,7 @@ export const siteConfig = {
   // Use VITE_SITE_URL so staging/prod .env files control the base URL
   url: import.meta.env.VITE_SITE_URL,
   logo: {
-    svg: "/images/branding/colored_logo.svg",
+    webp: "/images/branding/cba-logo-nobackground.webp",
     avif: "/images/branding/cba-logo-nobackground.avif",
   },
   favicon: {
