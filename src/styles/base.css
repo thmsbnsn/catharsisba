@@ -29,13 +29,14 @@
 [data-theme="light"]{
   --bg:#f5f2ed;
   --bg-elevated:#ffffff;
+  --text:#151415;
   --surface:#ffffff;
   --surface-glass:rgba(255,255,255,0.88);
   --surface-glass-light:rgba(12,11,12,0.06);
   --outline:#e3d9cd;
   --outline-soft:rgba(201,168,116,0.22);
-  --cta:#d93628;
-  --cta-hover:#b72a1e;
+  --cta:#D4AF37;
+  --cta-hover:#F5D076;
 }
 
 /* ================== Inter (variable) ================== */
@@ -440,8 +441,8 @@
   border-radius: 28px;
   padding: clamp(1.75rem, 2vw + 1rem, 2.75rem);
   box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
   display: grid;
   gap: 1.35rem;
   position: relative;
@@ -582,8 +583,8 @@
   border: 1px solid rgba(228,60,47,0.25);
   border-radius: 20px;
   padding: 1.25rem 1.5rem;
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   position: relative;
   overflow: hidden;
 }
