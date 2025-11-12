@@ -8,9 +8,11 @@ import type { NormalizedArtist } from "../../lib/data-sources";
 
 export async function getStaticPaths() {
   const artists = await getArtists();
-  return artists.map((artist) => ({
-    params: { slug: artist.slug },
-  }));
+  return artists
+    .filter((artist) => Boolean(artist.slug))
+    .map((artist) => ({
+      params: { slug: artist.slug },
+    }));
 }
 
 const slug = Astro.params.slug as string;
