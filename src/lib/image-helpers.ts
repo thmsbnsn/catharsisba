@@ -1,5 +1,11 @@
 import { urlForImage } from './sanity'
 
+const isSanityAsset = (image: unknown) => {
+  if (!image || typeof image !== 'object') return false
+  const source = image as { _ref?: string; asset?: { _ref?: string } }
+  return Boolean(source._ref || source.asset?._ref)
+}
+
 export type ImageFormat = 'webp' | 'avif' | 'jpg'
 
 export interface ImageOptions {
@@ -18,6 +24,10 @@ export function buildImageUrl(image: unknown, options: ImageOptions = {}): strin
     (image as {path?: string}).path ??
     (image as {asset?: {url?: string}}).asset?.url ??
     null
+
+  if (!isSanityAsset(image)) {
+    return fallbackUrl
+  }
 
   const builder = urlForImage(image)
   if (!builder) return fallbackUrl
