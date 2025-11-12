@@ -1,9 +1,0 @@
-# Hostinger Production Environment Variables
-# For catharsisba.com (main domain)
-# Copy this to .env.production
-
-FTP_HOST=46.202.183.226
-FTP_USER=u204461404.catharsisba.com
-FTP_PASS=L0g!nSt@geX4
-FTP_DIR=/public_html
-WIN_SCP_FINGERPRINT=

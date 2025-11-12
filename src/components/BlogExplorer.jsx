@@ -1,4 +1,9 @@
-import {useMemo, useState} from "react";
+import { useState } from "react";
+
+/**
+ * @typedef {import("../types").BlogPost} BlogPost
+ * @typedef {import("../types").Category} BlogCategory
+ */
 
 function formatDate(dateString) {
   if (!dateString) return "";
@@ -13,21 +18,23 @@ function formatDate(dateString) {
   }
 }
 
+/**
+ * @param {{ posts?: BlogPost[]; categories?: BlogCategory[] }} props
+ */
 export default function BlogExplorer({ posts = [], categories = [] }) {
   const [activeCategory, setActiveCategory] = useState("all");
 
-  const availableCategories = useMemo(() => {
-    if (categories.length) return categories;
-
-    const map = new Map();
-    posts.forEach((post) => {
-      const cat = post.category;
-      if (cat?.slug && !map.has(cat.slug)) {
-        map.set(cat.slug, cat);
-      }
-    });
-    return Array.from(map.values());
-  }, [categories, posts]);
+  const availableCategories = categories.length
+    ? categories
+    : Array.from(
+        posts.reduce((map, post) => {
+          const cat = post.category;
+          if (cat?.slug && !map.has(cat.slug)) {
+            map.set(cat.slug, cat);
+          }
+          return map;
+        }, new Map()).values(),
+      );
 
   const filteredPosts =
     activeCategory === "all"

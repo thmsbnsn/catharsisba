@@ -2,17 +2,10 @@ import {createClient} from '@sanity/client'
 import imageUrlBuilder from '@sanity/image-url'
 import {toHTML} from '@portabletext/to-html'
 import groq from 'groq'
+import { env } from './env'
+import type { Artist, BlogPost, Image } from '../types'
 
-const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID
-const dataset = import.meta.env.PUBLIC_SANITY_DATASET || 'production'
-const apiVersion = import.meta.env.PUBLIC_SANITY_API_VERSION || '2024-01-01'
-
-if (!projectId) {
-  throw new Error('Missing PUBLIC_SANITY_PROJECT_ID environment variable')
-}
-
-const token = import.meta.env.SANITY_API_TOKEN
-const useCdn = import.meta.env.PROD
+const {projectId, dataset, apiVersion, token, useCdn} = env.sanity
 
 const client = createClient({
   projectId,
@@ -32,7 +25,52 @@ const previewClient = token
     })
   : client
 
-const getClient = () => (import.meta.env.DEV && token ? previewClient : client)
+const getClient = () => (env.runtime.isDev && token ? previewClient : client)
+
+type SanityPortableImage = {
+  asset?: {
+    _id?: string
+    _ref?: string
+    url?: string
+    metadata?: {
+      lqip?: string
+      dimensions?: {width?: number; height?: number}
+      palette?: unknown
+    }
+  }
+  crop?: Record<string, unknown>
+  hotspot?: Record<string, unknown>
+  alt?: string
+}
+
+type SanityArtist = {
+  name: string
+  slug: {current: string}
+  position?: string
+  shortBio?: string
+  bio?: unknown[]
+  email?: string
+  socialLinks?: Record<string, string>
+  videos?: string[]
+  profileImage?: SanityPortableImage
+  gallery?: SanityPortableImage[]
+}
+
+type SanityBlogPost = {
+  title: string
+  slug: {current: string}
+  author?: string
+  publishedAt?: string
+  excerpt?: string
+  coverImage?: SanityPortableImage & {alt?: string}
+  category?: {
+    title?: string
+    slug?: {current: string}
+    color?: string
+  }
+  body?: unknown[]
+  extraImages?: SanityPortableImage[]
+}
 
 async function fetchSanity<T>(query: string, params: Record<string, unknown> = {}): Promise<T | null> {
   try {
@@ -46,6 +84,18 @@ async function fetchSanity<T>(query: string, params: Record<string, unknown> = {
 const imageBuilder = imageUrlBuilder(client)
 
 export const urlForImage = (source: unknown) => (source ? imageBuilder.image(source) : null)
+
+const mapSanityImage = (image?: SanityPortableImage): Image | undefined => {
+  const url = image?.asset?.url
+  if (!url) return undefined
+  return {
+    url,
+    width: image.asset?.metadata?.dimensions?.width,
+    height: image.asset?.metadata?.dimensions?.height,
+    lqip: image.asset?.metadata?.lqip,
+    alt: image.alt,
+  }
+}
 
 export const portableTextToHtml = (blocks: unknown) =>
   Array.isArray(blocks)
@@ -69,7 +119,8 @@ export const portableTextToHtml = (blocks: unknown) =>
             }
           },
           list: ({children, type}) =>
-            type === 'number' ? `<ol>${children}</ol>` : `<ul>${children}</ul>`,
+            type === 'number' ? `<ol>${children}</ol>` : `<ul>${children}</ul>`
+          ,
           listItem: ({children}) => `<li>${children}</li>`,
           marks: {
             link: ({value, children}) => {
@@ -300,14 +351,45 @@ const blogSlugsQuery = groq`*[_type == "blogPost" && defined(slug.current)]{
   "slug": slug.current
 }`
 
+const mapSanityArtistToCore = (artist: SanityArtist): Artist => ({
+  slug: artist.slug.current,
+  name: artist.name,
+  position: artist.position,
+  shortBio: artist.shortBio,
+  bio: artist.bio,
+  email: artist.email,
+  socialLinks: artist.socialLinks,
+  profileImage: mapSanityImage(artist.profileImage),
+  gallery: artist.gallery?.map(mapSanityImage).filter(Boolean) as Image[] | undefined,
+})
+
+const mapSanityPost = (post: SanityBlogPost): BlogPost => ({
+  slug: post.slug.current,
+  title: post.title,
+  author: post.author,
+  excerpt: post.excerpt,
+  publishedAt: post.publishedAt,
+  body: post.body,
+  coverImage: mapSanityImage(post.coverImage),
+  category: post.category
+    ? {
+        title: post.category.title || '',
+        slug: post.category.slug?.current || '',
+        color: post.category.color,
+      }
+    : undefined,
+  extraImages: post.extraImages?.map(mapSanityImage).filter(Boolean) as Image[] | undefined,
+})
+
 export async function getAllArtists() {
-  const data = await fetchSanity<unknown[]>(artistListQuery)
-  return data ?? []
+  const data = await fetchSanity<SanityArtist[]>(artistListQuery)
+  return data ? data.map(mapSanityArtistToCore) : []
 }
 
 export async function getArtistBySlug(slug: string) {
   if (!slug) return null
-  return await fetchSanity(artistDetailQuery, {slug})
+  const data = await fetchSanity<SanityArtist>(artistDetailQuery, {slug})
+  return data ? mapSanityArtistToCore(data) : null
 }
 
 export async function getAllArtistSlugs() {
@@ -334,13 +416,14 @@ export async function getBlogCategories() {
 }
 
 export async function getBlogPosts() {
-  const data = await fetchSanity<unknown[]>(blogPostsQuery)
-  return data ?? []
+  const data = await fetchSanity<SanityBlogPost[]>(blogPostsQuery)
+  return data ? data.map(mapSanityPost) : []
 }
 
 export async function getBlogPostBySlug(slug: string) {
   if (!slug) return null
-  return await fetchSanity(blogPostDetailQuery, {slug})
+  const data = await fetchSanity<SanityBlogPost>(blogPostDetailQuery, {slug})
+  return data ? mapSanityPost(data) : null
 }
 
 export async function getAllBlogSlugs() {

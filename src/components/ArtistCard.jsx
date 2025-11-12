@@ -1,5 +1,20 @@
+/**
+ * @typedef {import("../types").Artist & {
+ *   profileImageUrl?: string | null;
+ *   profileImageAlt?: string;
+ *   hero?: { path?: string } | string | null;
+ * }} ArtistCardArtist
+ */
+
+/**
+ * @param {{ artist: ArtistCardArtist }} props
+ */
 export default function ArtistCard({ artist }) {
-  const profileImageUrl = artist.profileImageUrl ?? artist.hero?.path ?? artist.hero;
+  const profileImageUrl =
+    artist.profileImageUrl ||
+    artist.hero?.path ||
+    artist.hero ||
+    null;
   const profileImageAlt = artist.profileImageAlt || `${artist.name} portrait`;
   const baseSummary = artist.shortBio || artist.bio || "";
   const summary =

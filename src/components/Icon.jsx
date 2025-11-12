@@ -1,12 +1,35 @@
+import { memo } from "react";
+import { getIconProps } from "../utils/iconHelpers.js";
+
+/**
+ * @typedef {{
+ *   id?: string;
+ *   src?: string;
+ *   className?: string;
+ *   ariaHidden?: boolean;
+ *   title?: string;
+ * }} IconProps
+ */
+
 // Icon can render from sprite (default) or a direct svg file via src
-export default function Icon({ id, className = "w-5 h-5", ariaHidden = true, title, src }) {
-  if (src) {
-    return <img src={src} alt={title || id || ""} className={className} aria-hidden={ariaHidden} />;
+/**
+ * @param {IconProps} props
+ */
+function IconComponent(props) {
+  const { type, props: iconProps } = getIconProps(props);
+
+  if (type === "img") {
+    const { hrefId, title, ...rest } = iconProps;
+    return <img {...rest} />;
   }
+
+  const { hrefId, title, ...rest } = iconProps;
   return (
-    <svg className={className} aria-hidden={ariaHidden} role={ariaHidden ? undefined : 'img'}>
+    <svg {...rest}>
       {title && <title>{title}</title>}
-      <use href={`/icons/cba-icons.svg#${id}`} />
+      <use href={`/icons/cba-icons.svg#${hrefId}`} />
     </svg>
   );
 }
+
+export default memo(IconComponent);

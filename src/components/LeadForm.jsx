@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[A-Za-z]{2,}$/;
+
 export default function LeadForm() {
   const [started, setStarted] = useState(0);
   const [status, setStatus] = useState(null); // 'loading' | 'sent' | 'fail'
@@ -37,13 +39,17 @@ export default function LeadForm() {
     if (artist) data.set("artist", artist);
 
     // Client validation
-    const name = (form.elements.name && form.elements.name.value || '').trim();
-    const email = (form.elements.email && form.elements.email.value || '').trim();
-    const message = (form.elements.message && form.elements.message.value || '').trim();
+    const formData = Object.fromEntries(data.entries());
+    const name = (formData.name || '').trim();
+    const email = (formData.email || '').trim();
+    const message = (formData.message || '').trim();
     const newErrors = { name: '', email: '', message: '' };
+    data.set("name", name);
+    data.set("email", email);
+    data.set("message", message);
     if (!name) newErrors.name = 'Please enter your name';
     if (!email) newErrors.email = 'Please enter your email';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) newErrors.email = 'Please enter a valid email';
+    else if (!EMAIL_REGEX.test(email)) newErrors.email = 'Please enter a valid email';
     if (!message) newErrors.message = 'Please enter a brief message';
     setErrors(newErrors);
     if (newErrors.name || newErrors.email || newErrors.message) {
@@ -108,82 +114,99 @@ export default function LeadForm() {
         </>
       )}
 
-      <div className="form-field">
-        <label htmlFor="lead_name" className="sr-only">
-          Your name
-        </label>
-        <div className={controlClass(Boolean(errors.name))}>
-        <input
-          id="lead_name"
-          name="name"
-          required
-          placeholder=" "
-          aria-invalid={errors.name ? 'true' : 'false'}
-          aria-describedby={errors.name ? 'err_name' : undefined}
-          onBlur={(e) => {
-            const v = (e.target.value || '').trim();
-            setErrors((s) => ({ ...s, name: v ? '' : 'Please enter your name' }));
-          }}
-          className="field-input"
-        />
-        <label htmlFor="lead_name" className="field-label">
-          Your name
-        </label>
-        <span className="field-underline" />
+      <fieldset className="form-fieldset">
+        <legend className="sr-only">Contact information</legend>
+        <div className="form-field">
+          <label htmlFor="lead_name" className="sr-only">
+            Your name
+          </label>
+          <div className={controlClass(Boolean(errors.name))}>
+            <input
+              id="lead_name"
+              name="name"
+              required
+              placeholder=" "
+              aria-invalid={errors.name ? "true" : "false"}
+              aria-describedby={errors.name ? "err_name" : undefined}
+              onBlur={(e) => {
+                const v = (e.target.value || "").trim();
+                setErrors((s) => ({
+                  ...s,
+                  name: v ? "" : "Please enter your name",
+                }));
+              }}
+              className="field-input"
+            />
+            <label htmlFor="lead_name" className="field-label">
+              Your name
+            </label>
+            <span className="field-underline" />
+          </div>
+          {errors.name && (
+            <p id="err_name" className="form-error" role="alert">
+              {errors.name}
+            </p>
+          )}
         </div>
-        {errors.name && <p id="err_name" className="form-error" role="alert">{errors.name}</p>}
-      </div>
 
-      <div className="form-field">
-        <label htmlFor="lead_email" className="sr-only">
-          Email address
-        </label>
-        <div className={controlClass(Boolean(errors.email))}>
-        <input
-          id="lead_email"
-          name="email"
-          type="email"
-          required
-          placeholder=" "
-          aria-invalid={errors.email ? 'true' : 'false'}
-          aria-describedby={errors.email ? 'err_email' : undefined}
-          onBlur={(e) => {
-            const v = (e.target.value || '').trim();
-            let msg = '';
-            if (!v) msg = 'Please enter your email';
-            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) msg = 'Please enter a valid email';
-            setErrors((s) => ({ ...s, email: msg }));
-          }}
-          className="field-input"
-        />
-        <label htmlFor="lead_email" className="field-label">
-          Email address
-        </label>
-        <span className="field-underline" />
+        <div className="form-field">
+          <label htmlFor="lead_email" className="sr-only">
+            Email address
+          </label>
+          <div className={controlClass(Boolean(errors.email))}>
+            <input
+              id="lead_email"
+              name="email"
+              type="email"
+              required
+              placeholder=" "
+              aria-invalid={errors.email ? "true" : "false"}
+              aria-describedby={errors.email ? "err_email" : undefined}
+              onBlur={(e) => {
+                const v = (e.target.value || "").trim();
+                let msg = "";
+                if (!v) msg = "Please enter your email";
+                else if (!EMAIL_REGEX.test(v))
+                  msg = "Please enter a valid email";
+                setErrors((s) => ({ ...s, email: msg }));
+              }}
+              className="field-input"
+            />
+            <label htmlFor="lead_email" className="field-label">
+              Email address
+            </label>
+            <span className="field-underline" />
+          </div>
+          {errors.email && (
+            <p id="err_email" className="form-error" role="alert">
+              {errors.email}
+            </p>
+          )}
         </div>
-        {errors.email && <p id="err_email" className="form-error" role="alert">{errors.email}</p>}
-      </div>
 
-      <div className="form-field">
-        <label htmlFor="lead_phone" className="sr-only">
-          Phone number
-        </label>
-        <div className="field-control">
-        <input
-          id="lead_phone"
-          name="phone"
-          type="tel"
-          placeholder=" "
-          className="field-input"
-        />
-        <label htmlFor="lead_phone" className="field-label">
-          Phone number
-        </label>
-        <span className="field-underline" />
+        <div className="form-field">
+          <label htmlFor="lead_phone" className="sr-only">
+            Phone number
+          </label>
+          <div className="field-control">
+            <input
+              id="lead_phone"
+              name="phone"
+              type="tel"
+              placeholder=" "
+              className="field-input"
+            />
+            <label htmlFor="lead_phone" className="field-label">
+              Phone number
+            </label>
+            <span className="field-underline" />
+          </div>
         </div>
-      </div>
+      </fieldset>
 
-      <div className="form-field">
+      <fieldset className="form-fieldset">
+        <legend className="sr-only">Project details</legend>
+        <div className="form-field">
         <label htmlFor="lead_message" className="sr-only">
           Message
         </label>
@@ -207,7 +230,8 @@ export default function LeadForm() {
         <span className="field-underline" />
         </div>
         {errors.message && <p id="err_message" className="form-error" role="alert">{errors.message}</p>}
-      </div>
+        </div>
+      </fieldset>
 
       <button
       className="btn-cta w-full justify-center disabled:opacity-60"

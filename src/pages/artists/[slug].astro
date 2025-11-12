@@ -1,138 +1,20 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import ArtistGallery from "../../components/ArtistGallery.jsx";
-import {
-  getAllArtistSlugs,
-  getArtistBySlug,
-  portableTextToHtml,
-  urlForImage,
-} from "../../lib/sanity";
-import { getCollection } from "astro:content";
-import type { CollectionEntry } from "astro:content";
-
-type SanityImageAsset = {
-  asset?: {
-    _ref?: string;
-    url?: string;
-    metadata?: {
-      lqip?: string;
-      dimensions?: { width?: number; height?: number };
-    };
-  };
-  crop?: Record<string, unknown>;
-  hotspot?: Record<string, unknown>;
-  alt?: string;
-};
-
-type ArtistContentEntry = CollectionEntry<"artists">;
-
-type ArtistDetail = {
-  name: string;
-  slug: string;
-  position?: string;
-  shortBio?: string;
-  bio?: unknown[];
-  email?: string;
-  socialLinks?: {
-    instagram?: string;
-    facebook?: string;
-  };
-  videos?: string[];
-  profileImage?: SanityImageAsset;
-  gallery?: SanityImageAsset[];
-};
-
-type GalleryImage = {
-  url: string;
-  width: number;
-  height: number;
-  alt: string;
-  lqip?: string;
-};
-
-function buildImageUrl(
-  image: SanityImageAsset | undefined,
-  options: {
-    width?: number;
-    height?: number;
-    quality?: number;
-    fit?: "crop" | "clip" | "fill";
-  } = {},
-) {
-  if (image?.asset?._ref) {
-    let builder = urlForImage(image);
-    if (!builder) return undefined;
-    if (options.width) builder = builder.width(options.width);
-    if (options.height) builder = builder.height(options.height);
-    if (options.quality) builder = builder.quality(options.quality);
-    if (options.fit) builder = builder.fit(options.fit);
-    return builder.auto("format").url();
-  }
-  return image?.asset?.url;
-}
+import { getArtists, getArtist } from "../../lib/data-sources";
+import { portableTextToHtml } from "../../lib/sanity";
+import { imagePresets } from "../../lib/image-helpers";
+import type { NormalizedArtist } from "../../lib/data-sources";
 
 export async function getStaticPaths() {
-  let sanitySlugs: string[] = [];
-  try {
-    sanitySlugs = (await getAllArtistSlugs()) as string[];
-  } catch (error) {
-    console.warn(
-      "[artists] Failed to load Sanity slugs, falling back to content collection.",
-    );
-  }
-  const contentEntries = await getCollection("artists");
-  const fallbackSlugs = contentEntries.map(
-    (artist: ArtistContentEntry) => artist.slug,
-  );
-  const uniqueSlugs = Array.from(new Set([...sanitySlugs, ...fallbackSlugs]));
-  return uniqueSlugs.map((slug) => ({
-    params: { slug },
+  const artists = await getArtists();
+  return artists.map((artist) => ({
+    params: { slug: artist.slug },
   }));
 }
 
 const slug = Astro.params.slug as string;
-let artist = null as ArtistDetail | null;
-
-try {
-  artist = (await getArtistBySlug(slug)) as ArtistDetail | null;
-} catch (error) {
-  console.warn(
-    `[artists] Failed to fetch Sanity artist for slug "${slug}", checking content collection.`,
-  );
-}
-
-if (!artist) {
-  const contentEntries = await getCollection("artists");
-  const fallback = contentEntries.find(
-    (entry: ArtistContentEntry) => entry.slug === slug,
-  );
-  if (fallback) {
-    const images = fallback.data.images || [];
-    artist = {
-      name: fallback.data.name,
-      slug: fallback.slug,
-      position: fallback.data.styles?.[0] ?? "Artist",
-      shortBio: fallback.data.bio,
-      bio: [],
-      email: fallback.data.email,
-      socialLinks: {
-        instagram: fallback.data.instagram,
-      },
-      profileImage: fallback.data.hero
-        ? { asset: { url: fallback.data.hero } }
-        : undefined,
-      gallery: images.map((image: any) => ({
-        asset: {
-          url: image.src,
-          metadata: {
-            dimensions: { width: image.w ?? 1600, height: image.h ?? 1067 },
-          },
-        },
-        alt: image.alt,
-      })),
-    } as ArtistDetail;
-  }
-}
+const artist = (await getArtist(slug)) as NormalizedArtist | null;
 
 if (!artist) {
   throw new Error(`Artist not found: ${slug}`);
@@ -142,28 +24,19 @@ const firstName = artist.name.split(" ")[0];
 const position = artist.position || "Artist";
 const pageTitle = `${artist.name} — ${position}`;
 
-const heroImageUrl = buildImageUrl(artist.profileImage, {
-  width: 900,
-  height: 900,
-  fit: "crop",
-});
-const heroImageLqip = artist.profileImage?.asset?.metadata?.lqip;
+const heroImageUrl = imagePresets.hero(artist.profileImage) || artist.profileImage?.url || "";
+const heroImageLqip = artist.profileImage?.lqip;
 
-const galleryImages: GalleryImage[] = (artist.gallery || []).map(
-  (image, index) => {
-    const url =
-      buildImageUrl(image, { width: 1600, quality: 85, fit: "crop" }) ||
-      image.asset?.url ||
-      "";
-    return {
-      url,
-      width: image.asset?.metadata?.dimensions?.width || 1600,
-      height: image.asset?.metadata?.dimensions?.height || 1067,
-      alt: image.alt || `${artist.name} artwork ${index + 1}`,
-      lqip: image.asset?.metadata?.lqip,
-    };
-  },
-);
+const galleryImages = (artist.gallery || []).map((image, index) => {
+  const url = imagePresets.full(image) || image.url;
+  return {
+    url,
+    width: image.width || 1600,
+    height: image.height || 1067,
+    alt: image.alt || `${artist.name} artwork ${index + 1}`,
+    lqip: image.lqip,
+  };
+});
 
 const bioHtml =
   Array.isArray(artist.bio) && artist.bio.length

@@ -1,220 +1,52 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Gallery from "../components/Gallery.jsx";
-import { getCollection } from "astro:content";
-import {
-  getAllArtists,
-  getBlogPosts,
-  getPageSettings,
-  urlForImage,
-} from "../lib/sanity";
+import { getArtists, getBlogHighlights } from "../lib/data-sources";
+import { getPageSettings } from "../lib/sanity";
+import { imagePresets } from "../lib/image-helpers";
 
-type ManifestImage = {
-  path: string;
-  folder: string;
-  width?: number;
-  height?: number;
-};
+const HERO_BG_DEFAULT = "/images/webpages/landinghero1.webp";
 
-type HeroCta = {
-  label: string;
-  href: string;
-};
-
-type SanityImageAsset = {
-  asset?: {
-    _ref?: string;
-    url?: string;
-    metadata?: {
-      lqip?: string;
-      dimensions?: { width?: number; height?: number };
-    };
-  };
-  crop?: Record<string, unknown>;
-  hotspot?: Record<string, unknown>;
-  alt?: string;
-};
-
-type ArtistListItem = {
-  name: string;
-  slug: string;
-  position?: string;
-  shortBio?: string;
-  bio?: string;
-  styles?: string[];
-  profileImage?: SanityImageAsset;
-};
-
-type ProcessedArtist = {
-  slug: string;
-  name: string;
-  label?: string;
-  summary: string;
-  profileImageUrl: string | null;
-  profileImageAlt: string;
-  profileImageLqip?: string;
-};
-
-type BlogPostSummary = {
-  title: string;
-  slug: string;
-  excerpt?: string;
-  author?: string;
-  publishedAt?: string;
-  coverImage?: SanityImageAsset;
-  category?: {
-    title?: string;
-    slug?: string;
-    color?: string;
-  };
-};
-
-function buildImageUrl(
-  image: SanityImageAsset | undefined,
-  options: {
-    width?: number;
-    height?: number;
-    quality?: number;
-    fit?: "crop" | "clip" | "fill";
-  } = {},
-) {
-  if (image?.asset?._ref) {
-    let builder = urlForImage(image);
-    if (!builder) return undefined;
-    if (options.width) builder = builder.width(options.width);
-    if (options.height) builder = builder.height(options.height);
-    if (options.quality) builder = builder.quality(options.quality);
-    if (options.fit) builder = builder.fit(options.fit);
-    return builder.auto("format").url();
-  }
-  return image?.asset?.url;
-}
-
-async function loadManifest(slug: string): Promise<ManifestImage[]> {
-  try {
-    const mod = await import(`../../image-manifests/${slug}.json`);
-    return mod.default;
-  } catch {
-    return [];
-  }
-}
-
-let rawArtists: ArtistListItem[] = [];
-try {
-  rawArtists = (await getAllArtists()) as ArtistListItem[];
-} catch (error) {
-  console.warn(
-    "[home] Failed to fetch artists from Sanity, falling back to local content.",
-    error,
-  );
-}
-
-if (!rawArtists?.length) {
-  const contentArtists = await getCollection("artists");
-  rawArtists = [];
-  for (const entry of contentArtists) {
-    const manifest = await loadManifest(entry.slug);
-    const hero =
-      manifest.find((img) => img.folder.includes("profile-images")) ||
-      manifest[0] ||
-      null;
-    rawArtists.push({
-      name: entry.data.name,
-      slug: entry.slug,
-      position: entry.data.styles?.[0] ?? "Artist",
-      shortBio: entry.data.bio,
-      bio: entry.data.bio,
-      styles: entry.data.styles ?? [],
-      profileImage: hero
-        ? {
-            asset: {
-              url: hero.path,
-              metadata: {
-                dimensions: {
-                  width: hero.width ?? 1600,
-                  height: hero.height ?? 1067,
-                },
-              },
-            },
-          }
-        : entry.data.hero
-          ? { asset: { url: entry.data.hero } }
-          : undefined,
-    });
-  }
-}
-
-const artistData: ProcessedArtist[] = rawArtists.map((artist) => {
-  const profileImageUrl =
-    buildImageUrl(artist.profileImage, {
-      width: 640,
-      height: 640,
-      fit: "crop",
-    }) ?? artist.profileImage?.asset?.url ?? null;
-  const summarySource = artist.shortBio || artist.bio || "";
+const artists = await getArtists();
+const artistData = artists.map((artist) => {
+  const summarySource =
+    typeof artist.shortBio === "string"
+      ? artist.shortBio
+      : Array.isArray(artist.bio)
+        ? artist.bio.map((block) => (typeof block === "string" ? block : "")).join(" ")
+        : typeof artist.bio === "string"
+          ? artist.bio
+          : "";
   const summary =
-    summarySource.length > 220
+    summarySource && summarySource.length > 220
       ? `${summarySource.slice(0, 217)}…`
-      : summarySource;
+      : summarySource ||
+        "Custom artistry tailored to your story. Consult to shape your session.";
   const label =
-    artist.position ||
-    (artist.styles && artist.styles.length > 0
-      ? artist.styles.join(" · ")
-      : undefined);
+    artist.position || (artist.styles && artist.styles.length ? artist.styles.join(" · ") : undefined);
+
   return {
     slug: artist.slug,
     name: artist.name,
     label,
-    summary:
-      summary ||
-      "Custom artistry tailored to your story. Consult to shape your session.",
-    profileImageUrl,
+    summary,
+    profileImageUrl: imagePresets.card(artist.profileImage) || artist.profileImage?.url || null,
     profileImageAlt: `${artist.name} portrait`,
-    profileImageLqip: artist.profileImage?.asset?.metadata?.lqip,
+    profileImageLqip: artist.profileImage?.lqip,
   };
 });
 
-let blogPostsRaw: BlogPostSummary[] = [];
-try {
-  blogPostsRaw = (await getBlogPosts()) as BlogPostSummary[];
-} catch (error) {
-  console.warn("[home] Failed to fetch blog posts from Sanity.", error);
-}
-
-const blogHighlights = (blogPostsRaw ?? [])
-  .filter((post) => post?.slug)
-  .slice(0, 3)
-  .map((post) => {
-    const coverBuilder = urlForImage(post.coverImage);
-    const coverImageUrl =
-      coverBuilder
-        ?.width(900)
-        .height(600)
-        .fit("crop")
-        .auto("format")
-        .url() ?? post.coverImage?.asset?.url ?? "";
-    const coverImageLqip = post.coverImage?.asset?.metadata?.lqip ?? "";
-    const formattedDate = post.publishedAt
-      ? new Date(post.publishedAt).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        })
-      : "";
-    return {
-      ...post,
-      coverImageUrl,
-      coverImageLqip,
-      formattedDate,
-    };
-  });
+const blogHighlightsRaw = await getBlogHighlights();
+const blogHighlights = blogHighlightsRaw.map((post) => ({
+  ...post,
+  coverImageUrl: imagePresets.card(post.coverImage) || post.coverImage?.url || "",
+  coverImageLqip: post.coverImage?.lqip,
+}));
 
 const pageSettings = await getPageSettings("index");
-const heroImageBuilder = urlForImage(pageSettings?.heroMedia);
-const HERO_BG_DEFAULT = "/images/webpages/landinghero1.webp";
 const heroBackground =
-  heroImageBuilder?.width(2400).height(1600).fit("crop").auto("format").url() ??
-  pageSettings?.heroMedia?.asset?.url ??
+  imagePresets.hero(pageSettings?.heroMedia) ||
+  pageSettings?.heroMedia?.asset?.url ||
   HERO_BG_DEFAULT;
 const heroOverlay =
   pageSettings?.backgroundOverlay ??
@@ -225,7 +57,7 @@ const heroTitle =
 const heroSubtitle =
   pageSettings?.heroSubtitle ??
   "Upscale tattoo and piercing sessions inside a studio that obsesses over detail, safety, and soul. Step in with a vision—leave with catharsis.";
-const heroCta: HeroCta =
+const heroCta =
   pageSettings?.cta && pageSettings.cta.label && pageSettings.cta.href
     ? pageSettings.cta
     : { label: "Book Consultation", href: "/contact" };

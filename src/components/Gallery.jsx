@@ -1,11 +1,18 @@
-import { useEffect, useState } from "react";
-import PhotoSwipeLightbox from "photoswipe/lightbox";
-import "photoswipe/style.css";
+import { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
+import ErrorBoundary from "./ErrorBoundary.jsx";
+import { usePhotoSwipeGallery } from "../hooks/usePhotoSwipeGallery.js";
+import { imagePresets } from "../lib/image-helpers";
+
+/**
+ * @typedef {{ path: string; folder: string; width?: number; height?: number; alt?: string }} ManifestImage
+ * @typedef {{ slug: string; title: string; color?: string }} Category
+ * @typedef {{ path: string; width?: number; height?: number; alt?: string }} GalleryImage
+ */
 
 // Import artist manifests
 import chrisImages from "../image-manifests/chris-summers.json";
@@ -20,36 +27,13 @@ const tattooImages = austinImages.filter((img) =>
   img.folder.includes("tattoo-images")
 );
 
+/**
+ * @param {{ images: GalleryImage[]; galleryId: string }} props
+ */
 function LightboxWrapper({ images, galleryId }) {
   const [showSwipeHint, setShowSwipeHint] = useState(true);
+  usePhotoSwipeGallery(`.${galleryId}-root`);
 
-  useEffect(() => {
-    const galleryElement = document.getElementById(galleryId);
-    if (!galleryElement) {
-      return;
-    }
-
-    const lightbox = new PhotoSwipeLightbox({
-      gallery: `#${galleryId}`,
-      children: "a",
-      pswpModule: () => import("photoswipe"),
-    });
-
-    lightbox.on("contentLoadError", (e) => {
-      console.error(
-        `[Gallery] Failed to load slide content for ${galleryId}`,
-        e?.content?.data?.src || e?.content?.data?.element?.getAttribute("href"),
-      );
-    });
-
-    lightbox.init();
-
-    return () => {
-      lightbox.destroy();
-    };
-  }, [galleryId]);
-
-  // Hide swipe hint after 3 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSwipeHint(false);
@@ -58,14 +42,28 @@ function LightboxWrapper({ images, galleryId }) {
   }, []);
 
   if (!images || images.length === 0) {
-    console.log('No images available for gallery:', galleryId);
+    if (import.meta.env.DEV) {
+      console.log("No images available for gallery:", galleryId);
+    }
     return <p className="text-white/60">No images available.</p>;
   }
 
-  console.log(`Gallery ${galleryId} has ${images.length} images:`, images.slice(0, 3));
+  if (import.meta.env.DEV) {
+    console.log(
+      `Gallery ${galleryId} has ${images.length} images:`,
+      images.slice(0, 3),
+    );
+  }
+
+  const hydratedImages = images
+    .filter((img) => img?.path)
+    .map((img) => ({
+      ...img,
+      url: imagePresets.card(img) || img.path,
+    }));
 
   return (
-    <div id={galleryId} className="relative">
+    <div className={`${galleryId}-root relative`}>
       {/* Swipe Hint Overlay */}
       {showSwipeHint && (
         <div className="absolute top-4 right-4 z-10 bg-black/70 backdrop-blur-sm rounded-full px-3 py-2 text-white text-sm font-medium animate-pulse">
@@ -108,9 +106,9 @@ function LightboxWrapper({ images, galleryId }) {
         }}
         className="gallery-swiper"
       >
-        {images.map((img, i) => (
+        {hydratedImages.map((img, i) => (
           <SwiperSlide
-            key={i}
+            key={img.path}
             className="gallery-slide"
             style={{ "--slide-delay": `${i * 0.08}s` }}
           >
@@ -122,14 +120,10 @@ function LightboxWrapper({ images, galleryId }) {
               className="block group"
             >
               <picture>
-                <source
-                  srcSet={img.path.replace(/\.webp$/i, ".avif")}
-                  type="image/avif"
-                />
                 <img
                   loading="lazy"
                   decoding="async"
-                  src={img.path}
+                  src={img.url}
                   alt={img.alt || `Gallery image ${i + 1}`}
                   className="aspect-[4/3] object-cover rounded-xl transition-transform duration-300 group-hover:scale-105 gallery-image"
                   width={img.width}
@@ -167,18 +161,20 @@ function LightboxWrapper({ images, galleryId }) {
 
 export default function Gallery() {
   return (
-    <div className="space-y-12">
-      {/* Tattoo Work */}
-      <section>
-        <h2 className="font-serif text-2xl mb-4">Tattoo Work</h2>
-        <LightboxWrapper images={tattooImages} galleryId="tattoo-gallery" />
-      </section>
+    <ErrorBoundary>
+      <div className="space-y-12">
+        {/* Tattoo Work */}
+        <section>
+          <h2 className="font-serif text-2xl mb-4">Tattoo Work</h2>
+          <LightboxWrapper images={tattooImages} galleryId="tattoo-gallery" />
+        </section>
 
-      {/* Piercings */}
-      <section>
-        <h2 className="font-serif text-2xl mb-4">Piercings</h2>
-        <LightboxWrapper images={piercingImages} galleryId="piercing-gallery" />
-      </section>
-    </div>
+        {/* Piercings */}
+        <section>
+          <h2 className="font-serif text-2xl mb-4">Piercings</h2>
+          <LightboxWrapper images={piercingImages} galleryId="piercing-gallery" />
+        </section>
+      </div>
+    </ErrorBoundary>
   );
 }

@@ -9,12 +9,24 @@ const artists = defineCollection({
     instagram: z.string().url().optional(),
     hero: z.string().optional(), // path to hero image in /public or /src/assets
     bio: z.string().optional(),
-    images: z.array(z.object({
-      src: z.string(),        // image URL or path
-      w: z.number().optional(), // optional width for PhotoSwipe
-      h: z.number().optional(), // optional height
-      alt: z.string().optional()
-    })).default([])
+    images: z
+      .array(
+        z
+          .object({
+            src: z.string(), // image URL or path
+            width: z.number().optional(),
+            height: z.number().optional(),
+            w: z.number().optional(), // optional legacy width for PhotoSwipe
+            h: z.number().optional(), // optional legacy height
+            alt: z.string().optional(),
+          })
+          .transform((image) => ({
+            ...image,
+            width: image.width ?? image.w,
+            height: image.height ?? image.h,
+          })),
+      )
+      .default([])
   })
 });
 

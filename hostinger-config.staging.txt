@@ -1,9 +1,0 @@
-# Hostinger Staging Environment Variables
-# For remix.catharsisba.com (staging domain)
-# Copy this to .env.staging
-
-FTP_HOST=46.202.183.226
-FTP_USER=u204461404.thmsbnsn
-FTP_PASS=L0g!nSt@geX4
-FTP_DIR=/public_html/remix
-WIN_SCP_FINGERPRINT=

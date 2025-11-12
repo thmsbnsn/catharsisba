@@ -2,20 +2,34 @@ import { Fragment, useEffect, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import Icon from './Icon.jsx';
 
+function safeStorage(key, value = null) {
+  try {
+    if (typeof window === 'undefined' || !window.localStorage) {
+      return null;
+    }
+    if (value === null) {
+      return window.localStorage.getItem(key);
+    }
+    window.localStorage.setItem(key, value);
+    return value;
+  } catch (error) {
+    console.warn('Storage unavailable', error);
+    return null;
+  }
+}
+
 export default function OffCanvasNav() {
   const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState('light');
 
   // Initialize theme: localStorage -> system preference -> light
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem('theme');
-      if (saved === 'light' || saved === 'dark') {
-        setTheme(saved);
-        document.documentElement.setAttribute('data-theme', saved);
-        return;
-      }
-    } catch {}
+    const saved = safeStorage('theme');
+    if (saved === 'light' || saved === 'dark') {
+      setTheme(saved);
+      document.documentElement.setAttribute('data-theme', saved);
+      return;
+    }
     const prefersDark = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initial = prefersDark ? 'dark' : 'light';
     setTheme(initial);
@@ -101,7 +115,7 @@ export default function OffCanvasNav() {
                       onChange={(e) => {
                         const next = e.target.checked ? 'dark' : 'light';
                         setTheme(next);
-                        try { localStorage.setItem('theme', next); } catch {}
+                        safeStorage('theme', next);
                         if (typeof document !== 'undefined') {
                           document.documentElement.setAttribute('data-theme', next);
                         }
