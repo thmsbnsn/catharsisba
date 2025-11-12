@@ -13,7 +13,11 @@ export interface ImageOptions {
 export function buildImageUrl(image: unknown, options: ImageOptions = {}): string | null {
   if (!image) return null
 
-  const fallbackUrl = (image as {url?: string}).url ?? (image as {asset?: {url?: string}}).asset?.url ?? null
+  const fallbackUrl =
+    (image as {url?: string}).url ??
+    (image as {path?: string}).path ??
+    (image as {asset?: {url?: string}}).asset?.url ??
+    null
 
   const builder = urlForImage(image)
   if (!builder) return fallbackUrl
