@@ -1,7 +1,8 @@
 {
-  "name": "catharsis-body-art",
+  "name": "catharsis-body-art-studio",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Content management studio for Catharsis Body Art",
   "main": "package.json",
   "license": "UNLICENSED",
   "scripts": {
@@ -9,16 +10,26 @@
     "start": "sanity start",
     "build": "sanity build",
     "deploy": "sanity deploy",
-    "deploy-graphql": "sanity graphql deploy"
+    "deploy-graphql": "sanity graphql deploy",
+    "check": "sanity check",
+    "format": "prettier --write \"**/*.{ts,tsx,json}\"",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
-    "sanity"
+    "sanity",
+    "cms",
+    "catharsis",
+    "body-art",
+    "tattoo",
+    "piercing"
   ],
   "dependencies": {
+    "@sanity/presentation": "^2.0.0",
     "@sanity/vision": "^4.14.2",
     "react": "^19.1",
     "react-dom": "^19.1",
     "sanity": "^4.14.2",
+    "sanity-plugin-media": "^4.0.0",
     "styled-components": "^6.1.18"
   },
   "devDependencies": {
@@ -32,6 +43,10 @@
     "semi": false,
     "printWidth": 100,
     "bracketSpacing": false,
-    "singleQuote": true
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
