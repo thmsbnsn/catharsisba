@@ -4,18 +4,9 @@
   "type": "module",
   "scripts": {
     "gen:images": "node src/scripts/gen-image-manifests.mjs",
-    "build": "npm run gen:images && astro build",
-    "deploy:staging": "npm run build && git add -A && (git commit -m \"staging: deploy\" || echo \"no changes to commit\") && git push origin HEAD:staging --force",
-    "deploy:staging:local": "npm run build && npm run deploy:staging",
-    "deploy:production": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-hostinger-winscpnet.ps1 production",
-    "deploy:staging:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-hostinger-winscpnet.ps1 staging -DryRun",
-    "deploy:production:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-hostinger-winscpnet.ps1 production -DryRun",
-    "deploy:local:staging": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-winscp-final.ps1 staging",
-    "deploy:local:production": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-winscp-final.ps1 production",
-    "deploy:local:staging:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-simple.ps1 staging -DryRun",
-    "deploy:local:production:dry": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-simple.ps1 production -DryRun",
-    "deploy:local:staging:skip": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-local.ps1 staging -SkipBuild",
-    "deploy:local:production:skip": "powershell -ExecutionPolicy Bypass -File ./scripts/deploy-local.ps1 production -SkipBuild"
+    "build": "npm-run-all gen:images build:astro postbuild:git",
+    "build:astro": "astro build",
+    "postbuild:git": "node src/scripts/post-build-git.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^4.0.0",
