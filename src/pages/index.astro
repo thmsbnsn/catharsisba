@@ -1,6 +1,9 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import Gallery from "../components/Gallery.jsx";
+import Services from "../components/Services.jsx";
+import Approach from "../components/Approach.jsx";
+import ReadyToBegin from "../components/ReadyToBegin.jsx";
 import { getArtists, getBlogHighlights } from "../lib/data-sources";
 import { getPageSettings } from "../lib/sanity";
 import { imagePresets } from "../lib/image-helpers";
@@ -136,7 +139,7 @@ const heroCta =
   </section>
 
   <!-- MEET THE ARTISTS -->
-  <section id="artists" class="section-block">
+  <section id="artists" class="section-block fly-in">
     <div class="section-header">
       <div>
         <h2 class="section-heading">Meet the Artists</h2>
@@ -192,7 +195,7 @@ const heroCta =
 
   {
     blogHighlights.length > 0 && (
-      <section class="section-block">
+      <section class="section-block fly-in">
         <div class="section-header">
           <div>
             <h2 class="section-heading">Studio Stories</h2>
@@ -258,9 +261,15 @@ const heroCta =
     )
   }
 
+  <!-- WHAT WE OFFER -->
+  <Services client:load />
+
+  <!-- OUR APPROACH -->
+  <Approach client:load />
+
   <!-- GALLERY TEASER -->
-  <section class="section-block">
-    <div class="section-header">
+  <section class="section-block fly-in">
+    <div class="section-header fly-in">
       <div>
         <h2 class="section-heading">Gallery</h2>
         <p class="section-subhead">
@@ -268,13 +277,13 @@ const heroCta =
         </p>
       </div>
     </div>
-    <div class="luxe-card">
+    <div class="luxe-card fly-in fly-in-delay-1">
       <Gallery client:load />
     </div>
   </section>
 
   <!-- COMMUNITY SUPPORT -->
-  <section class="section-block">
+  <section class="section-block fly-in">
     <div class="section-header">
       <div>
         <h2 class="section-heading">Community Care</h2>
@@ -360,22 +369,11 @@ const heroCta =
     </div>
   </section>
 
-  <!-- BOOKING CTA BAND -->
-  <section class="section-block">
-    <div class="cta-banner">
-      <div class="cta-banner__content">
-        <h2>Ready when you are.</h2>
-        <p>
-          Give us a call or book a consult for tattoos or piercings. We’ll map
-          lighting, jewelry, and healing before needles ever touch skin.
-        </p>
-      </div>
-      <a href="/contact" class="btn-cta" data-open-contact="true"> Book Now </a>
-    </div>
-  </section>
+  <!-- READY TO BEGIN YOUR JOURNEY -->
+  <ReadyToBegin client:load />
 
   <!-- AFTERCARE + CONTACT TEASERS -->
-  <section class="section-block split-grid">
+  <section class="section-block split-grid fly-in">
     <article class="resource-card">
       <header>
         <h3>Aftercare</h3>

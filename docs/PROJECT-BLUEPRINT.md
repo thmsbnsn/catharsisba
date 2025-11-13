@@ -1,6 +1,6 @@
 # Catharsis Body Art · Project Blueprint & Review
 
-_Last updated: 2025-11-12_
+_Last updated: 2025-01-XX_
 
 > This consolidated brief replaces `CBA.Agent.md`, `CF-WebsiteReviewCatharsis.md`, and `BLUEPRINT-v3.md`. It captures the purpose of the build, the tech stack, page-by-page intent, and the working practices that keep the site healthy.
 
@@ -80,12 +80,16 @@ Additional assets live in `public/` (fonts, icons, imagery, reels) and `_blog/` 
 ## 5. Page-by-Page Highlights
 
 ### Homepage (`/`)
-- Hero with CTA (“Call Us” + “Browse Artists”), video/performance ready.
+- Hero with CTA ("Call Us" + "Browse Artists"), video/performance ready, parallax scroll effect.
 - Metrics list, Catharsis definition aside, scroll cue.
 - Meet the Artists cards with LQIP blur and scene-specific copy.
-- Community Care campaign block featuring Facebook embed.
+- **"What We Offer"** section with 4 service cards (Custom Tattoos, Professional Piercings, Safety First, Expert Artists) featuring hover glow/lift animations.
+- **"Our Approach"** section with split-color heading, 6 benefit items, stats card (15+ Years, 99% Satisfaction, 100% Safety), and "Book Consultation" CTA.
+- Studio Stories (blog highlights) with category chips.
 - Gallery teaser (Swiper/PhotoSwipe) and merch CTA.
-- Booking banner plus aftercare/contact teaser cards.
+- Community Care campaign block featuring Facebook embed.
+- **"Ready to Begin Your Journey?"** CTA section with dual buttons and phone number.
+- Aftercare/contact teaser cards.
 
 ### Artists Landing & Detail Pages
 - Landing grid uses `ArtistCard` with fallback avatars for missing portraits.
@@ -101,10 +105,17 @@ Additional assets live in `public/` (fonts, icons, imagery, reels) and `_blog/` 
 
 ## 6. Current Status & Progress (High-Level)
 
-- Frontend polish is largely complete; the site reflects the brand pillars and design system.
-- Sanity integration is partially live (artists blog), with more routes queued.
-- Supabase migration remains the biggest outstanding feature.
-- Documentation consolidated (README, ROADMAP-STATUS.md, this blueprint).
+- **Frontend Complete:** Modern, upscale design with glass morphism, gold accents, and premium animations.
+- **New Sections Implemented:**
+  - "What We Offer" section with service cards (hover glow/lift effects)
+  - "Our Approach" section with split-color headings, benefits list, and stats card
+  - "Ready to Begin Your Journey?" CTA section (replaced old booking banner)
+- **Footer Redesigned:** 4-column layout with logo/brand, quick links, contact info, and social media icons
+- **Animations:** Scroll-triggered fly-in animations throughout, hero parallax effect, button shimmer effects preserved
+- **Content Width:** Expanded to max-w-7xl for wider, more luxurious layouts
+- **Sanity Integration:** Live with custom Studio branding, media plugin, presentation tool, and organized structure
+- **Supabase Migration:** Planned for contact pipeline (currently using PHPMailer)
+- **Documentation:** Consolidated and up-to-date
 
 For task-level detail, see `ROADMAP-STATUS.md`.
 
@@ -132,6 +143,7 @@ For task-level detail, see `ROADMAP-STATUS.md`.
 
 ### Change Log
 
+- 2025-01-XX · Added new sections (What We Offer, Our Approach, Ready to Begin), footer redesign, scroll animations, hero parallax.
 - 2025-11-12 · Created consolidated blueprint from legacy docs.
 
 

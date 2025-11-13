@@ -1,6 +1,6 @@
 # Catharsis Body Art · Roadmap & Status
 
-_Last updated: 2025-11-12_
+_Last updated: 2025-01-XX_
 
 > This single source replaces `nextup.md`, `projectstatus.md`, and `roadmap.md`. It tracks where the build stands today, what’s shipping next, and how we’ll hand off smoothly.
 
@@ -8,19 +8,27 @@ _Last updated: 2025-11-12_
 
 ## Snapshot
 
-- Production (Vercel `catharsisba-k8epi9jyt`) carries the refreshed hero, header CTA, footer polish, booking copy, centered events layout, and Community Care feature block.
+- Production (Vercel) features modern, upscale design with glass morphism effects, gold accents, and premium animations.
+- **New Homepage Sections:** "What We Offer" (4 service cards with hover effects), "Our Approach" (benefits + stats card), "Ready to Begin Your Journey?" (replacement CTA).
+- **Footer Redesign:** 4-column layout with brand logo/name (Coldiac font, gold), quick links, contact info with icons, and social media (Instagram/Facebook with hover glow).
+- **Animations:** Scroll-triggered fly-in animations throughout, hero parallax effect (image moves with scroll, fades behind background), button shimmer effects preserved.
+- **Content Width:** Expanded to max-w-7xl for wider, more luxurious layouts.
 - Blog hub mirrors the landing typography with seeded categories (Tattoo, Piercing, Community, Aftercare, Studio News) and Studio color chip pickers.
-- Sanity Studio (`sld92wg1`) is live with fixed project ID/CORS and brighter publish controls; artists and initial blog posts are seeded.
+- Sanity Studio (`sld92wg1`) is live with custom branding, media plugin, presentation tool, organized structure, and brighter publish controls; artists and initial blog posts are seeded.
 - Local `npm run build` succeeds; remaining lint warnings are vendor-ordering tweaks (e.g., `-webkit-backdrop-filter`) scheduled for cleanup.
 
 ---
 
 ## Recently Completed
 
+- **New Homepage Sections:** "What We Offer" service cards, "Our Approach" benefits/stats, "Ready to Begin Your Journey?" CTA.
+- **Footer Redesign:** Complete 4-column restructure with brand, quick links, contact (with icons), and social media.
+- **Animations:** Scroll-triggered fly-in animations, hero parallax effect, preserved button shimmer effects.
+- **Content Width:** Expanded layouts for more luxurious, wide-screen experience.
+- **Sanity Studio Enhancements:** Custom branding, media plugin, presentation tool, organized structure.
 - Retired unused Sanity workspace and reconnected Vercel static adapter/webhook.
 - Updated documentation (README, blueprint/review, roadmap) to reflect the 2025 plan.
 - Navigation polish: animated menu button, icon scaling, light-mode contrast, mobile panel sizing.
-- Footer and events refresh: centered columns, refined social chips, “Booking” terminology, balanced card layout.
 - Sanity improvements: custom color inputs for categories, brighter publishing accents, roster/blog seed data.
 
 ---
@@ -80,6 +88,7 @@ _Last updated: 2025-11-12_
 
 ### Change Log
 
+- 2025-01-XX · Added new homepage sections, footer redesign, scroll animations, hero parallax, expanded content width.
 - 2025-11-11 · Consolidated roadmap/status documentation into this file.
 
 
