@@ -30,101 +30,13 @@ export default defineConfig({
     }),
 
     // Live Preview Integration
+    // Temporarily simplified to fix duplicate context error
     presentationTool({
       previewUrl: {
         origin: PREVIEW_BASE_URL,
         preview: '/api/preview',
         draftMode: {
           enable: '/api/draft'
-        }
-      },
-      resolve: {
-        locations: {
-          // Artist preview locations
-          artist: {
-            select: {
-              slug: 'slug.current',
-              name: 'name'
-            },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.name || 'Artist Profile',
-                  href: `/artists/${doc?.slug}`
-                },
-                {
-                  title: 'Artists Index',
-                  href: '/artists'
-                }
-              ]
-            })
-          },
-
-          // Blog post preview locations
-          blogPost: {
-            select: {
-              slug: 'slug.current',
-              title: 'title'
-            },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.title || 'Blog Post',
-                  href: `/blog/${doc?.slug}`
-                },
-                {
-                  title: 'Blog Index',
-                  href: '/blog'
-                }
-              ]
-            })
-          },
-
-          // Event preview locations
-          event: {
-            select: {
-              slug: 'slug.current',
-              title: 'title'
-            },
-            resolve: (doc) => ({
-              locations: [
-                {
-                  title: doc?.title || 'Event',
-                  href: `/events/${doc?.slug}`
-                },
-                {
-                  title: 'Events Calendar',
-                  href: '/events'
-                }
-              ]
-            })
-          },
-
-          // Page settings preview
-          pageSettings: {
-            select: {
-              route: 'route'
-            },
-            resolve: (doc) => {
-              const routeMap: Record<string, string> = {
-                'index': '/',
-                'artists': '/artists',
-                'events': '/events',
-                'gallery': '/gallery',
-                'our-studio': '/our-studio',
-                'contact': '/contact'
-              }
-
-              return {
-                locations: [
-                  {
-                    title: `Page: ${doc?.route || 'Unknown'}`,
-                    href: routeMap[doc?.route] || `/${doc?.route}`
-                  }
-                ]
-              }
-            }
-          }
         }
       }
     }),
