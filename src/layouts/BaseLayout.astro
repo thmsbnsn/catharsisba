@@ -92,6 +92,20 @@ const {
           if (img.complete) img.classList.add("loaded");
         });
 
+        const headerShell = document.querySelector(".header-shell");
+        const updateHeaderState = () => {
+          if (!headerShell) return;
+          const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+          if (currentScroll > 100) {
+            document.body.classList.add("scrolled");
+          } else {
+            document.body.classList.remove("scrolled");
+          }
+        };
+
+        updateHeaderState();
+        window.addEventListener("scroll", updateHeaderState, { passive: true });
+
         // CTA button haptic feedback (mobile)
         const supportsHaptics =
           typeof navigator !== "undefined" &&
@@ -304,7 +318,7 @@ const {
         );
 
         // Observe all cards and sections
-        document.querySelectorAll(".card, section").forEach((el) => {
+        document.querySelectorAll(".card, .section-block").forEach((el) => {
           observer.observe(el);
         });
 
