@@ -1,0 +1,88 @@
+Overall Site Architecture Review
+What's Working:
+
+The separate pages make sense: Gallery, FAQ, Contact, Events, Blog (Studio Stories), Aftercare
+Each page has a clear, focused purpose
+The design consistency across pages is strong
+The dark aesthetic is maintained throughout
+
+Critical Issues:
+1. Homepage is Still Overloaded
+The homepage should be simplified to:
+
+Hero with catharsis message
+3-4 key services (from "What We Offer")
+One powerful visual (gallery preview or featured work)
+Single strong CTA to book
+That's it
+
+Move to other pages:
+
+"Studio Stories" cards → Blog page (you already have this!)
+Full "Our Approach" breakdown → FAQ or About page
+Gallery section → You have a gallery page
+Community Care → Could be on About/Events
+Merchandise → Needs its own Shop page or remove from site flow
+
+2. The Gallery Page Needs Work
+
+Only showing 7 images is underwhelming for a portfolio
+No filtering/categories visible
+The layout feels cramped
+Consider: Grid with lightbox, categories (Tattoo Work, Piercings), artist attribution
+
+3. FAQ Page is Excellent
+
+Well-organized with clear categories
+Comprehensive without being overwhelming
+Good use of cards
+This is your best-structured page
+
+4. Contact Page Issues
+
+Too many contact options competing (two separate forms/cards)
+Simplify to ONE clear path: "Schedule Your Session" or general contact
+The "Why attend right now?" section feels odd on a contact page
+
+5. Events Page
+
+The embedded scheduler is good
+Community collaborators section is interesting
+This page works well as-is
+
+6. Blog/Studio Stories
+
+Good structure with filtering
+Empty state (black boxes) suggests content isn't ready
+This is fine once populated
+
+7. Aftercare Page is Perfect
+
+Clear, scannable information
+Well-organized by time periods
+Warning signs prominently displayed
+No changes needed here
+
+Priority Recommendations:
+Immediate:
+
+Drastically simplify homepage (remove 4-5 sections)
+Create dedicated "About" page for studio philosophy, approach, community care
+Consolidate contact page to one clear form/path
+Expand gallery with more images and better organization
+Either create a proper Shop page for merchandise or remove it from navigation
+
+Your Current Structure Should Be:
+
+Home - Hero, services overview, one visual, CTA
+About - Studio philosophy, approach, community work, team/artists
+Services - Detail on tattoos, piercings, consultation process
+Gallery - Portfolio with filtering
+FAQ - Keep as-is
+Blog/Stories - Keep as-is
+Events - Keep as-is
+Aftercare - Keep as-is
+Contact/Book - One clear booking path
+Shop (optional) - If keeping merchandise
+
+The site is 80% there. The main issue is the homepage trying to be everything at once. Would you like me to create a streamlined homepage mockup
