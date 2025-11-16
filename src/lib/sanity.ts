@@ -45,7 +45,9 @@ type SanityPortableImage = {
 
 type SanityArtist = {
   name: string
-  slug: {current: string}
+  // In some queries we alias slug to a string (`"slug": slug.current`), while in
+  // detail queries it remains an object. Support both shapes here.
+  slug: {current: string} | string
   position?: string
   shortBio?: string
   bio?: PortableTextBlock[]
@@ -351,17 +353,22 @@ const blogSlugsQuery = groq`*[_type == "blogPost" && defined(slug.current)]{
   "slug": slug.current
 }`
 
-const mapSanityArtistToCore = (artist: SanityArtist): Artist => ({
-  slug: artist.slug.current,
-  name: artist.name,
-  position: artist.position,
-  shortBio: artist.shortBio,
-  bio: artist.bio,
-  email: artist.email,
-  socialLinks: artist.socialLinks,
-  profileImage: mapSanityImage(artist.profileImage),
-  gallery: artist.gallery?.map(mapSanityImage).filter(Boolean) as Image[] | undefined,
-})
+const mapSanityArtistToCore = (artist: SanityArtist): Artist => {
+  const slugValue =
+    typeof artist.slug === 'string' ? artist.slug : artist.slug?.current
+
+  return {
+    slug: slugValue,
+    name: artist.name,
+    position: artist.position,
+    shortBio: artist.shortBio,
+    bio: artist.bio,
+    email: artist.email,
+    socialLinks: artist.socialLinks,
+    profileImage: mapSanityImage(artist.profileImage),
+    gallery: artist.gallery?.map(mapSanityImage).filter(Boolean) as Image[] | undefined,
+  }
+}
 
 const mapSanityPost = (post: SanityBlogPost): BlogPost => ({
   slug: post.slug.current,

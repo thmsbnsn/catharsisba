@@ -1,10 +1,10 @@
 import Icon from "./Icon.jsx";
 
 const items = [
-  { href: "/artists", title: "Artists", desc: "Meet the team", iconSrc: "/icons/MeetTheArtists_Icon.svg" },
-  { href: "/gallery", title: "Gallery", desc: "Selected works", iconSrc: "/icons/Gallery_Icon.svg" },
-  { href: "/contact", title: "Book", desc: "Consult & questions", iconSrc: "/icons/Contact_Icon.svg" },
-  { href: "/blog", title: "Blog", desc: "Stories & updates", iconSrc: "/icons/nav_blog.svg" }
+  { href: "/artists", title: "Artists", desc: "Meet the team", iconSrc: "/icons/MeetTheArtists Icon.svg" },
+  { href: "/gallery", title: "Gallery", desc: "Selected works", iconSrc: "/icons/Gallery Icon.svg" },
+  { href: "/contact", title: "Book", desc: "Consult & questions", iconSrc: "/icons/Contact Icon.svg" },
+  { href: "/blog", title: "Blog", desc: "Stories & updates", iconSrc: "/icons/nav_blog2.svg" }
 ];
 
 export default function MegaMenu() {
