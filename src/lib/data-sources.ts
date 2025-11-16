@@ -38,12 +38,17 @@ async function loadManifest(slug: string): Promise<ImageManifestItem[]> {
   return manifestCache.get(slug) as Promise<ImageManifestItem[]>
 }
 
-const mapContentImage = (image: ImageManifestItem | {src: string; width?: number; height?: number; w?: number; h?: number; alt?: string}): Image => ({
-  url: image.src,
-  width: image.width ?? ('w' in image ? image.w : undefined),
-  height: image.height ?? ('h' in image ? image.h : undefined),
-  alt: image.alt,
-})
+const mapContentImage = (
+  image: ImageManifestItem | { src?: string; path?: string; width?: number; height?: number; w?: number; h?: number; alt?: string }
+): Image => {
+  const src = 'src' in image && image.src ? image.src : ('path' in image ? (image as any).path : undefined)
+  return {
+    url: src,
+    width: image.width ?? ('w' in image ? (image as any).w : undefined),
+    height: image.height ?? ('h' in image ? (image as any).h : undefined),
+    alt: image.alt,
+  }
+}
 
 async function fallbackArtists(): Promise<NormalizedArtist[]> {
   const entries = await getCollection('artists')
