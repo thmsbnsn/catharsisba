@@ -1,8 +1,17 @@
 import { urlForImage } from './sanity'
+import type { Image } from '../types'
 
-const isSanityAsset = (image: unknown) => {
+type SanityImageSource = {
+  _ref?: string
+  asset?: { _ref?: string; url?: string }
+  url?: string
+}
+
+type ImageSource = Image | SanityImageSource | string
+
+const isSanityAsset = (image: unknown): image is SanityImageSource => {
   if (!image || typeof image !== 'object') return false
-  const source = image as { _ref?: string; asset?: { _ref?: string } }
+  const source = image as SanityImageSource
   return Boolean(source._ref || source.asset?._ref)
 }
 
@@ -16,13 +25,16 @@ export interface ImageOptions {
   fit?: 'crop' | 'fill' | 'clip' | 'max'
 }
 
-export function buildImageUrl(image: unknown, options: ImageOptions = {}): string | null {
+export function buildImageUrl(image: ImageSource | unknown, options: ImageOptions = {}): string | null {
   if (!image) return null
+  
+  if (typeof image === 'string') return image
 
+  const imageObj = image as SanityImageSource | Image
   const fallbackUrl =
-    (image as {url?: string}).url ??
-    (image as {path?: string}).path ??
-    (image as {asset?: {url?: string}}).asset?.url ??
+    ('url' in imageObj ? imageObj.url : undefined) ??
+    ('path' in imageObj && typeof (imageObj as {path?: string}).path === 'string' ? (imageObj as {path: string}).path : undefined) ??
+    ('asset' in imageObj && imageObj.asset && 'url' in imageObj.asset ? imageObj.asset.url : undefined) ??
     null
 
   if (!isSanityAsset(image)) {
@@ -54,10 +66,10 @@ export function buildImageUrl(image: unknown, options: ImageOptions = {}): strin
 }
 
 export const imagePresets = {
-  thumbnail: (image: unknown) => buildImageUrl(image, {width: 400, height: 400, fit: 'crop'}),
-  card: (image: unknown) => buildImageUrl(image, {width: 800, height: 600, fit: 'crop'}),
-  hero: (image: unknown) => buildImageUrl(image, {width: 1920, height: 1080, fit: 'crop'}),
-  full: (image: unknown) => buildImageUrl(image, {width: 2400, fit: 'max'}),
+  thumbnail: (image: ImageSource | unknown) => buildImageUrl(image, {width: 400, height: 400, fit: 'crop'}),
+  card: (image: ImageSource | unknown) => buildImageUrl(image, {width: 800, height: 600, fit: 'crop'}),
+  hero: (image: ImageSource | unknown) => buildImageUrl(image, {width: 1920, height: 1080, fit: 'crop'}),
+  full: (image: ImageSource | unknown) => buildImageUrl(image, {width: 2400, fit: 'max'}),
 } as const
 
 

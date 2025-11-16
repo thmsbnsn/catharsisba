@@ -16,22 +16,32 @@ type BlogHighlight = Pick<BlogPost, 'slug' | 'title' | 'excerpt' | 'author' | 'p
   formattedDate?: string
 }
 
-const manifestCache = new Map<string, Promise<any[]>>()
+type ImageManifestItem = {
+  src: string
+  width?: number
+  height?: number
+  w?: number
+  h?: number
+  alt?: string
+  folder?: string
+}
 
-async function loadManifest(slug: string) {
+const manifestCache = new Map<string, Promise<ImageManifestItem[]>>()
+
+async function loadManifest(slug: string): Promise<ImageManifestItem[]> {
   if (!manifestCache.has(slug)) {
     manifestCache.set(
       slug,
       import(`../image-manifests/${slug}.json`).then((mod) => mod.default).catch(() => [])
     )
   }
-  return manifestCache.get(slug) as Promise<any[]>
+  return manifestCache.get(slug) as Promise<ImageManifestItem[]>
 }
 
-const mapContentImage = (image: any): Image => ({
+const mapContentImage = (image: ImageManifestItem | {src: string; width?: number; height?: number; w?: number; h?: number; alt?: string}): Image => ({
   url: image.src,
-  width: image.width ?? image.w,
-  height: image.height ?? image.h,
+  width: image.width ?? ('w' in image ? image.w : undefined),
+  height: image.height ?? ('h' in image ? image.h : undefined),
   alt: image.alt,
 })
 

@@ -63,9 +63,20 @@ export default function LeadForm() {
 
     try {
       const res = await fetch("/api/lead.php", { method: "POST", body: data });
-      const j = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(`Server error: ${res.status}`);
+      }
 
-      if (res.ok && j.success) {
+      let j;
+      try {
+        j = await res.json();
+      } catch (parseError) {
+        console.error('Failed to parse server response:', parseError);
+        throw new Error('Invalid server response');
+      }
+
+      if (j.success) {
         setStatus("sent");
         form.reset();
         // Keep artist chip visible OR clear if you prefer:
@@ -75,8 +86,11 @@ export default function LeadForm() {
         setErrorMsg(j.error || "Something went wrong. Please try again.");
       }
     } catch (err) {
+      console.error('Form submission error:', err);
       setStatus("fail");
-      setErrorMsg("Network error — please try again later.");
+      setErrorMsg(err instanceof Error && err.message.includes('Server error') 
+        ? "Server error — please try again later."
+        : "Network error — please try again later.");
     }
   }
 

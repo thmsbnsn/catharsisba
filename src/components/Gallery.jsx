@@ -57,10 +57,13 @@ function LightboxWrapper({ images, galleryId }) {
 
   const hydratedImages = images
     .filter((img) => img?.path)
-    .map((img) => ({
-      ...img,
-      url: imagePresets.card(img) || img.path,
-    }));
+    .map((img) => {
+      const cardUrl = imagePresets.card(img);
+      return {
+        ...img,
+        url: cardUrl ?? img.path,
+      };
+    });
 
   return (
     <div className={`${galleryId}-root relative`}>

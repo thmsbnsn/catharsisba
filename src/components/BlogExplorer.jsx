@@ -8,12 +8,18 @@ import { useState } from "react";
 function formatDate(dateString) {
   if (!dateString) return "";
   try {
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+      console.warn('Invalid date string:', dateString);
+      return dateString;
+    }
     return new Intl.DateTimeFormat("en-US", {
       month: "long",
       day: "numeric",
       year: "numeric",
-    }).format(new Date(dateString));
-  } catch {
+    }).format(date);
+  } catch (error) {
+    console.error('Error formatting date:', error);
     return dateString;
   }
 }

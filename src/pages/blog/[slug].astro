@@ -38,11 +38,11 @@ const formattedDate = post.publishedAt
   : "";
 
 // Body
-const bodyHtml = portableTextToHtml(post.body || []);
+const bodyHtml = portableTextToHtml(post.body);
 
 // Gallery Images
 const extraImages = (post.extraImages || [])
-  .map((image: any) => {
+  .map((image) => {
     const asset = image?.asset;
     if (!asset?.url) return null;
 

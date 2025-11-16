@@ -3,7 +3,7 @@ import imageUrlBuilder from '@sanity/image-url'
 import {toHTML} from '@portabletext/to-html'
 import groq from 'groq'
 import { env } from './env'
-import type { Artist, BlogPost, Image } from '../types'
+import type { Artist, BlogPost, Image, PortableTextBlock } from '../types'
 
 const {projectId, dataset, apiVersion, token, useCdn} = env.sanity
 
@@ -35,7 +35,7 @@ type SanityPortableImage = {
     metadata?: {
       lqip?: string
       dimensions?: {width?: number; height?: number}
-      palette?: unknown
+      palette?: Record<string, unknown>
     }
   }
   crop?: Record<string, unknown>
@@ -48,7 +48,7 @@ type SanityArtist = {
   slug: {current: string}
   position?: string
   shortBio?: string
-  bio?: unknown[]
+  bio?: PortableTextBlock[]
   email?: string
   socialLinks?: Record<string, string>
   videos?: string[]
@@ -68,7 +68,7 @@ type SanityBlogPost = {
     slug?: {current: string}
     color?: string
   }
-  body?: unknown[]
+  body?: PortableTextBlock[]
   extraImages?: SanityPortableImage[]
 }
 
@@ -76,14 +76,14 @@ async function fetchSanity<T>(query: string, params: Record<string, unknown> = {
   try {
     return await getClient().fetch<T>(query, params)
   } catch (error) {
-    console.warn('[sanity] Fetch failed', {query, params, error})
+    console.error('[sanity] Fetch failed:', error instanceof Error ? error.message : 'Unknown error', {query, params})
     return null
   }
 }
 
 const imageBuilder = imageUrlBuilder(client)
 
-export const urlForImage = (source: unknown) => (source ? imageBuilder.image(source) : null)
+export const urlForImage = (source: SanityPortableImage | unknown) => (source ? imageBuilder.image(source) : null)
 
 const mapSanityImage = (image?: SanityPortableImage): Image | undefined => {
   const url = image?.asset?.url
@@ -97,8 +97,8 @@ const mapSanityImage = (image?: SanityPortableImage): Image | undefined => {
   }
 }
 
-export const portableTextToHtml = (blocks: unknown) =>
-  Array.isArray(blocks)
+export const portableTextToHtml = (blocks: PortableTextBlock[] | undefined) =>
+  Array.isArray(blocks) && blocks.length > 0
     ? toHTML(blocks, {
         components: {
           block: ({children, value}) => {

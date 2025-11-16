@@ -27,7 +27,8 @@ export function usePhotoSwipeGallery(galleryId) {
     })
 
     lightbox.on('contentLoadError', (e) => {
-      console.error('[Gallery] Failed to load slide content', e?.content?.data?.src)
+      const src = e?.content?.data?.src || 'unknown';
+      console.error('[Gallery] Failed to load slide content:', src);
     })
 
     lightbox.init()

@@ -12,12 +12,30 @@ export interface Category {
   color?: string;
 }
 
+export interface PortableTextBlock {
+  _type: string;
+  _key: string;
+  children?: Array<{
+    _type: string;
+    _key: string;
+    text: string;
+    marks?: string[];
+  }>;
+  markDefs?: Array<{
+    _type: string;
+    _key: string;
+    href?: string;
+  }>;
+  style?: string;
+  level?: number;
+}
+
 export interface Artist {
   slug: string;
   name: string;
   position?: string;
   shortBio?: string;
-  bio?: unknown;
+  bio?: PortableTextBlock[];
   styles?: string[];
   email?: string;
   socialLinks?: Record<string, string>;
@@ -33,7 +51,7 @@ export interface BlogPost {
   publishedAt?: string;
   coverImage?: Image;
   category?: Category;
-  body?: unknown;
+  body?: PortableTextBlock[];
   extraImages?: Image[];
 }
 

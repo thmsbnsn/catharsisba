@@ -16,6 +16,11 @@ if (!apiVersion) {
 
 const sanityToken = import.meta.env.SANITY_API_TOKEN
 const publicUseCdn = import.meta.env.PUBLIC_SANITY_USE_CDN
+const siteUrl = import.meta.env.VITE_SITE_URL || import.meta.env.SITE
+
+if (!siteUrl && import.meta.env.PROD) {
+  console.warn('Warning: VITE_SITE_URL is not set in production. Some features may not work correctly.')
+}
 
 export const env = {
   sanity: {
@@ -26,7 +31,7 @@ export const env = {
     useCdn: typeof publicUseCdn === 'string' ? publicUseCdn !== 'false' : import.meta.env.PROD,
   },
   site: {
-    url: import.meta.env.VITE_SITE_URL || '',
+    url: siteUrl || '',
   },
   runtime: {
     isDev: import.meta.env.DEV,
