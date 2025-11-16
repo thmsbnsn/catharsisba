@@ -4,9 +4,10 @@
   "type": "module",
   "scripts": {
     "gen:images": "node src/scripts/gen-image-manifests.mjs",
-    "build": "npm-run-all gen:images build:astro postbuild:git",
+    "build": "npm-run-all gen:images build:astro",
     "build:astro": "astro build",
-    "postbuild:git": "node src/scripts/post-build-git.mjs"
+    "postbuild:git": "node src/scripts/post-build-git.mjs",
+    "deploy": "npm-run-all build postbuild:git"
   },
   "dependencies": {
     "@astrojs/react": "^4.0.0",

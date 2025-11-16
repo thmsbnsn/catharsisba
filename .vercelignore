@@ -1,0 +1,7 @@
+# Vercel build ignore patterns
+src/scripts/post-build-git.mjs
+github.ps1
+.git
+logs/
+_blog/
+_CBADemo/
